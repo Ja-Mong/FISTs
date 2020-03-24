@@ -1,98 +1,92 @@
-package com.example.compass_v03;
+package com.example.lla;
 
-import android.app.Activity;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements SensorEventListener {
-    //implements ~ 회전-gravity-geomagnetic vector 다중상속을 위해
-
-
-    // 나침반 이미지
-
-    private float currentDegree = 0f;
-    // 현재 방위각 측정
-
-    private SensorManager mSensorManager;
-    // 안드로이드 센서
-    TextView tvHeading;
-    // tvHeading=0.0으로 설정 되어있고, TextView를 통해 현재 방위각 표시
-    TextView direct;
-
-
-
+//LocationListener ~ 위치서비스 호출 위해
+public class MainActivity extends AppCompatActivity implements LocationListener {
+    final int dex = 1; //value 값 지정
+    TextView txt;
+    LocationManager lm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-        direct = (TextView) findViewById(R.id.direct);
-        tvHeading = (TextView) findViewById(R.id.tvHeading);
-        // tvHeading 통해 방위각 확인
-        // initialize your android device sensor capabilities
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        // 센서 초기 기능 설정
+        txt = (TextView)findViewById(R.id.txt);
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        // gps - network provider 사용 가능 여부 확인 기능??
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
 
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_GAME);
-        // 방향 센서 등록
+        if(ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        dex);
+            }
+
+
+        } else {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+        }
     }
 
+
     @Override
-    protected void onPause() {
+    protected  void onPause() {
         super.onPause();
 
-
-        mSensorManager.unregisterListener(this);
-        // 멈춤
+        lm.removeUpdates(this);
     }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-
-        Integer degree = Math.round(event.values[0]);
-        // 상-하축(z-axis)를 중심으로 한 회전 각도 추출
-        tvHeading.setText("현재 방위:" + Integer.toString(degree)+"°");
-        direct.setText(getDirectionFromDegrees(degree));
-
-
-    }
-
-
-
-    private String getDirectionFromDegrees(int degree) {
-        if(degree >= 0 && degree < 23) { return "N"; }
-        if(degree >=338) {return "N"; }
-        if(degree >= 23 && degree < 68) { return "NE"; }
-        if(degree >= 68 && degree < 113) { return "E"; }
-        if(degree >= 113 && degree < 158) { return "SE"; }
-        if(degree >= 158 && degree < 203) { return "S"; }
-        if(degree >= 203 && degree < 248) { return "SW"; }
-        if(degree >= 248 && degree < 293) { return "W"; }
-        if(degree >= 293 && degree < 338) { return "NW"; }
-        // 0<=N<45, 45<=E<135, 135<=S<225, 225<=W<=0
-        return null;
-
-    }
-
 
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    //위치 데이터 수신 시 메소드 - Location 객체 실행
+    public void onLocationChanged(Location location) {
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+        double altitude = location.getAltitude();
+
+        txt.setText("위도: "+Integer.toString((int)longitude)+"\n"+"경도: "+Integer.toString((int)latitude)+"\n"+"고도: "+Integer.toString((int)altitude));
+    }
+
+    @Override
+    //gps 신호 수신 안될 시 호출 (객체 정리만)
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // LocationProvider.OUT_OF_SERVICE   ==  위치 제공자 이용불가
+        // LocationProvider.TEMPORARILY_UNAVAILABLE == 위치 제공자 현재 이용불가, 조치가능
+        // LocationProvider.AVAILABLE == 위치 제공자 이용가능
+        // 조건별로 정리해서 상황처리 유도 Toast Message 호출기능??
+    }
+
+    @Override
+    //onStatusChanged와 비슷한 역활이지만 사용자가 위치제공자를 위치 설정 메뉴에서 사용 가능-불가능 변경 시 통지 받을 수 있도록 하는 메소드
+    // LocationProvider 객체 사용
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
 
     }
 }
