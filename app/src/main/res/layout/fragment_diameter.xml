@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.diameter.DiameterFragment">
+
+    <TextureView
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
+    <ImageView
+        android:id="@+id/focus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/focus"
+        android:layout_centerInParent="true"/>
+
+    <ImageButton
+        android:id="@+id/Btn_diameter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="65dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:src="@drawable/radi"/>
+
+    <ImageButton
+        android:id="@+id/Btn_calculate"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:src="@drawable/ok"/>
+
+    <TextView
+        android:id="@+id/tv_alititude"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="고        도 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_diameter"
+        android:layout_above="@id/Btn_diameter"/>
+    <TextView
+        android:id="@+id/tv_compass"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="방        위 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_diameter"
+        android:layout_above="@id/tv_alititude"/>
+    <TextView
+        android:id="@+id/tv_height"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="수        고 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_diameter"
+        android:layout_above="@id/tv_compass"/>
+    <TextView
+        android:id="@+id/tv_diameter"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="흉고직경 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_diameter"
+        android:layout_above="@id/tv_height"/>
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="거        리 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_diameter"
+        android:layout_above="@id/tv_diameter"/>
+
+</RelativeLayout>

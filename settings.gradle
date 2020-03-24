@@ -1,0 +1,2 @@
+rootProject.name='Forest Inventory Survery Tools'
+include ':app'

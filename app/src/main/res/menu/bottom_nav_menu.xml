@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_distance"
+        android:icon="@drawable/ruler"
+        android:title="@string/title_distance" />
+
+    <item
+        android:id="@+id/navigation_diameter"
+        android:icon="@drawable/radi"
+        android:title="@string/title_diameter" />
+
+    <item
+        android:id="@+id/navigation_height"
+        android:icon="@drawable/heigth"
+        android:title="@string/title_height" />
+
+</menu>
