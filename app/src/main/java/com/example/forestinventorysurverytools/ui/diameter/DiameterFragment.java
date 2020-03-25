@@ -1,57 +1,88 @@
 package com.example.forestinventorysurverytools.ui.diameter;
 
+import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import static android.content.Context.SENSOR_SERVICE;
 
 public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener{
+    View root;
+    CameraAPI mDiamCameraAPI;
+    TextureView mCameraPreview_diam;
+
+    SensorManager mSensorManager;
+    MySensorEventListener mMySensorEventListener;
+    Handler mCameraHandler;
+    HandlerThread mCameraThread;
 
     ImageView focusImage;
     ImageButton mBtn_diameter;
+    ImageButton mBtn_calculate;
+    TextView mDistance_tv;
+    TextView mDiameter_tv;
+    TextView mHeight_tv;
+    TextView mCompass_tv;
+    TextView mAltitude_tv;
+    EditText mInputHeight;
 
-    /*추가한 변수*/
-    CameraAPI mDiamCameraAPI;
-    TextureView mCameraPreview_diam;
-    View root;
+    float angle;
+    float angle2;
 
+    //layout View
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root =  inflater.inflate(R.layout.fragment_diameter, container, false);
+        mDiamCameraAPI = new CameraAPI(this);
+        mCameraPreview_diam = (TextureView)root.findViewById(R.id.camera_preview);
+
+        mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
+        mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
         focusImage = (ImageView)root.findViewById(R.id.focus);
         mBtn_diameter = (ImageButton)root.findViewById(R.id.Btn_diameter);
+        mBtn_calculate = (ImageButton)root.findViewById(R.id.Btn_calculate);
+        mDistance_tv = (TextView)root.findViewById(R.id.tv_distance);
+        mDiameter_tv = (TextView)root.findViewById(R.id.tv_diameter);
+        mHeight_tv = (TextView)root.findViewById(R.id.tv_height);
+        mCompass_tv = (TextView)root.findViewById(R.id.tv_compass);
+        mAltitude_tv = (TextView)root.findViewById(R.id.tv_alititude);
+        mInputHeight = (EditText)root.findViewById(R.id.input_height);
 
-        mDiamCameraAPI = new CameraAPI(this);
-        mCameraPreview_diam = (TextureView)root.findViewById(R.id.camera_preview);
+        mBtn_diameter.setOnClickListener(measureDiameter);
+        mBtn_calculate.setOnClickListener(calculateDiameter);
 
         return root;
     }
 
+
+    // Toast
     public void showToast(String data){
         Toast.makeText(root.getContext(),data, Toast.LENGTH_SHORT).show();
-    } // Toast 메세지 사용 간단하게 만듦
+    }
 
+    //Camera
     private void openCamera() {
 
         CameraManager cameraManager = mDiamCameraAPI.cameraManager_1_DBH(this);
@@ -59,29 +90,6 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         mDiamCameraAPI.CameraDevice_3_DBH(cameraManager, cameraID);
         showToast("흉고직경 기능 수행");
     }
-
-    /*
-     * Surface Callbacks
-     */
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        openCamera();
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-    }
-
     @Override
     public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
         SurfaceTexture surfaceTexture = mCameraPreview_diam.getSurfaceTexture();
@@ -97,18 +105,9 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
             mDiamCameraAPI.CaptureSession_5(cameraDevice,surface);
         }
     }
-
     private void closeCamera(){
         mDiamCameraAPI.closeCamera();
     }
-
-    /*재정의*/
-    @Override
-    public void onPause() {
-        closeCamera();
-        super.onPause();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -117,5 +116,62 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         }else{
             mCameraPreview_diam.setSurfaceTextureListener(this);
         }
+        startCameraHandlerThread();
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+    }
+    @Override
+    public void onPause() {
+        closeCamera();
+        stopCameraHandlerThread();
+        mSensorManager.unregisterListener(mMySensorEventListener);
+        super.onPause();
+    }
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        openCamera();
+    }
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        return true;
+    }
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
+
+
+    //Button
+    ImageButton.OnClickListener measureDiameter = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View diameter) {
+            mMySensorEventListener.updateOrientationAngles();
+            showToast("버튼이 눌렸스니다.");
+        }
+    };
+    ImageButton.OnClickListener calculateDiameter = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calculate) {
+            showToast("계산완료");
+        }
+    };
+
+
+
+    //Handler
+    private void startCameraHandlerThread() {
+        mCameraThread = new HandlerThread("Camera Background");
+        mCameraThread.start();
+        mCameraHandler = new Handler(mCameraThread.getLooper());
+    }
+    private void stopCameraHandlerThread() {
+        mCameraThread.quitSafely();
+        mCameraThread = null;
+        mCameraHandler = null;
     }
 }

@@ -95,4 +95,14 @@
         android:layout_alignBaseline="@id/Btn_height"
         android:layout_above="@id/tv_diameter"/>
 
+    <EditText
+        android:id="@+id/input_height"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:background="#FFFF"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="80dp" />
+
 </RelativeLayout>
