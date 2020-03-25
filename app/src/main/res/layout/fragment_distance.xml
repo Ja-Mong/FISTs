@@ -89,6 +89,7 @@
         android:layout_height="wrap_content"
         android:textSize="13sp"
         android:background="#FFFF"
+        android:inputType="numberDecimal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="80dp" />

@@ -59,6 +59,8 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
 
     float angle;
     float angle2;
+    float angle_1;
+    float angle2_1;
     int click_count = 0;
 
     @Override
@@ -162,17 +164,24 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         public void onClick(View height) {
             mMySensorEventListener.updateOrientationAngles();
             if (!mInputHeight.getText().toString().isEmpty()) {
-                if (click_count%2 == 0) {
+                if (click_count%3 == 0) {
                     angle = Math.abs(mMySensorEventListener.getPitch());
                     click_count++;
                     showToast("1");
-                } else if (click_count%2 == 1) {
+                } else if (click_count%3 == 1) {
                     angle2 = Math.abs(mMySensorEventListener.getPitch());
                     float quadrant = mMySensorEventListener.getPitchQuadrantUpDown();
                     angle2 = angle2 * Math.signum(quadrant);
+                    angle_1 = Math.abs(mMySensorEventListener.getPitch());
                     click_count++;
                     showToast("2");
-                }
+                } else if (click_count%3 == 2) {
+                    angle2_1 = Math.abs(mMySensorEventListener.getPitch());
+                    float quadrant2 = mMySensorEventListener.getPitchQuadrantUpDown();
+                    angle2_1 = angle2_1 * Math.signum(quadrant2);
+                    click_count++;
+                    showToast("3");
+                } //2번까지 진행했을때의 값이 너무 작음.. 3번 말고 n번으로 할 수 있는 방법을 찾고, calculate 눌렀을때의 값을 구할 수 있게 작업해야됨.
             }
         }
     };
@@ -181,10 +190,10 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
                 float userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
-                double length = userHeight * Math.tan(angle);
-                double angleCalc = Math.PI/2.0 - Math.abs(angle2);
+                double length = userHeight * Math.tan(angle + angle_1);
+                double angleCalc = Math.PI/2.0 - Math.abs(angle2 + angle2_1);
                 double dist = length * Math.tan(angleCalc);
-                double finalDisp = dist * (-1)/Math.signum(angle2);
+                double finalDisp = dist * (-1)/Math.signum(angle2 + angle2_1);
                 String height_value = String.format("%.1f", userHeight+finalDisp);
                 mHeight_tv.setText("수        고 :" + height_value + "m");
                 showToast("calculate");

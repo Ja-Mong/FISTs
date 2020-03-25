@@ -27,7 +27,7 @@ import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener{
+public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener {
     View root;
     CameraAPI mDiamCameraAPI;
     TextureView mCameraPreview_diam;
@@ -49,26 +49,27 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
 
     float angle;
     float angle2;
+    int click_count = 0;
 
     //layout View
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root =  inflater.inflate(R.layout.fragment_diameter, container, false);
+        root = inflater.inflate(R.layout.fragment_diameter, container, false);
         mDiamCameraAPI = new CameraAPI(this);
-        mCameraPreview_diam = (TextureView)root.findViewById(R.id.camera_preview);
+        mCameraPreview_diam = (TextureView) root.findViewById(R.id.camera_preview);
 
-        mSensorManager = (SensorManager)getActivity().getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
-        focusImage = (ImageView)root.findViewById(R.id.focus);
-        mBtn_diameter = (ImageButton)root.findViewById(R.id.Btn_diameter);
-        mBtn_calculate = (ImageButton)root.findViewById(R.id.Btn_calculate);
-        mDistance_tv = (TextView)root.findViewById(R.id.tv_distance);
-        mDiameter_tv = (TextView)root.findViewById(R.id.tv_diameter);
-        mHeight_tv = (TextView)root.findViewById(R.id.tv_height);
-        mCompass_tv = (TextView)root.findViewById(R.id.tv_compass);
-        mAltitude_tv = (TextView)root.findViewById(R.id.tv_alititude);
-        mInputHeight = (EditText)root.findViewById(R.id.input_height);
+        focusImage = (ImageView) root.findViewById(R.id.focus);
+        mBtn_diameter = (ImageButton) root.findViewById(R.id.Btn_diameter);
+        mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
+        mDistance_tv = (TextView) root.findViewById(R.id.tv_distance);
+        mDiameter_tv = (TextView) root.findViewById(R.id.tv_diameter);
+        mHeight_tv = (TextView) root.findViewById(R.id.tv_height);
+        mCompass_tv = (TextView) root.findViewById(R.id.tv_compass);
+        mAltitude_tv = (TextView) root.findViewById(R.id.tv_alititude);
+        mInputHeight = (EditText) root.findViewById(R.id.input_height);
 
         mBtn_diameter.setOnClickListener(measureDiameter);
         mBtn_calculate.setOnClickListener(calculateDiameter);
@@ -78,9 +79,11 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
 
 
     // Toast
-    public void showToast(String data){
-        Toast.makeText(root.getContext(),data, Toast.LENGTH_SHORT).show();
+    public void showToast(String data) {
+        Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
+
+
 
     //Camera
     private void openCamera() {
@@ -93,27 +96,27 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     @Override
     public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
         SurfaceTexture surfaceTexture = mCameraPreview_diam.getSurfaceTexture();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            surfaceTexture.setDefaultBufferSize(cameraSize.getWidth(),cameraSize.getHeight());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            surfaceTexture.setDefaultBufferSize(cameraSize.getWidth(), cameraSize.getHeight());
         }
         Surface surface = new Surface(surfaceTexture);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mDiamCameraAPI.CaptureSession_4_DBH(cameraDevice, surface);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            mDiamCameraAPI.CaptureSession_5(cameraDevice,surface);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mDiamCameraAPI.CaptureSession_5(cameraDevice, surface);
         }
     }
-    private void closeCamera(){
+    private void closeCamera() {
         mDiamCameraAPI.closeCamera();
     }
     @Override
     public void onResume() {
         super.onResume();
-        if(mCameraPreview_diam.isAvailable()){
+        if (mCameraPreview_diam.isAvailable()) {
             openCamera();
-        }else{
+        } else {
             mCameraPreview_diam.setSurfaceTextureListener(this);
         }
         startCameraHandlerThread();
@@ -137,13 +140,16 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         openCamera();
     }
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    }
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return true;
     }
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    }
+
 
 
     //Button
@@ -151,13 +157,34 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         @Override
         public void onClick(View diameter) {
             mMySensorEventListener.updateOrientationAngles();
-            showToast("버튼이 눌렸스니다.");
+            if (!mInputHeight.getText().toString().isEmpty()) {
+                if (click_count % 2 == 0) {
+                    angle = Math.abs(mMySensorEventListener.getPitch());
+                    click_count++;
+                    showToast("1");
+                } else if (click_count % 2 == 1) {
+                    angle2 = Math.abs(mMySensorEventListener.getPitch());
+                    float quadrant = mMySensorEventListener.getPitchQuadrantRigthLeft();
+                    angle2 = angle2 * (Math.signum(quadrant));
+                    click_count++;
+                    showToast("2");
+                }
+            }
         }
     };
     ImageButton.OnClickListener calculateDiameter = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
-            showToast("계산완료");
+            if (calculate.getId() == R.id.Btn_calculate) {
+                float userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
+                double length = userHeight * Math.tan(angle);
+                double angleCalc = Math.PI / 2.0 - Math.abs(angle2);
+                double dist = length * Math.tan(angleCalc);
+                double finalDisp = dist * (-1) / Math.signum(angle2);
+                String height_value = String.format("%.1f", userHeight + finalDisp);
+                mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
+                showToast("calculate"); //단위 변환이 필요함
+            }
         }
     };
 
@@ -169,9 +196,11 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         mCameraThread.start();
         mCameraHandler = new Handler(mCameraThread.getLooper());
     }
+
     private void stopCameraHandlerThread() {
         mCameraThread.quitSafely();
         mCameraThread = null;
         mCameraHandler = null;
     }
 }
+
