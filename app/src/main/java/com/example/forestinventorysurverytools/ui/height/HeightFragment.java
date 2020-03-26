@@ -33,6 +33,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import java.util.Vector;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -157,13 +158,19 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
+    //n번 넣을 수 있게 하는 자료구조 전역 선언
+    Vector<Float>angle_vec = new Vector<Float>();
+    Vector<Float>quadrant_vec = new Vector<Float>();
+    float angle_quad;
 
     //Button
     ImageButton.OnClickListener measureHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View height) {
+
             mMySensorEventListener.updateOrientationAngles();
             if (!mInputHeight.getText().toString().isEmpty()) {
+
                 if (click_count%3 == 0) {
                     angle = Math.abs(mMySensorEventListener.getPitch());
                     click_count++;
@@ -182,22 +189,77 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                     click_count++;
                     showToast("3");
                 } //2번까지 진행했을때의 값이 너무 작음.. 3번 말고 n번으로 할 수 있는 방법을 찾고, calculate 눌렀을때의 값을 구할 수 있게 작업해야됨.
+
+
+                /*
+                if(angle_vec.isEmpty()){
+                    angle = Math.abs(mMySensorEventListener.getPitch());
+                    angle_vec.add(angle);
+                    showToast(Integer.toString(angle_vec.size()));
+                }else{
+                    angle = Math.abs(mMySensorEventListener.getPitch());
+                    angle_vec.add(angle);
+                    float quadrant = mMySensorEventListener.getPitchQuadrantUpDown();
+                    angle = angle * Math.signum(quadrant);
+                    angle_quad = angle*Math.signum(quadrant);
+                    quadrant_vec.add(angle_quad);
+                    showToast(Integer.toString(angle_vec.size()));
+                }*/
+
             }
         }
     };
+
+    double length=0.0;
+    double angleCalc=0.0;
+    double dist=0.0;
+    double finalDisp=0.0;
+
     ImageButton.OnClickListener calculateHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
                 float userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
-                double length = userHeight * Math.tan(angle + angle_1);
-                double angleCalc = Math.PI/2.0 - Math.abs(angle2 + angle2_1);
-                double dist = length * Math.tan(angleCalc);
-                double finalDisp = dist * (-1)/Math.signum(angle2 + angle2_1);
+
+                length = userHeight * Math.tan(angle + angle_1);
+                angleCalc = Math.PI/2.0 - Math.abs(angle2 + angle2_1);
+                dist = length * Math.tan(angleCalc);
+                finalDisp = dist * (-1)/Math.signum(angle2 + angle2_1);
+
+                /*System.out.println(angle_vec.elementAt(0));
+                length = userHeight*Math.tan(angle_vec.elementAt(0)+angle_vec.elementAt(1));
+                if(quadrant_vec.size() == 1){ // 나무를 두번만 마크 찍고 했을때
+                    angleCalc = Math.PI/2.0 - Math.abs(quadrant_vec.elementAt(0));
+                    dist = length * Math.tan(angleCalc);
+                    finalDisp += dist*(-1)/Math.signum(quadrant_vec.elementAt(0));
+                }else{ // 나무를 N번찍고 수고 측정할때
+                    for(int i=0; i<quadrant_vec.size(); i++){
+                        angleCalc = Math.PI/2.0 - Math.abs(quadrant_vec.elementAt(0) + quadrant_vec.elementAt(1));
+                        dist = length * Math.tan(angleCalc);
+                        finalDisp += dist*(-1)/Math.signum(quadrant_vec.elementAt(0)+quadrant_vec.elementAt(1));
+                    }
+
+
+                angleCalc = Math.PI/2.0 - Math.abs(quadrant_vec[0] + quadrant_vec[1]);
+                dist = length * Math.tan(angleCalc);
+                finalDisp += dist*(-1)/Math.signum(quadrant_vec[0]+quadrant_vec[1]);
+
+                }*/
+
+
+
                 String height_value = String.format("%.1f", userHeight+finalDisp);
                 mHeight_tv.setText("수        고 :" + height_value + "m");
                 showToast("calculate");
-            }
+
+                angle_vec.removeAllElements();
+                quadrant_vec.removeAllElements();
+
+
+            }// end if
+
+
+
         }
     };
 
