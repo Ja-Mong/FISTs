@@ -116,11 +116,11 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         startCameraHandlerThread();
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
 
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
     @Override
     public void onPause() {
@@ -134,15 +134,13 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         openCamera();
     }
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    }
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return true;
     }
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-    }
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
 
 
     //Button
@@ -151,9 +149,10 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         public void onClick(View distance) {
             mMySensorEventListener.updateOrientationAngles();
             if (distance.getId() == R.id.Btn_distance) {
-                angle = Math.abs(mMySensorEventListener.getPitch());
+//                angle = Math.abs(mMySensorEventListener.getPitch());
+                angle = Math.abs(mMySensorEventListener.getRoll());
                 if (!mInputHeight.getText().toString().isEmpty()) {
-                    float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) / 100;
+                    float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) / 100; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
                     float length = phoneHeight * (float) Math.tan(angle);
                     String distance_value = String.format("%.1f", length);
                     mDistance_tv.setText("거        리 :" + distance_value + "m");

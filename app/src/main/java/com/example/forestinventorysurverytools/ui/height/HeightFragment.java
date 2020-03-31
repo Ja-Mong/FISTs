@@ -243,7 +243,6 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 angleCalc = Math.PI/2.0 - Math.abs(quadrant_vec[0] + quadrant_vec[1]);
                 dist = length * Math.tan(angleCalc);
                 finalDisp += dist*(-1)/Math.signum(quadrant_vec[0]+quadrant_vec[1]);
-
                 }*/
 
 
