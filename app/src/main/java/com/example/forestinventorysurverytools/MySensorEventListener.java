@@ -49,17 +49,17 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
      * 2. 기종별 센서 기능
      * */
     public float getYaw() {
-        float yaw = (float) -mOrientationAngles[0];
+        float yaw = -mOrientationAngles[0];
         return yaw;
     }//z축
 
     public float getPitch() {
-        float pitch = (float) (mOrientationAngles[1]);
+        float pitch = (mOrientationAngles[1]);
         return pitch;
     }//x축
 
     public float getRoll() {
-        float roll = (float) mOrientationAngles[2];
+        float roll = mOrientationAngles[2];
         return roll;
     }//y축
 
@@ -70,12 +70,12 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
 //    }
 //
     //Value Listener for D, DBH, H
-    public float getPitchQuadrantRigthLeft() {
-        return mRotationMatrix[7];
-    }
-    public float getPitchQuadrantUpDown() {
-        return mRotationMatrix[8];
-    } // 수정이 필요함
+//    public float getPitchQuadrantRigthLeft() {
+//        return mRotationMatrix[6];
+//    }
+//    public float getRollQuadrantUpDown() {
+//        return mRotationMatrix[8];
+//    } // 수정이 필요함
 //
 //    //Rotation(Coordinate)
 //    public float getYaw() {

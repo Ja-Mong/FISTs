@@ -164,8 +164,8 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
                     showToast("1");
                 } else if (click_count % 2 == 1) {
                     angle2 = Math.abs(mMySensorEventListener.getPitch());
-                    float quadrant = mMySensorEventListener.getPitchQuadrantRigthLeft();
-                    angle2 = angle2 * (Math.signum(quadrant));
+//                    float quadrant = mMySensorEventListener.getPitchQuadrantRigthLeft();
+//                    angle2 = angle2 * (Math.signum(quadrant));
                     click_count++;
                     showToast("2");
                 }
