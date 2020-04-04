@@ -51,16 +51,14 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     ImageView focusImage;
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
+
     TextView mDistance_tv;
     TextView mDiameter_tv;
     TextView mHeight_tv;
     TextView mCompass_tv;
     TextView mAltitude_tv;
-    EditText mInputHeight;
 
-    float angle;
-    float angle2;
-    int click_count = 0;
+    EditText mInputHeight;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -194,23 +192,12 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                     f_theta = Math.abs(mMySensorEventListener.getRoll());
                     theta_vec.add(f_theta);
                     showToast(Integer.toString(theta_vec.size()));
-                } else if (theta_vec.size() == 1) {
+                    x_theta = 90 - theta_vec.elementAt(0);
+                } else {
                     t_theta = Math.abs(mMySensorEventListener.getRoll());
                     xy_theta = t_theta - theta_vec.elementAt(0);
-                    x_theta = 90 - theta_vec.elementAt(0);
                     y_theta = Math.abs(xy_theta - x_theta);
                     theta_vec.add(y_theta);
-
-                    /**
-                     * else 부분이 어떤걸 뜻하는 건지 잘 모르겠음
-                     **/
-//                } else {
-//                    t_theta = Math.abs(mMySensorEventListener.getRoll());
-//                    xy_theta = t_theta - theta_vec.elementAt(0);
-//                    y_theta = Math.abs(xy_theta - x_theta);
-//                    y2_theta = y_theta - n_theta; // n_theta ??
-//                    theta_vec.add(y_theta);
-
                 }
             }
         }
@@ -224,65 +211,32 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     double t_height;
     double new_height;
 
-    float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) /100f;
-    float distance = (float) (Math.tan(x_theta) * phoneHeight);
-
     final ImageButton.OnClickListener getCalculateHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
-                for (int i =0; i<theta_vec.size(); i++) {
+                float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) /100f;
+                float distance = (float) (Math.tan(x_theta) * phoneHeight);
+
+                for (int i = 1; i < theta_vec.size(); i++) {
                     if (height_vec.isEmpty()) {
-                        x_height = distance * Math.tan(theta_vec.elementAt(i+1));
+                        x_height = distance * Math.tan(theta_vec.elementAt(i));
                         height_vec.add(x_height);
                         t_height += x_height;
                     } else {
-                        t_height = distance * Math.tan(theta_vec.elementAt(i+1));
-                        new_height = t_height - height_vec.elementAt(i);
+                        double tmp_height = distance * Math.tan(theta_vec.elementAt(i));
+                        new_height = tmp_height - t_height;
                         height_vec.add(new_height);
                         t_height += new_height;
                     }
                 }
                 t_height += phoneHeight;
+                String totalHeightValue = String.format("%.1f", t_height);
+                mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
             }
         }
     };
 
-
-    /*
-     * (방법 1일 경우)  여기서 각도 계산하면서 수고까지 함께 계산 후 총 수고 계산
-     *
-     * (방법 2일 경우)  수고만 계산
-     *
-     * //먼저 phoneHeight 경우도 변하지 않는 값이므로 반복문에서 제외하고 먼저 값 할당
-     * float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
-     * // 총 수고 높이 변수 선언
-     * double t_height;
-     * //size 값은 벡터에 들어간 원소의 개수를 의미함.
-     * //vector 인덱스 오류가 생길 수 있어 여기서 값 건드릴때 주의해야 함
-     * //for(int i=1; i<angle_vec.size(); i++){
-     * for(int i=0; i<angle_vec.size(); i++){
-     *   if(dist_vec.isEmpty()){ // 2번
-     *       double x_height = distance*Math.tan(angle_vec.elementAt(i+1);
-     *       dist_vec.add(x_height);
-     *       t_height += x_height;
-     *  }else{ // N번
-     *       double T_height = distance*Math.tan(angle_vec.elementAt(i+1);
-     *       double new_height = T_height - dist_vec.elementAt(i);
-     *       dist_vec.add(new_height);
-     *       t_height += new_height;
-     *  }//end if
-     *
-     *
-     *
-     * }//end for
-     * r_height += phoneHeight; // 고정된 값인 핸드폰 높이는 나중에 더 하거나 먼저 더하는게 어떨까요?
-     *
-     * */
-    /*
-    * 이전에 있던 angle_vec.removeAllElements(); 이 함수는 저장한 값을 모두 지우는데
-    * 리셋 버튼에 적용할 예정이고 테스트하기 위해 추가했던 부분이므로 제거하였습니다.
-    * */
 
     //Handler
     private void startCameraHandlerThread() {

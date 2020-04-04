@@ -72,7 +72,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         mInputHeight = (EditText) root.findViewById(R.id.input_height);
 
         mBtn_diameter.setOnClickListener(measureDiameter);
-        mBtn_calculate.setOnClickListener(calculateDiameter);
+        mBtn_calculate.setOnClickListener(getMeasureDiameter);
 
         return root;
     }
@@ -172,7 +172,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
             }
         }
     };
-    ImageButton.OnClickListener calculateDiameter = new ImageButton.OnClickListener() {
+    ImageButton.OnClickListener getMeasureDiameter = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
