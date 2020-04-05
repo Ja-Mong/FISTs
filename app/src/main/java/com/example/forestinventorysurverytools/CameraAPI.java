@@ -1,6 +1,8 @@
 package com.example.forestinventorysurverytools;
 
 import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -12,6 +14,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.util.Size;
 import android.view.Surface;
+import android.view.TextureView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,7 +53,33 @@ public class CameraAPI extends Fragment {
         mCamera2Interface_H = camera2Interface;
     }
 
+    public void transformImage(TextureView tv, int width, int height)
+    {
 
+        if (tv == null) {
+            return;
+        } else try {
+            {
+                Matrix matrix = new Matrix();
+                int rotation = Surface.ROTATION_90;
+                RectF textureRectF = new RectF(0, 0, width, height);
+                RectF previewRectF = new RectF(0, 0, tv.getHeight(), tv.getWidth());
+                float centerX = textureRectF.centerX();
+                float centerY = textureRectF.centerY();
+                if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+                    previewRectF.offset(centerX - previewRectF.centerX(), centerY - previewRectF.centerY());
+                    matrix.setRectToRect(textureRectF, previewRectF, Matrix.ScaleToFit.FILL);
+                    float scale = Math.max((float) width / width, (float) height / width);
+                    matrix.postScale(scale, scale, centerX, centerY);
+                    matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+                }
+                tv.setTransform(matrix);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     public CameraManager cameraManager_1_D(Fragment mDistanceCameraAPI) {
         CameraManager cameraManager_D = (CameraManager)mDistanceCameraAPI.getActivity().getSystemService(Context.CAMERA_SERVICE);
         return cameraManager_D;
