@@ -39,7 +39,8 @@ import java.util.Vector;
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class HeightFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener {
+public class HeightFragment extends Fragment implements CameraAPI.Camera2Interface,
+        TextureView.SurfaceTextureListener {
     View root;
     CameraAPI mHeightCameraAPI;
     TextureView mCameraPreview_height;
@@ -89,7 +90,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         CameraManager cameraManager = mHeightCameraAPI.cameraManager_1_H(this);
         String cameraID = mHeightCameraAPI.CameraCharacteristics_2(cameraManager);
         mHeightCameraAPI.CameraDevice_3_H(cameraManager, cameraID);
-        showToast("수고 기능 수행");
+        showToast("수고측정 기능 수행");
         // 카메라 가로 변환
         mHeightCameraAPI.transformImage(mCameraPreview_height,mCameraPreview_height.getWidth(),mCameraPreview_height.getHeight());
     }

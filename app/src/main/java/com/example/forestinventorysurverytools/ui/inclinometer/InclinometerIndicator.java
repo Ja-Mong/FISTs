@@ -26,7 +26,8 @@ public class InclinometerIndicator extends View {
 
     Paint mBitmapPaint;
     Paint mRollLadderPaint;
-    Paint mPointColorPaint;
+//    Paint mPointColorPaint;
+    Paint mBackGround;
     Paint mHorizon;
     Paint mBottomRollLadderPaint;
 
@@ -60,6 +61,10 @@ public class InclinometerIndicator extends View {
 //        mPointColorPaint = new Paint();
 //        mPointColorPaint.setAntiAlias(true);
 //        mPointColorPaint.setColor(POINT_COLOR);
+
+        mBackGround = new Paint();
+        mBackGround.setAntiAlias(true);
+        mBackGround.setColor(Color.TRANSPARENT);
 
         mHorizon = new Paint();
         mHorizon.setAntiAlias(true);
@@ -102,10 +107,13 @@ public class InclinometerIndicator extends View {
         float centerY = mHeight/2;
 
         //Background
-        canvas.drawColor(Color.TRANSPARENT);
+        canvas.drawColor(Color.BLUE);
         canvas.save();
         canvas.rotate(mRoll, centerX, centerY);
         canvas.translate(0, (mPitch/ROLL_DEGREES) * mHeight);
+
+        //Background
+        canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mBackGround);
 
         //Horizon and TopLadder
 //        float ladderStepY = mHeight/12;

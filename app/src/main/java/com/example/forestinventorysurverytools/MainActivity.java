@@ -11,12 +11,9 @@ import android.widget.TextView;
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
-//import com.example.forestinventorysurverytools.ui.slope.SlopeFragment;
-//import com.example.forestinventorysurverytools.ui.slope.SlopeIndicator;
-//import com.example.forestinventorysurverytools.ui.slope.SlopeIndicator;
 import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerIndicator;
-//import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
+import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -24,19 +21,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+//        implements InclinometerOrientation.Listener
+{
 
     InclinometerFragment inclinometerFragment;
     DistanceFragment distanceFragment;
     DiameterFragment diameterFragment;
     HeightFragment heightFragment;
 
-//    public InclinometerOrientation mInclinometerOrientation;
-//    InclinometerIndicator mInclinometerIndicator;
+//    InclinometerOrientation inclinometerOrientation;
+//    InclinometerIndicator inclinometerIndicator;
 
     boolean cameraPermission;
     boolean writePermission;
 
+    public TextView mInclinometer_tv;
     public TextView mDistance_tv;
     public TextView mDiameter_tv;
     public TextView mHeight_tv;
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public EditText mInputHeight;
 
     // 거리, 흉고직경, 높이 실제 값 저장 변수
+    public double mInclinometer_val;
     public double mDistance_val;
     public double mDiameter_val;
     public double mHeight_val;
@@ -54,12 +55,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-        inclinometerFragment = new InclinometerFragment();
-        distanceFragment = new DistanceFragment();
-        diameterFragment = new DiameterFragment();
-        heightFragment = new HeightFragment();
-=======
+//        inclinometerOrientation = new InclinometerOrientation(this);
+//        inclinometerIndicator = (InclinometerIndicator)this.findViewById(R.id.inclinometer);
+
+        mInclinometer_tv = (TextView)this.findViewById(R.id.tv_inclinometer);
         mDistance_tv = (TextView)this.findViewById(R.id.tv_distance);
         mDiameter_tv = (TextView)this.findViewById(R.id.tv_diameter);
         mHeight_tv = (TextView)this.findViewById(R.id.tv_height);
@@ -68,15 +67,10 @@ public class MainActivity extends AppCompatActivity {
         mInputHeight = (EditText)this.findViewById(R.id.input_height);
 
 
+        inclinometerFragment = new InclinometerFragment(this);
         distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
-
-
->>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
-
-//        mInclinometerOrientation = new InclinometerOrientation(this);
-//        mInclinometerIndicator = (InclinometerIndicator)findViewById(R.id.inclinometer);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
 
@@ -129,12 +123,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //    @Override
-//    public void onOrientationChanged(float pitch, float roll) {
-//        mInclinometerIndicator.setInclimeter(pitch, roll);
+//    public void onStart() {
+//        super.onStart();
+//        inclinometerOrientation.startListening(this);
 //    }
-
+//
 //    @Override
-//    public void onOrientationChanged(float clinoPitch, float clinoRoll) {
-//        slopeIndicator.setSlope(clinoPitch, clinoRoll);
+//    public void onStop() {
+//        super.onStop();
+//        inclinometerOrientation.stopListening();
+//    }
+//
+//    @Override
+//    public void onOrientationChanged(float pitch, float roll) {
+//        inclinometerIndicator.setInclinometer(pitch, roll);
 //    }
 }

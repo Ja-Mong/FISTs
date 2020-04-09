@@ -38,6 +38,16 @@
         app:menu="@menu/bottom_nav_menu" />
 
     <TextView
+        android:id="@+id/tv_inclinometer"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="경        사 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_above="@id/tv_distance"/>
+
+    <TextView
         android:id="@+id/tv_compass"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
