@@ -18,6 +18,8 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -32,18 +34,32 @@ import com.example.forestinventorysurverytools.R;
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class DistanceFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener {
+public class DistanceFragment extends Fragment implements CameraAPI.Camera2Interface,
+        TextureView.SurfaceTextureListener {
+
     View root;
     CameraAPI mDistCameraAPI;
     TextureView mCameraPreview_dist;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
+//    WindowManager mWindowManager;
+//    Sensor mRotationSensor;
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
     ImageView focusImage;
     ImageButton mBtn_distance;
+<<<<<<< HEAD
+    TextView mDistance_tv;
+    TextView mDiameter_tv;
+    TextView mHeight_tv;
+    TextView mCompass_tv;
+    TextView mAltitude_tv;
+    TextView mInclinometer_tv;
+    EditText mInputHeight;
+=======
+>>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
 
 
     MainActivity ma=null;
@@ -61,10 +77,22 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
+//        mWindowManager = getActivity().getWindow().getWindowManager();
+//        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
         focusImage = (ImageView) root.findViewById(R.id.focus); /* 버튼을 제외하고 공통적으로 나타내는 View들의 경우 굳이 코드를 작성하지 않아도 되는 듯 함 */
         mBtn_distance = (ImageButton) root.findViewById(R.id.Btn_distance);
+<<<<<<< HEAD
+        mDistance_tv = (TextView)root.findViewById(R.id.tv_distance);
+        mDiameter_tv = (TextView)root.findViewById(R.id.tv_diameter);
+        mHeight_tv = (TextView)root.findViewById(R.id.tv_height);
+        mCompass_tv = (TextView)root.findViewById(R.id.tv_compass);
+        mAltitude_tv = (TextView)root.findViewById(R.id.tv_alititude);
+        mInclinometer_tv = (TextView)root.findViewById(R.id.tv_inclinometer);
+        mInputHeight = (EditText)root.findViewById(R.id.input_height);
+=======
 
+>>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
 
         mBtn_distance.setOnClickListener(measureDistance);
 
@@ -72,7 +100,6 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
 
         return root;
     }
-
 
     // Toast
     public void showToast(String data) {
@@ -86,9 +113,13 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         CameraManager cameraManager = mDistCameraAPI.cameraManager_1_D(this);
         String cameraID = mDistCameraAPI.CameraCharacteristics_2(cameraManager);
         mDistCameraAPI.CameraDevice_3_D(cameraManager, cameraID);
+<<<<<<< HEAD
+        showToast("거리측정 기능 수행");
+=======
         showToast("거리 기능 수행");
         // 카메라 가로 변환
         mDistCameraAPI.transformImage(mCameraPreview_dist, mCameraPreview_dist.getWidth(),mCameraPreview_dist.getHeight());
+>>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
     }
 
 
@@ -131,10 +162,10 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
     }
     @Override
     public void onPause() {
+        super.onPause();
         closeCamera();
         stopCameraHandlerThread();
         mSensorManager.unregisterListener(mMySensorEventListener);
-        super.onPause();
     }
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
