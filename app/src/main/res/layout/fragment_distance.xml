@@ -82,6 +82,16 @@
         android:background="#757575"
         android:layout_alignBaseline="@id/Btn_distance"
         android:layout_above="@id/tv_diameter"/>
+    <TextView
+        android:id="@+id/tv_inclinometer"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="경        사 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_alignBaseline="@id/Btn_distance"
+        android:layout_above="@id/tv_distance"/>
 
     <EditText
         android:id="@+id/input_height"
