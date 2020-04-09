@@ -161,9 +161,8 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
                 angle = Math.abs(mMySensorEventListener.getRoll());
                 if (!ma.mInputHeight.getText().toString().isEmpty()) {
                     float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
-                    float length = phoneHeight * (float) Math.tan(angle);
-                    String distance_value = String.format("%.1f", length);
-                    ma.mDistance_tv.setText("거        리 :" + distance_value + "m");
+                    ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
+                    ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
                 } else {
                     showToast("핸드폰의 높이를 입력해주세요.");
                 }

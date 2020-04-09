@@ -226,6 +226,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 }
                 t_height += phoneHeight;
                 String totalHeightValue = String.format("%.1f", t_height);
+                ma.mHeight_val=t_height;
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
             }
         }

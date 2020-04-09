@@ -178,6 +178,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
                 double dist = length * Math.tan(angleCalc);
                 double finalDisp = dist * (-1) / Math.signum(angle2);
                 String height_value = String.format("%.1f", userHeight + finalDisp);
+                ma.mDiameter_val = userHeight + finalDisp;
                 ma.mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
                 showToast("calculate"); //단위 변환이 필요함
             }

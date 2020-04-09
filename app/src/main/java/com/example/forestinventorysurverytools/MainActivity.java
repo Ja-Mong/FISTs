@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     public TextView mAltitude_tv;
     public EditText mInputHeight;
 
+    // 거리, 흉고직경, 높이 실제 값 저장 변수
+    public double mDistance_val;
+    public double mDiameter_val;
+    public double mHeight_val;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
