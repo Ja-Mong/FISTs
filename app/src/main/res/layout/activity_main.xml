@@ -15,6 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+
+
     </FrameLayout>
 
     <ImageView
@@ -33,5 +36,65 @@
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu" />
+
+    <TextView
+        android:id="@+id/tv_compass"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="방        위 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_above="@id/tv_alititude"/>
+
+    <TextView
+        android:id="@+id/tv_height"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="수        고 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_above="@id/tv_compass"/>
+    <TextView
+        android:id="@+id/tv_diameter"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="흉고직경 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_above="@id/tv_height"/>
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="거        리 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:background="#757575"
+        android:layout_above="@id/tv_diameter"/>
+    <TextView
+        android:id="@+id/tv_alititude"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="#757575"
+        android:text="고        도 :"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:layout_above="@id/input_height"/>
+
+    <EditText
+        android:id="@+id/input_height"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:background="#FFFF"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:textSize="13sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        />
 
 </RelativeLayout>
