@@ -8,11 +8,19 @@
 
     <TextureView
         android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:paddingLeft="1dp"
+        android:paddingTop="1dp"
+        android:paddingRight="1dp"
+        android:paddingBottom="1dp"
+        android:rotation="0" />
 
     <ImageView
         android:id="@+id/focus"
@@ -32,6 +40,7 @@
         android:background="@drawable/circle_background"
         android:src="@drawable/ruler"/>
 
+<<<<<<< HEAD
     <TextView
         android:id="@+id/tv_alititude"
         android:layout_width="100dp"
@@ -92,17 +101,8 @@
         android:background="#757575"
         android:layout_alignBaseline="@id/Btn_distance"
         android:layout_above="@id/tv_distance"/>
+=======
+>>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
 
-    <EditText
-        android:id="@+id/input_height"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:background="#FFFF"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="80dp" />
 
 </RelativeLayout>
