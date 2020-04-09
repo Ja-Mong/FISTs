@@ -31,6 +31,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 import java.util.Vector;
@@ -52,13 +53,9 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
 
-    TextView mDistance_tv;
-    TextView mDiameter_tv;
-    TextView mHeight_tv;
-    TextView mCompass_tv;
-    TextView mAltitude_tv;
+    MainActivity ma=null;
 
-    EditText mInputHeight;
+    public HeightFragment(MainActivity ma){this.ma=ma;}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,12 +69,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         focusImage = (ImageView) root.findViewById(R.id.focus);
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
-        mDistance_tv = (TextView) root.findViewById(R.id.tv_distance);
-        mDiameter_tv = (TextView) root.findViewById(R.id.tv_diameter);
-        mHeight_tv = (TextView) root.findViewById(R.id.tv_height);
-        mCompass_tv = (TextView) root.findViewById(R.id.tv_compass);
-        mAltitude_tv = (TextView) root.findViewById(R.id.tv_alititude);
-        mInputHeight = (EditText) root.findViewById(R.id.input_height);
+
 
         mBtn_height.setOnClickListener(measureHeight);
         mBtn_calculate.setOnClickListener(getCalculateHeight);
@@ -98,6 +90,8 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         String cameraID = mHeightCameraAPI.CameraCharacteristics_2(cameraManager);
         mHeightCameraAPI.CameraDevice_3_H(cameraManager, cameraID);
         showToast("수고 기능 수행");
+        // 카메라 가로 변환
+        mHeightCameraAPI.transformImage(mCameraPreview_height,mCameraPreview_height.getWidth(),mCameraPreview_height.getHeight());
     }
 
     @Override
@@ -187,7 +181,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         public void onClick(View height) {
 
             mMySensorEventListener.updateOrientationAngles();
-            if (!mInputHeight.getText().toString().isEmpty()) {
+            if (!ma.mInputHeight.getText().toString().isEmpty()) {
                 if (theta_vec.isEmpty()) {
                     f_theta = Math.abs(mMySensorEventListener.getRoll());
                     theta_vec.add(f_theta);
@@ -215,7 +209,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
-                float phoneHeight = Float.valueOf(mInputHeight.getText().toString()) /100f;
+                float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
                 float distance = (float) (Math.tan(x_theta) * phoneHeight);
 
                 for (int i = 1; i < theta_vec.size(); i++) {
@@ -232,7 +226,8 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 }
                 t_height += phoneHeight;
                 String totalHeightValue = String.format("%.1f", t_height);
-                mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
+                ma.mHeight_val=t_height;
+                ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
             }
         }
     };

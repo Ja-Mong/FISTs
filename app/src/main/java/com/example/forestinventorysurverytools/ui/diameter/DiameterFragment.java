@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 import static android.content.Context.SENSOR_SERVICE;
@@ -40,16 +41,14 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     ImageView focusImage;
     ImageButton mBtn_diameter;
     ImageButton mBtn_calculate;
-    TextView mDistance_tv;
-    TextView mDiameter_tv;
-    TextView mHeight_tv;
-    TextView mCompass_tv;
-    TextView mAltitude_tv;
-    EditText mInputHeight;
+    MainActivity ma=null;
 
     float angle;
     float angle2;
     int click_count = 0;
+
+
+    public DiameterFragment(MainActivity ma){this.ma=ma;}
 
     //layout View
     @Override
@@ -64,12 +63,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         focusImage = (ImageView) root.findViewById(R.id.focus);
         mBtn_diameter = (ImageButton) root.findViewById(R.id.Btn_diameter);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
-        mDistance_tv = (TextView) root.findViewById(R.id.tv_distance);
-        mDiameter_tv = (TextView) root.findViewById(R.id.tv_diameter);
-        mHeight_tv = (TextView) root.findViewById(R.id.tv_height);
-        mCompass_tv = (TextView) root.findViewById(R.id.tv_compass);
-        mAltitude_tv = (TextView) root.findViewById(R.id.tv_alititude);
-        mInputHeight = (EditText) root.findViewById(R.id.input_height);
+
 
         mBtn_diameter.setOnClickListener(measureDiameter);
         mBtn_calculate.setOnClickListener(getMeasureDiameter);
@@ -92,6 +86,8 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         String cameraID = mDiamCameraAPI.CameraCharacteristics_2(cameraManager);
         mDiamCameraAPI.CameraDevice_3_DBH(cameraManager, cameraID);
         showToast("흉고직경 기능 수행");
+        // 카메라 가로 변환
+        mDiamCameraAPI.transformImage(mCameraPreview_diam,mCameraPreview_diam.getWidth(), mCameraPreview_diam.getHeight());
     }
     @Override
     public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
@@ -157,7 +153,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         @Override
         public void onClick(View diameter) {
             mMySensorEventListener.updateOrientationAngles();
-            if (!mInputHeight.getText().toString().isEmpty()) {
+            if (!ma.mInputHeight.getText().toString().isEmpty()) {
                 if (click_count % 2 == 0) {
                     angle = Math.abs(mMySensorEventListener.getPitch());
                     click_count++;
@@ -176,13 +172,14 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
-                float userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
+                float userHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f;
                 double length = userHeight * Math.tan(angle);
                 double angleCalc = Math.PI / 2.0 - Math.abs(angle2);
                 double dist = length * Math.tan(angleCalc);
                 double finalDisp = dist * (-1) / Math.signum(angle2);
                 String height_value = String.format("%.1f", userHeight + finalDisp);
-                mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
+                ma.mDiameter_val = userHeight + finalDisp;
+                ma.mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
                 showToast("calculate"); //단위 변환이 필요함
             }
         }

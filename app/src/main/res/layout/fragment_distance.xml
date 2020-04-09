@@ -8,11 +8,19 @@
 
     <TextureView
         android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:paddingLeft="1dp"
+        android:paddingTop="1dp"
+        android:paddingRight="1dp"
+        android:paddingBottom="1dp"
+        android:rotation="0" />
 
     <ImageView
         android:id="@+id/focus"
@@ -32,67 +40,6 @@
         android:background="@drawable/circle_background"
         android:src="@drawable/ruler"/>
 
-    <TextView
-        android:id="@+id/tv_alititude"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="고        도 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/Btn_distance"/>
-    <TextView
-        android:id="@+id/tv_compass"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="방        위 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_alititude"/>
-    <TextView
-        android:id="@+id/tv_height"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="수        고 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_compass"/>
-    <TextView
-        android:id="@+id/tv_diameter"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="흉고직경 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_height"/>
-    <TextView
-        android:id="@+id/tv_distance"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="거        리 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_diameter"/>
 
-    <EditText
-        android:id="@+id/input_height"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:background="#FFFF"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="80dp" />
 
 </RelativeLayout>

@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
@@ -23,14 +26,36 @@ public class MainActivity extends AppCompatActivity {
     boolean cameraPermission;
     boolean writePermission;
 
+    public TextView mDistance_tv;
+    public TextView mDiameter_tv;
+    public TextView mHeight_tv;
+    public TextView mCompass_tv;
+    public TextView mAltitude_tv;
+    public EditText mInputHeight;
+
+    // 거리, 흉고직경, 높이 실제 값 저장 변수
+    public double mDistance_val;
+    public double mDiameter_val;
+    public double mHeight_val;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        distanceFragment = new DistanceFragment();
-        diameterFragment = new DiameterFragment();
-        heightFragment = new HeightFragment();
+        mDistance_tv = (TextView)this.findViewById(R.id.tv_distance);
+        mDiameter_tv = (TextView)this.findViewById(R.id.tv_diameter);
+        mHeight_tv = (TextView)this.findViewById(R.id.tv_height);
+        mCompass_tv = (TextView)this.findViewById(R.id.tv_compass);
+        mAltitude_tv = (TextView)this.findViewById(R.id.tv_alititude);
+        mInputHeight = (EditText)this.findViewById(R.id.input_height);
+
+
+        distanceFragment = new DistanceFragment(this);
+        diameterFragment = new DiameterFragment(this);
+        heightFragment = new HeightFragment(this);
+
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
 
