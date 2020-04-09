@@ -40,69 +40,6 @@
         android:background="@drawable/circle_background"
         android:src="@drawable/ruler"/>
 
-<<<<<<< HEAD
-    <TextView
-        android:id="@+id/tv_alititude"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="고        도 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/Btn_distance"/>
-    <TextView
-        android:id="@+id/tv_compass"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="방        위 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_alititude"/>
-    <TextView
-        android:id="@+id/tv_height"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="수        고 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_compass"/>
-    <TextView
-        android:id="@+id/tv_diameter"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="흉고직경 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_height"/>
-    <TextView
-        android:id="@+id/tv_distance"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="거        리 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_diameter"/>
-    <TextView
-        android:id="@+id/tv_inclinometer"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="경        사 :"
-        android:textColor="#FFFF"
-        android:textSize="13sp"
-        android:background="#757575"
-        android:layout_alignBaseline="@id/Btn_distance"
-        android:layout_above="@id/tv_distance"/>
-=======
->>>>>>> a95421060153e0f97b4d45bbf4db1baa9febfe1e
 
 
 </RelativeLayout>

@@ -7,9 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.Surface;
 import android.view.WindowManager;
-
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 
 public class InclinometerOrientation extends Fragment implements SensorEventListener {
 
@@ -20,11 +19,18 @@ public class InclinometerOrientation extends Fragment implements SensorEventList
     public final WindowManager mWindowManager;
     public final SensorManager mSensorManager;
 
-    @Nullable
     public final Sensor mRotationSensor;
 
     public int mLastAccuracy;
     public Listener mListener;
+
+        public InclinometerOrientation(WindowManager mWindowManager,
+                                   SensorManager mSensorManager,
+                                   Sensor mRotationSensor){
+        this.mWindowManager = mWindowManager;
+        this.mSensorManager = mSensorManager;
+        this.mRotationSensor = mRotationSensor;
+        }
 
 
     public InclinometerOrientation(Activity activity) {
@@ -41,7 +47,7 @@ public class InclinometerOrientation extends Fragment implements SensorEventList
         if (mRotationSensor == null) {
             return;
         }
-        mSensorManager.registerListener(this, mRotationSensor, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, mRotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void stopListening() {

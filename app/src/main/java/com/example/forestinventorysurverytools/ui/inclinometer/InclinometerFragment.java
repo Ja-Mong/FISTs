@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,31 +27,36 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 
 public class InclinometerFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener {
-    public interface Listener {
-        void onOrientationChanged(float pitch, float roll);
-    }
+        TextureView.SurfaceTextureListener,
+        InclinometerOrientation.Listener {
 
     View root;
     CameraAPI mInclinometerCameraAPI;
     TextureView mCameraPreview_Inclino;
-    FrameLayout mFrameLayout;
-
-    ImageButton mBtn_inclinometer;
-
-    WindowManager mWindowManager;
+//    FrameLayout mFrameLayout;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
-//    InclinometerOrientation mInclinometerOrientation;
+    ImageButton mBtn_inclinometer;
+
+    MainActivity ma = null;
+
+    float angle;
+
+    WindowManager mWindowManager;
+    
+    InclinometerOrientation mInclinometerOrientation;
     InclinometerIndicator mInclinometerIndicator;
+
+    public InclinometerFragment(MainActivity ma){this.ma=ma;}
 
 
 
@@ -63,28 +69,15 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
-//        mFrameLayout = (FrameLayout) root.findViewById(R.id.inclinometer_layout);
-//        mFrameLayout.addView(mInclinometerIndicator.getRootView());
-//        mBtn_inclinometer = (ImageButton)root.findViewById();
+
+        mBtn_inclinometer = (ImageButton)root.findViewById(R.id.Btn_inclinometer);
 
         mWindowManager = getActivity().getWindow().getWindowManager();
 
-
-//        mInclinometerOrientation =new InclinometerOrientation(getActivity().getParent());
+        mInclinometerOrientation =new InclinometerOrientation(ma);
         mInclinometerIndicator = (InclinometerIndicator)root.findViewById(R.id.inclinometer);
 
         return root;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        mInclinometerOrientation.startListening(this);
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-//        mInclinometerOrientation.stopListening();
     }
 
     // Toast
@@ -98,7 +91,13 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
         String cameraID = mInclinometerCameraAPI.CameraCharacteristics_2(cameraManager);
         mInclinometerCameraAPI.CameraDevice_3_D(cameraManager, cameraID);
         showToast("경사측정 기능 수행");
+        // 카메라 가로 변환
+        mInclinometerCameraAPI.transformImage(mCameraPreview_Inclino,
+                mCameraPreview_Inclino.getWidth(),
+                mCameraPreview_Inclino.getHeight());
     }
+
+
     @Override
     public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
         SurfaceTexture surfaceTexture = mCameraPreview_Inclino.getSurfaceTexture();
@@ -117,6 +116,8 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     public void closeCamera() {
         mInclinometerCameraAPI.closeCamera();
     }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -134,6 +135,8 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
+
+
     @Override
     public void onPause() {
         super.onPause();
@@ -169,7 +172,19 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
         mCameraHandler = null;
     }
 
-//    @Override
+    @Override
+    public void onStart() {
+        super.onStart();
+        mInclinometerOrientation.startListening(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mInclinometerOrientation.stopListening();
+    }
+
+    @Override
     public void onOrientationChanged(float pitch, float roll) {
         mInclinometerIndicator.setInclinometer(pitch, roll);
     }

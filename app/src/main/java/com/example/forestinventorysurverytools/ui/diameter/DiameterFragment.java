@@ -28,7 +28,8 @@ import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface, TextureView.SurfaceTextureListener {
+public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface,
+        TextureView.SurfaceTextureListener {
     View root;
     CameraAPI mDiamCameraAPI;
     TextureView mCameraPreview_diam;
@@ -85,7 +86,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         CameraManager cameraManager = mDiamCameraAPI.cameraManager_1_DBH(this);
         String cameraID = mDiamCameraAPI.CameraCharacteristics_2(cameraManager);
         mDiamCameraAPI.CameraDevice_3_DBH(cameraManager, cameraID);
-        showToast("흉고직경 기능 수행");
+        showToast("흉고직경측정 기능 수행");
         // 카메라 가로 변환
         mDiamCameraAPI.transformImage(mCameraPreview_diam,mCameraPreview_diam.getWidth(), mCameraPreview_diam.getHeight());
     }
