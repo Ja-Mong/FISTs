@@ -43,4 +43,18 @@
         android:scaleType="centerCrop"
         android:background="@drawable/circle_background"
         android:src="@drawable/ok"/>
+    <ImageButton
+        android:id="@+id/Btn_back_step"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:src="@drawable/undo"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="65dp"
+        android:layout_toLeftOf="@id/Btn_height"
+        android:layout_marginRight="20dp"
+        />
+
+
 </RelativeLayout>

@@ -21,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Vector;
+
 public class MainActivity extends AppCompatActivity
 //        implements InclinometerOrientation.Listener
 {
@@ -49,6 +52,11 @@ public class MainActivity extends AppCompatActivity
     public double mDistance_val;
     public double mDiameter_val;
     public double mHeight_val;
+
+    //heightfragment에서 메인으로 이동
+    public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+    public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,4 +146,34 @@ public class MainActivity extends AppCompatActivity
 //    public void onOrientationChanged(float pitch, float roll) {
 //        inclinometerIndicator.setInclinometer(pitch, roll);
 //    }
+
+
+    public void tv_Reset(){
+        // 초기화(리셋) 버튼 기능, 버튼 연결 보류
+        mInclinometer_tv.setText("경        사 :");
+        mDistance_tv.setText("거        리 :");
+        mDiameter_tv.setText("흉고직경 :");
+        mHeight_tv.setText("수        고 :");
+        mCompass_tv.setText("방        위 :");
+        mAltitude_tv.setText("고        도 :");
+        mInclinometer_val = 0.0;
+        mDistance_val = 0.0;
+        mDiameter_val = 0.0;
+        mHeight_val = 0.0;
+        height_vec.removeAllElements();
+        theta_vec.removeAllElements();
+    }
+
+    public void Save_data(){
+        //저장 버튼 기능, 버튼 연결 보류
+        //POI 라이브러리 다운 필요
+        if((mDistance_val != 0.0 ) &&(mDiameter_val != 0.0 ) &&(mHeight_val != 0.0))
+        {
+            SimpleDateFormat dateformat = new SimpleDateFormat("forest_yyMMdd_HHmmss");
+            String filename = dateformat.format(System.currentTimeMillis());
+
+        }
+
+    }
+
 }
