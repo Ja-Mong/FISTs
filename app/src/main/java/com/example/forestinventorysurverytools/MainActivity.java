@@ -1,40 +1,33 @@
 package com.example.forestinventorysurverytools;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
-import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
-import com.example.forestinventorysurverytools.ui.height.HeightFragment;
-import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
-import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerIndicator;
-import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
+import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+import com.example.forestinventorysurverytools.ui.height.HeightFragment;
+import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-public class MainActivity extends AppCompatActivity
-//        implements InclinometerOrientation.Listener
-{
+public class MainActivity extends AppCompatActivity {
 
     InclinometerFragment inclinometerFragment;
     DistanceFragment distanceFragment;
     DiameterFragment diameterFragment;
     HeightFragment heightFragment;
 
-//    InclinometerOrientation inclinometerOrientation;
-//    InclinometerIndicator inclinometerIndicator;
 
     boolean cameraPermission;
     boolean writePermission;
@@ -57,14 +50,10 @@ public class MainActivity extends AppCompatActivity
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        inclinometerOrientation = new InclinometerOrientation(this);
-//        inclinometerIndicator = (InclinometerIndicator)this.findViewById(R.id.inclinometer);
 
         mInclinometer_tv = (TextView)this.findViewById(R.id.tv_inclinometer);
         mDistance_tv = (TextView)this.findViewById(R.id.tv_distance);
@@ -130,24 +119,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        inclinometerOrientation.startListening(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        inclinometerOrientation.stopListening();
-//    }
-//
-//    @Override
-//    public void onOrientationChanged(float pitch, float roll) {
-//        inclinometerIndicator.setInclinometer(pitch, roll);
-//    }
-
-
     public void tv_Reset(){
         // 초기화(리셋) 버튼 기능, 버튼 연결 보류
         mInclinometer_tv.setText("경        사 :");
@@ -164,6 +135,7 @@ public class MainActivity extends AppCompatActivity
         theta_vec.removeAllElements();
     }
 
+
     public void Save_data(){
         //저장 버튼 기능, 버튼 연결 보류
         //POI 라이브러리 다운 필요
@@ -175,5 +147,4 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-
 }

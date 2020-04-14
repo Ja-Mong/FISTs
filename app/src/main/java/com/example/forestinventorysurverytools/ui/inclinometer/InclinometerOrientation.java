@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.Surface;
 import android.view.WindowManager;
+
 import androidx.fragment.app.Fragment;
 
 
@@ -25,8 +26,8 @@ public class InclinometerOrientation extends Fragment implements SensorEventList
     public Listener mListener;
 
         public InclinometerOrientation(WindowManager mWindowManager,
-                                   SensorManager mSensorManager,
-                                   Sensor mRotationSensor){
+                                       SensorManager mSensorManager,
+                                       Sensor mRotationSensor){
         this.mWindowManager = mWindowManager;
         this.mSensorManager = mSensorManager;
         this.mRotationSensor = mRotationSensor;

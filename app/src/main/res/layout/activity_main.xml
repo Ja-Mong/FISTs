@@ -107,7 +107,6 @@
         android:layout_alignParentBottom="true"
         />
 
-
     <ImageButton
         android:id="@+id/Btn_reset"
         android:layout_width="50dp"
@@ -144,6 +143,5 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="65dp"
         />
-
 
 </RelativeLayout>

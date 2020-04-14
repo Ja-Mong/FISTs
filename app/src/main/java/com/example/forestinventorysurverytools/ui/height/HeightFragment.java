@@ -1,7 +1,5 @@
 package com.example.forestinventorysurverytools.ui.height;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -17,24 +15,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.Guideline;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
-import java.util.Vector;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -157,17 +147,11 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
-    //n번 넣을 수 있게 하는 자료구조 전역 선언
-    //public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
-
     float f_theta = 0;
     float t_theta = 0;
     float xy_theta = 0;
     float x_theta = 0;
     float y_theta = 0;
-//    float y2_theta = 0;
-//    float n_theta = 0;
-
 
     // 이렇게 하게 되면 "theta_vec"에 저장되는 값은
     // [0] 처음 측정했을 때의  f_theta
@@ -198,9 +182,25 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         }
     };
 
-    /* theta_vec : 구간별 theta 벡터, dist_vec : 구간별 수고 벡터*/
+    /* theta_vec : 구간별 theta 벡터, dist_vec : 구간별 수고 벡터 */
 
-    //public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+    /**
+     * 두번째 고도값 가져오기
+     * if(calculate.getId() == R.id.Btn_calculate) {
+     *     float altitude2 = Math.abs(mMySensorEventListener.getAltitude());
+     *     ...
+     *     for(...) { //Up slope
+     *         h = altitude - altitude2;
+     *         d = h/ Math.tan(slope);
+     *         t_height = (Math.tan(angle + slope) * distance) - h;
+     *     }
+     *     for(...) { //down slope
+     *         h = altitude2;
+     *         d = h/Math.tan(slope);
+     *         t_height = (Math.tan(angle - slope) * distance) + h;
+     *     }
+     * }
+     */
 
     double x_height;
     double t_height;

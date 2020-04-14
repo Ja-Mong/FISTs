@@ -1,6 +1,5 @@
 package com.example.forestinventorysurverytools.ui.diameter;
 
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -16,16 +15,19 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
+
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+
+import java.util.Vector;
+
 import static android.content.Context.SENSOR_SERVICE;
 
 public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface,
@@ -147,7 +149,25 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
+    /* theta_vec : 구간별 theta 벡터, dist_vec : 구간별 수고 벡터*/
 
+    Vector<Double> diameter_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+
+    double dbh_Height = 12000/100f;
+    double distance;
+    double diameter1;
+    double diameter2;
+    double t_diameter;
+
+    /**
+     * distance(수평거리) = 경사를 측정할때 구하도록 작업하기
+     * angle = Math.abs(mMySensorEventListener.getPitch());
+     * x_angle = angle/2;
+     * y_angle = angle/2;
+     * diameter1 = Math.tan(x_angle) * distance;
+     * diameter2 = Math.tan(y_angle) * distance;
+     * t_diameter = diameter1 + diameter2;
+     */
 
     //Button
     ImageButton.OnClickListener measureDiameter = new ImageButton.OnClickListener() {

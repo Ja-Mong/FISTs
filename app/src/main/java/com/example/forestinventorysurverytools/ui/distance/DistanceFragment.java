@@ -1,9 +1,6 @@
 package com.example.forestinventorysurverytools.ui.distance;
 
-import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraDevice;
@@ -18,17 +15,17 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
+
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+
 import static android.content.Context.SENSOR_SERVICE;
 
 
@@ -63,10 +60,7 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
-        focusImage = (ImageView) root.findViewById(R.id.focus); /* 버튼을 제외하고 공통적으로 나타내는 View들의 경우 굳이 코드를 작성하지 않아도 되는 듯 함 */
         mBtn_distance = (ImageButton) root.findViewById(R.id.Btn_distance);
-
-
         mBtn_distance.setOnClickListener(measureDistance);
 
 

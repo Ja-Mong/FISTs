@@ -17,9 +17,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,26 +36,25 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     View root;
     CameraAPI mInclinometerCameraAPI;
     TextureView mCameraPreview_Inclino;
-//    FrameLayout mFrameLayout;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
-    ImageButton mBtn_inclinometer;
-
-    MainActivity ma = null;
-
-    float angle;
-
     WindowManager mWindowManager;
-    
     InclinometerOrientation mInclinometerOrientation;
     InclinometerIndicator mInclinometerIndicator;
 
-    public InclinometerFragment(MainActivity ma){this.ma=ma;}
+    ImageButton mBtn_inclinometer;
 
+    float angle;
+
+    MainActivity ma = null;
+
+    public InclinometerFragment(MainActivity ma) {
+        this.ma = ma;
+    }
 
 
     @Nullable
@@ -70,13 +67,12 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
-        mBtn_inclinometer = (ImageButton)root.findViewById(R.id.Btn_inclinometer);
-
         mWindowManager = getActivity().getWindow().getWindowManager();
+        mInclinometerOrientation = new InclinometerOrientation(ma);
+        mInclinometerIndicator = (InclinometerIndicator) root.findViewById(R.id.inclinometer);
 
-        mInclinometerOrientation =new InclinometerOrientation(ma);
-        mInclinometerIndicator = (InclinometerIndicator)root.findViewById(R.id.inclinometer);
-
+        mBtn_inclinometer = (ImageButton) root.findViewById(R.id.Btn_inclinometer);
+        mBtn_inclinometer.setOnClickListener(measureSlope);
         return root;
     }
 
@@ -84,6 +80,20 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
+
+    ImageButton.OnClickListener measureSlope = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View inclino) {
+            mMySensorEventListener.updateOrientationAngles();
+            if (inclino.getId() == R.id.Btn_inclinometer) {
+                angle = Math.abs(mMySensorEventListener.getRoll());
+                float slopeAngle = (float) Math.abs(90 - Math.toDegrees(angle));
+                ma.mInclinometer_val = slopeAngle;
+                ma.mInclinometer_tv.setText("경        사 :" + String.format("%.1f", ma.mInclinometer_val) + "\u02DA");
+            }
+        }
+    };
+
 
     //Camera
     private void openCamera() {
@@ -113,9 +123,7 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
             mInclinometerCameraAPI.CaptureSession_5(cameraDevice, surface);
         }
     }
-    public void closeCamera() {
-        mInclinometerCameraAPI.closeCamera();
-    }
+    public void closeCamera() { mInclinometerCameraAPI.closeCamera(); }
 
 
     @Override
@@ -146,19 +154,13 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     }
 
     @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        openCamera();
-    }
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {openCamera();}
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    }
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
-    }
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {return true;}
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-    }
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
 
 
     public void startCameraHandlerThread() {

@@ -1,13 +1,9 @@
 package com.example.forestinventorysurverytools;
 
-import android.app.Activity;
-import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.view.Surface;
-import android.view.WindowManager;
 
 import androidx.fragment.app.Fragment;
 
