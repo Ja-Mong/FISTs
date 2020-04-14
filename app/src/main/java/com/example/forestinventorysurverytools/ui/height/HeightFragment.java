@@ -158,7 +158,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     }
 
     //n번 넣을 수 있게 하는 자료구조 전역 선언
-    Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    //public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
 
     float f_theta = 0;
     float t_theta = 0;
@@ -183,16 +183,16 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
 
             mMySensorEventListener.updateOrientationAngles();
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                if (theta_vec.isEmpty()) {
+                if (ma.theta_vec.isEmpty()) {
                     f_theta = Math.abs(mMySensorEventListener.getRoll());
-                    theta_vec.add(f_theta);
-                    showToast(Integer.toString(theta_vec.size()));
-                    x_theta = 90 - theta_vec.elementAt(0);
+                    ma.theta_vec.add(f_theta);
+                    showToast(Integer.toString(ma.theta_vec.size()));
+                    x_theta = 90 - ma.theta_vec.elementAt(0);
                 } else {
                     t_theta = Math.abs(mMySensorEventListener.getRoll());
-                    xy_theta = t_theta - theta_vec.elementAt(0);
+                    xy_theta = t_theta - ma.theta_vec.elementAt(0);
                     y_theta = Math.abs(xy_theta - x_theta);
-                    theta_vec.add(y_theta);
+                    ma.theta_vec.add(y_theta);
                 }
             }
         }
@@ -200,7 +200,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
 
     /* theta_vec : 구간별 theta 벡터, dist_vec : 구간별 수고 벡터*/
 
-    Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+    //public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
 
     double x_height;
     double t_height;
@@ -213,15 +213,15 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
                 float distance = (float) (Math.tan(x_theta) * phoneHeight);
 
-                for (int i = 1; i < theta_vec.size(); i++) {
-                    if (height_vec.isEmpty()) {
-                        x_height = distance * Math.tan(theta_vec.elementAt(i));
-                        height_vec.add(x_height);
+                for (int i = 1; i < ma.theta_vec.size(); i++) {
+                    if (ma.height_vec.isEmpty()) {
+                        x_height = distance * Math.tan(ma.theta_vec.elementAt(i));
+                        ma.height_vec.add(x_height);
                         t_height += x_height;
                     } else {
-                        double tmp_height = distance * Math.tan(theta_vec.elementAt(i));
+                        double tmp_height = distance * Math.tan(ma.theta_vec.elementAt(i));
                         new_height = tmp_height - t_height;
-                        height_vec.add(new_height);
+                        ma.height_vec.add(new_height);
                         t_height += new_height;
                     }
                 }
