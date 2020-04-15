@@ -150,14 +150,14 @@ public class MainActivity extends AppCompatActivity {
 
     //Compass
     public String matchDirection(float compass) {
-        if(compass >= 90 && compass < 113) { return "N"; }
-        if(compass >=68 && compass <= 90) {return "N"; }
+        if(compass >= 68 && compass < 113) { return "N"; }
         if(compass >= 113 && compass < 158) { return "NE"; }
         if(compass >= 158 && compass < 203) { return "E"; }
         if(compass >= 203 && compass < 248) { return "SE"; }
         if(compass >= 248 && compass < 293) { return "S"; }
         if(compass >= 293 && compass < 338) { return "SW"; }
-        if(compass >= 338 && compass < 23) { return "W"; }
+        if(compass >= 338 && compass <= 360) { return "W"; }
+        if(compass >= 0 && compass < 23) { return "W"; }
         if(compass >= 23 && compass < 68) { return "NW"; }
         return null;
     }
