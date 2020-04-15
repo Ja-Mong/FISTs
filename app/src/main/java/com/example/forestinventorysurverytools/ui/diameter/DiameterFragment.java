@@ -126,6 +126,10 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
     }
     @Override
     public void onPause() {
@@ -194,6 +198,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
                 float userHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f;
+                float compass = Math.abs(mMySensorEventListener.getYaw());
                 double length = userHeight * Math.tan(angle);
                 double angleCalc = Math.PI / 2.0 - Math.abs(angle2);
                 double dist = length * Math.tan(angleCalc);
@@ -201,6 +206,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
                 String height_value = String.format("%.1f", userHeight + finalDisp);
                 ma.mDiameter_val = userHeight + finalDisp;
                 ma.mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
                 showToast("calculate"); //단위 변환이 필요함
             }
         }

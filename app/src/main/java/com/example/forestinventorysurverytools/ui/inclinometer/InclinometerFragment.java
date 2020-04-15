@@ -87,9 +87,11 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
             mMySensorEventListener.updateOrientationAngles();
             if (inclino.getId() == R.id.Btn_inclinometer) {
                 angle = Math.abs(mMySensorEventListener.getRoll());
+                float compass = Math.abs(mMySensorEventListener.getYaw());
                 float slopeAngle = (float) Math.abs(90 - Math.toDegrees(angle));
                 ma.mInclinometer_val = slopeAngle;
                 ma.mInclinometer_tv.setText("경        사 :" + String.format("%.1f", ma.mInclinometer_val) + "\u02DA");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
             }
         }
     };

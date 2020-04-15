@@ -116,8 +116,13 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -212,7 +217,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
             if (calculate.getId() == R.id.Btn_calculate) {
                 float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
                 float distance = (float) (Math.tan(x_theta) * phoneHeight);
-
+                float compass = Math.abs(mMySensorEventListener.getYaw());
                 for (int i = 1; i < ma.theta_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.theta_vec.elementAt(i));
@@ -223,6 +228,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                         new_height = tmp_height - t_height;
                         ma.height_vec.add(new_height);
                         t_height += new_height;
+                        ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
                     }
                 }
                 t_height += phoneHeight;

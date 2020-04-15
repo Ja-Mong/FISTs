@@ -123,6 +123,10 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
+
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
     @Override
     public void onPause() {
@@ -154,10 +158,13 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
             if (distance.getId() == R.id.Btn_distance) {
 //                angle = Math.abs(mMySensorEventListener.getPitch());
                 angle = Math.abs(mMySensorEventListener.getRoll());
+                float compass = Math.abs(mMySensorEventListener.getYaw());
                 if (!ma.mInputHeight.getText().toString().isEmpty()) {
                     float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
                     ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
                     ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
+                    compass = (float) Math.toDegrees(compass);
+                    ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
                 } else {
                     showToast("핸드폰의 높이를 입력해주세요.");
                 }
