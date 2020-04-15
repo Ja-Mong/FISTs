@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
 
+    final int dex=1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,5 +162,21 @@ public class MainActivity extends AppCompatActivity {
         if(compass >= 0 && compass < 23) { return "W"; }
         if(compass >= 23 && compass < 68) { return "NW"; }
         return null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                !=PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        dex);
+            }
+        }
     }
 }
