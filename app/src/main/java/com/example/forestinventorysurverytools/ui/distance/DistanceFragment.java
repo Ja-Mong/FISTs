@@ -186,8 +186,16 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
                 angle = Math.abs(mMySensorEventListener.getRoll());
                 if (!ma.mInputHeight.getText().toString().isEmpty()) {
                     float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
+
+                    float presure = mMySensorEventListener.getYaw(); // 바로미터, 기압을 고도로 바꾸기 위해서 사용
+                    presure = (float) (Math.round(presure*100)/100.0);
+                    float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE,presure);
+                    altitude = (float) (Math.round(altitude*100)/100.0);
+
+
                     ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
                     ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
+                    ma.mAltitude_tv.setText("고        도 :"+altitude+"m");
                 } else {
                     showToast("핸드폰의 높이를 입력해주세요.");
                 }
