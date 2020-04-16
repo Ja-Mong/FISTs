@@ -16,7 +16,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -31,25 +30,27 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class DistanceFragment extends Fragment implements CameraAPI.Camera2Interface,
         TextureView.SurfaceTextureListener {
+
     View root;
     CameraAPI mDistCameraAPI;
     TextureView mCameraPreview_dist;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
+
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
-    ImageView focusImage;
     ImageButton mBtn_distance;
-
-
-    MainActivity ma=null;
 
     float angle;
 
+    MainActivity ma=null;
     public DistanceFragment(MainActivity ma){this.ma=ma;}
-    //layout View
+
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_distance, container, false);
@@ -69,10 +70,12 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
     }
 
 
+
     // Toast
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
+
 
 
     //Camera
@@ -85,8 +88,6 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         // 카메라 가로 변환
         mDistCameraAPI.transformImage(mCameraPreview_dist, mCameraPreview_dist.getWidth(),mCameraPreview_dist.getHeight());
     }
-
-
 
 
     @Override
@@ -104,9 +105,13 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
             mDistCameraAPI.CaptureSession_5(cameraDevice, surface);
         }
     }
+
+
     private void closeCamera() {
         mDistCameraAPI.closeCamera();
     }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -123,11 +128,9 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
-
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
+
+
     @Override
     public void onPause() {
         closeCamera();
@@ -135,42 +138,28 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mSensorManager.unregisterListener(mMySensorEventListener);
         super.onPause();
     }
+
+
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         openCamera();
     }
+
+
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
+
+
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return true;
     }
+
+
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
 
 
-
-    //Button
-    ImageButton.OnClickListener measureDistance = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View distance) {
-            mMySensorEventListener.updateOrientationAngles();
-            if (distance.getId() == R.id.Btn_distance) {
-//                angle = Math.abs(mMySensorEventListener.getPitch());
-                angle = Math.abs(mMySensorEventListener.getRoll());
-                float compass = Math.abs(mMySensorEventListener.getYaw());
-                if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                    float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
-                    ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
-                    ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
-                    compass = (float) Math.toDegrees(compass);
-                    ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
-                } else {
-                    showToast("핸드폰의 높이를 입력해주세요.");
-                }
-            }
-        }
-    };
 
     //Handler
     private void startCameraHandlerThread() {
@@ -183,4 +172,26 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mCameraThread = null;
         mCameraHandler = null;
     }
+
+
+
+
+    //Button
+    ImageButton.OnClickListener measureDistance = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View distance) {
+            mMySensorEventListener.updateOrientationAngles();
+            if (distance.getId() == R.id.Btn_distance) {
+//                angle = Math.abs(mMySensorEventListener.getPitch());
+                angle = Math.abs(mMySensorEventListener.getRoll());
+                if (!ma.mInputHeight.getText().toString().isEmpty()) {
+                    float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
+                    ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
+                    ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
+                } else {
+                    showToast("핸드폰의 높이를 입력해주세요.");
+                }
+            }
+        }
+    };
 }

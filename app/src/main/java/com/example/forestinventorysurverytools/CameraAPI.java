@@ -46,11 +46,16 @@ public class CameraAPI extends Fragment {
     CaptureRequest.Builder mPreviewRequestBuilder_DBH;
     CaptureRequest.Builder mPreviewRequestBuilder_H;
 
+
+
+
     public CameraAPI(Camera2Interface camera2Interface) {
         mCamera2Interface_D = camera2Interface;
         mCamera2Interface_DBH = camera2Interface;
         mCamera2Interface_H = camera2Interface;
     }
+
+
 
     public void transformImage(TextureView tv, int width, int height)
     {
@@ -78,19 +83,27 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
 
+
+
     }
     public CameraManager cameraManager_1_D(Fragment mDistanceCameraAPI) {
         CameraManager cameraManager_D = (CameraManager)mDistanceCameraAPI.getActivity().getSystemService(Context.CAMERA_SERVICE);
         return cameraManager_D;
     }
+
+
     public CameraManager cameraManager_1_DBH(Fragment mDiameterCameraAPI) {
         CameraManager cameraManager_DBH = (CameraManager)mDiameterCameraAPI.getActivity().getSystemService(Context.CAMERA_SERVICE);
         return cameraManager_DBH;
     }
+
+
     public CameraManager cameraManager_1_H(Fragment mHeightCameraAPI) {
         CameraManager cameraManager_H = (CameraManager)mHeightCameraAPI.getActivity().getSystemService(Context.CAMERA_SERVICE);
         return cameraManager_H;
     }
+
+
 
 
     public String CameraCharacteristics_2(CameraManager cameraManager) {
@@ -122,21 +135,29 @@ public class CameraAPI extends Fragment {
     }
 
 
+
     private CameraDevice.StateCallback mCameraDeviceStateCallback_D = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera_D) {
             mCameraDevice_D = camera_D;
             mCamera2Interface_D.onCameraDeviceOpen(camera_D, mSize_D);
         }
+
         @Override
         public void onDisconnected(@NonNull CameraDevice camera_D) {
             camera_D.close();
         }
+
         @Override
         public void onError(@NonNull CameraDevice camera_D, int error) {
             camera_D.close();
         }
+
+
     };
+
+
+
     private CameraDevice.StateCallback mCameraDeviceStateCallback_DBH = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera_DBH) {
@@ -152,6 +173,9 @@ public class CameraAPI extends Fragment {
             camera_DBH.close();
         }
     };
+
+
+
     private CameraDevice.StateCallback mCameraDeviceStateCallback_H = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera_H) {
@@ -169,6 +193,7 @@ public class CameraAPI extends Fragment {
     };
 
 
+
     public void CameraDevice_3_D(CameraManager cameraManager, String cameraId) {
         try {
             cameraManager.openCamera(cameraId, mCameraDeviceStateCallback_D, null);
@@ -176,6 +201,9 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
+
+
     public void CameraDevice_3_DBH(CameraManager cameraManager, String cameraId) {
         try {
             cameraManager.openCamera(cameraId, mCameraDeviceStateCallback_DBH, null);
@@ -183,6 +211,9 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
+
+
     public void CameraDevice_3_H(CameraManager cameraManager, String cameraId) {
         try {
             cameraManager.openCamera(cameraId, mCameraDeviceStateCallback_H, null);
@@ -190,6 +221,7 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
 
 
     private CameraCaptureSession.CaptureCallback mCaptureCallback_D = new CameraCaptureSession.CaptureCallback() {
@@ -203,6 +235,9 @@ public class CameraAPI extends Fragment {
             super.onCaptureSequenceCompleted(session, sequenceId, frameNumber);
         }
     };
+
+
+
     private CameraCaptureSession.CaptureCallback mCaptureCallback_DBH = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
@@ -214,6 +249,9 @@ public class CameraAPI extends Fragment {
             super.onCaptureSequenceCompleted(session, sequenceId, frameNumber);
         }
     };
+
+
+
     private CameraCaptureSession.CaptureCallback mCaptureCallback_H = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
@@ -225,6 +263,7 @@ public class CameraAPI extends Fragment {
             super.onCaptureSequenceCompleted(session, sequenceId, frameNumber);
         }
     };
+
 
 
     private CameraCaptureSession.StateCallback mCaptureSessionCallback_D = new CameraCaptureSession.StateCallback() {
@@ -239,9 +278,13 @@ public class CameraAPI extends Fragment {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {}
     };
+
+
+
     private CameraCaptureSession.StateCallback mCaptureSessionCallback_DBH = new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession session_DBH) {
@@ -253,9 +296,13 @@ public class CameraAPI extends Fragment {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {}
     };
+
+
+
     private CameraCaptureSession.StateCallback mCaptureSessionCallback_H = new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession session_H) {
@@ -267,9 +314,11 @@ public class CameraAPI extends Fragment {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {}
     };
+
 
 
     public void CaptureSession_4_D(CameraDevice cameraDevice, Surface surface) {
@@ -279,6 +328,8 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
+
     public void CaptureSession_4_DBH(CameraDevice cameraDevice, Surface surface) {
         try {
             cameraDevice.createCaptureSession(Collections.singletonList(surface), mCaptureSessionCallback_DBH, null);
@@ -286,6 +337,9 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
+
+
     public void CaptureSession_4_H(CameraDevice cameraDevice, Surface surface) {
         try {
             cameraDevice.createCaptureSession(Collections.singletonList(surface), mCaptureSessionCallback_H, null);
@@ -293,6 +347,7 @@ public class CameraAPI extends Fragment {
             e.printStackTrace();
         }
     }
+
 
 
     public void CaptureSession_5(CameraDevice cameraDevice, Surface surface) {
@@ -310,6 +365,7 @@ public class CameraAPI extends Fragment {
             cae.printStackTrace();
         }
     }
+
 
 
     public void closeCamera() {

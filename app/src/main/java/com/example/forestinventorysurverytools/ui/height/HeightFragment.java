@@ -16,7 +16,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -31,22 +30,35 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class HeightFragment extends Fragment implements CameraAPI.Camera2Interface,
         TextureView.SurfaceTextureListener {
+
     View root;
     CameraAPI mHeightCameraAPI;
     TextureView mCameraPreview_height;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
+
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
-    ImageView focusImage;
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
 
-    MainActivity ma=null;
+    double x_height;
+    double t_height;
+    double new_height;
 
+    float compass;
+    float f_angle = 0;
+    float t_angle = 0;
+    float xy_angle = 0;
+    float x_angle = 0;
+    float y_angle = 0;
+
+    MainActivity ma=null;
     public HeightFragment(MainActivity ma){this.ma=ma;}
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,10 +69,8 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
-        focusImage = (ImageView) root.findViewById(R.id.focus);
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
-
 
         mBtn_height.setOnClickListener(measureHeight);
         mBtn_calculate.setOnClickListener(getCalculateHeight);
@@ -75,6 +85,8 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     }
 
 
+
+
     //Camera
     private void openCamera() {
         CameraManager cameraManager = mHeightCameraAPI.cameraManager_1_H(this);
@@ -84,6 +96,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         // 카메라 가로 변환
         mHeightCameraAPI.transformImage(mCameraPreview_height,mCameraPreview_height.getWidth(),mCameraPreview_height.getHeight());
     }
+
 
     @Override
     public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
@@ -100,9 +113,11 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         }
     }
 
+
     private void closeCamera() {
         mHeightCameraAPI.closeCamera();
     }
+
 
     @Override
     public void onResume() {
@@ -126,6 +141,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
     }
 
+
     @Override
     public void onPause() {
         closeCamera();
@@ -134,29 +150,44 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
         super.onPause();
     }
 
+
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         openCamera();
     }
 
+
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
     }
+
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         return true;
     }
 
+
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
+
+
+
+
+    //Handler
+    private void startCameraHandlerThread() {
+        mCameraThread = new HandlerThread("Camera Background");
+        mCameraThread.start();
+        mCameraHandler = new Handler(mCameraThread.getLooper());
     }
 
-    float f_theta = 0;
-    float t_theta = 0;
-    float xy_theta = 0;
-    float x_theta = 0;
-    float y_theta = 0;
+    private void stopCameraHandlerThread() {
+        mCameraThread.quitSafely();
+        mCameraThread = null;
+        mCameraHandler = null;
+    }
+
+
 
     // 이렇게 하게 되면 "theta_vec"에 저장되는 값은
     // [0] 처음 측정했을 때의  f_theta
@@ -172,16 +203,16 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
 
             mMySensorEventListener.updateOrientationAngles();
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                if (ma.theta_vec.isEmpty()) {
-                    f_theta = Math.abs(mMySensorEventListener.getRoll());
-                    ma.theta_vec.add(f_theta);
-                    showToast(Integer.toString(ma.theta_vec.size()));
-                    x_theta = 90 - ma.theta_vec.elementAt(0);
+                if (ma.angle_vec.isEmpty()) {
+                    f_angle = Math.abs(mMySensorEventListener.getRoll());
+                    ma.angle_vec.add(f_angle);
+                    showToast(Integer.toString(ma.angle_vec.size()));
+                    x_angle = 90 - ma.angle_vec.elementAt(0);
                 } else {
-                    t_theta = Math.abs(mMySensorEventListener.getRoll());
-                    xy_theta = t_theta - ma.theta_vec.elementAt(0);
-                    y_theta = Math.abs(xy_theta - x_theta);
-                    ma.theta_vec.add(y_theta);
+                    t_angle = Math.abs(mMySensorEventListener.getRoll());
+                    xy_angle = t_angle - ma.angle_vec.elementAt(0);
+                    y_angle = Math.abs(xy_angle - x_angle);
+                    ma.angle_vec.add(y_angle);
                 }
             }
         }
@@ -207,51 +238,35 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
      * }
      */
 
-    double x_height;
-    double t_height;
-    double new_height;
+
 
     final ImageButton.OnClickListener getCalculateHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
                 float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
-                float distance = (float) (Math.tan(x_theta) * phoneHeight);
-                float compass = Math.abs(mMySensorEventListener.getYaw());
-                for (int i = 1; i < ma.theta_vec.size(); i++) {
+                float distance = (float) (Math.tan(x_angle) * phoneHeight);
+                compass = Math.abs(mMySensorEventListener.getYaw());
+                for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
-                        x_height = distance * Math.tan(ma.theta_vec.elementAt(i));
+                        x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
                         ma.height_vec.add(x_height);
                         t_height += x_height;
                     } else {
-                        double tmp_height = distance * Math.tan(ma.theta_vec.elementAt(i));
+                        double tmp_height = distance * Math.tan(ma.angle_vec.elementAt(i));
                         new_height = tmp_height - t_height;
                         ma.height_vec.add(new_height);
                         t_height += new_height;
-                        ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
                     }
                 }
                 t_height += phoneHeight;
                 String totalHeightValue = String.format("%.1f", t_height);
                 ma.mHeight_val=t_height;
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"+mMySensorEventListener.matchDirection(compass));
             }
         }
     };
-
-
-    //Handler
-    private void startCameraHandlerThread() {
-        mCameraThread = new HandlerThread("Camera Background");
-        mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
-    }
-
-    private void stopCameraHandlerThread() {
-        mCameraThread.quitSafely();
-        mCameraThread = null;
-        mCameraHandler = null;
-    }
 }
 
 

@@ -39,6 +39,7 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
+
     Handler mCameraHandler;
     HandlerThread mCameraThread;
 
@@ -51,10 +52,10 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     float angle;
 
     MainActivity ma = null;
-
     public InclinometerFragment(MainActivity ma) {
         this.ma = ma;
     }
+
 
 
     @Nullable
@@ -73,6 +74,9 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
 
         mBtn_inclinometer = (ImageButton) root.findViewById(R.id.Btn_inclinometer);
         mBtn_inclinometer.setOnClickListener(measureSlope);
+
+
+
         return root;
     }
 
@@ -80,6 +84,9 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
+
+
+
 
     ImageButton.OnClickListener measureSlope = new ImageButton.OnClickListener() {
         @Override
@@ -91,7 +98,6 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
                 float slopeAngle = (float) Math.abs(90 - Math.toDegrees(angle));
                 ma.mInclinometer_val = slopeAngle;
                 ma.mInclinometer_tv.setText("경        사 :" + String.format("%.1f", ma.mInclinometer_val) + "\u02DA");
-                ma.mCompass_tv.setText("방        위 :"+compass+"°"+ma.matchDirection(compass));
             }
         }
     };

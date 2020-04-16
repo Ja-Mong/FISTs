@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
     DiameterFragment diameterFragment;
     HeightFragment heightFragment;
 
-
     boolean cameraPermission;
     boolean writePermission;
+    boolean locationPermission;
 
     public TextView mInclinometer_tv;
     public TextView mDistance_tv;
@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     //heightfragment에서 메인으로 이동
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
-    public Vector<Float> theta_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    public Vector<Double> diameter_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
 
-    final int dex=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +103,22 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             writePermission = true;
         }
-        if (!cameraPermission || writePermission) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermission = true;
+        }
+
+        if (!cameraPermission || writePermission || locationPermission) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
+
+
 
     public void onRequestPermissionsResults(int requsetCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requsetCode, permissions, grantResults);
@@ -118,8 +127,13 @@ public class MainActivity extends AppCompatActivity {
                 cameraPermission = true;
             if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 writePermission = true;
+            if (grantResults[2] == PackageManager.PERMISSION_GRANTED)
+                locationPermission = true;
         }
     }
+
+
+
 
     public void tv_Reset(){
         // 초기화(리셋) 버튼 기능, 버튼 연결 보류
@@ -134,8 +148,9 @@ public class MainActivity extends AppCompatActivity {
         mDiameter_val = 0.0;
         mHeight_val = 0.0;
         height_vec.removeAllElements();
-        theta_vec.removeAllElements();
+        angle_vec.removeAllElements();
     }
+
 
 
     public void Save_data(){
@@ -148,35 +163,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-    }
-
-    //Compass
-    public String matchDirection(float compass) {
-        if(compass >= 68 && compass < 113) { return "N"; }
-        if(compass >= 113 && compass < 158) { return "NE"; }
-        if(compass >= 158 && compass < 203) { return "E"; }
-        if(compass >= 203 && compass < 248) { return "SE"; }
-        if(compass >= 248 && compass < 293) { return "S"; }
-        if(compass >= 293 && compass < 338) { return "SW"; }
-        if(compass >= 338 && compass <= 360) { return "W"; }
-        if(compass >= 0 && compass < 23) { return "W"; }
-        if(compass >= 23 && compass < 68) { return "NW"; }
-        return null;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(ContextCompat.checkSelfPermission(MainActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                !=PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-            } else {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        dex);
-            }
-        }
     }
 }
