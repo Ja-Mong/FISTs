@@ -5,19 +5,12 @@
     android:layout_height="match_parent">
 
 
-    <TextureView
-    android:id="@+id/camera_preview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-
     <FrameLayout
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
-
-
 
     <ImageView
         android:id="@+id/focus"
@@ -112,7 +105,8 @@
         android:id="@+id/Btn_reset"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/reset"
         android:layout_toRightOf="@id/input_height"
@@ -125,7 +119,8 @@
         android:id="@+id/Btn_back_step"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/undo"
         android:layout_toRightOf="@id/Btn_reset"
@@ -137,7 +132,8 @@
         android:id="@+id/Btn_capture"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/capture"
         android:layout_toRightOf="@id/Btn_back_step"
@@ -149,7 +145,8 @@
         android:id="@+id/Btn_save"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/save"
         android:layout_toRightOf="@id/Btn_capture"

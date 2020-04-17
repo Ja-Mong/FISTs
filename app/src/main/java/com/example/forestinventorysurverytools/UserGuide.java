@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 public class UserGuide extends AppCompatActivity implements View.OnClickListener {
 
     ImageView mImportance_mark;
@@ -38,6 +39,8 @@ public class UserGuide extends AppCompatActivity implements View.OnClickListener
         if (v == mNext_layout) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), Test.class);
+//            startActivity(intent);
         }
     }
 }

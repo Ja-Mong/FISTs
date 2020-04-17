@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public double mDiameter_val;
     public double mHeight_val;
 
+
     //heightfragment에서 메인으로 이동
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
 
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             cameraPermission = true;
         }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             writePermission = true;

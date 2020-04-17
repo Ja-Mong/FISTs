@@ -22,6 +22,7 @@
         android:paddingBottom="1dp"
         android:rotation="0" />
 
+
     <ImageView
         android:id="@+id/focus"
         android:layout_width="wrap_content"
@@ -43,7 +44,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="65dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/slope"/>
 

@@ -24,12 +24,21 @@ import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import com.google.ar.core.Anchor;
+import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.MaterialFactory;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 
 public class DistanceFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener {
+        TextureView.SurfaceTextureListener, Scene.OnUpdateListener {
 
     View root;
     CameraAPI mDistCameraAPI;
@@ -48,7 +57,13 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
     MainActivity ma=null;
     public DistanceFragment(MainActivity ma){this.ma=ma;}
 
+    ArFragment distance_arFragment;
+    Anchor anchor = null;
+    AnchorNode anchorNode;
+    ModelRenderable modelRenderable;
 
+    DistanceFragment distanceFR = null;
+    public DistanceFragment(DistanceFragment distanceFR){this.distanceFR=distanceFR;}
 
 
     @Override
@@ -65,8 +80,39 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
         mBtn_distance.setOnClickListener(measureDistance);
 
 
+        distance_arFragment = (ArFragment)getActivity().getSupportFragmentManager().findFragmentById(R.id.camera_preview);
+
+        initModel();
+
+        distance_arFragment.setOnTapArPlaneListener(((hitResult, plane, motionEvent) -> {
+            if (modelRenderable == null)
+                return;
+
+            //Create Anchor
+            Anchor anchor = hitResult.createAnchor();
+            AnchorNode anchorNode = new AnchorNode(anchor);
+            anchorNode.setParent(distance_arFragment.getArSceneView().getScene());
+
+            clearAnchor();
+
+            this.anchor = anchor;
+            this.anchorNode = anchorNode;
+
+            TransformableNode transformableNode = new TransformableNode(distance_arFragment.getTransformationSystem());
+            transformableNode.setRenderable(modelRenderable);
+            transformableNode.setParent(anchorNode);
+            distance_arFragment.getArSceneView().getScene().addOnUpdateListener(this);
+            distance_arFragment.getArSceneView().getScene().addChild(anchorNode);
+            transformableNode.select();
+
+        }));
+
 
         return root;
+    }
+
+    public void initModel() {
+        MaterialFactory.makeTransparentWithColor(distanceFR, new Color(android.graphics.Color.RED));
     }
 
 
@@ -187,6 +233,7 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
                 if (!ma.mInputHeight.getText().toString().isEmpty()) {
                     float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
 
+
                     float presure = mMySensorEventListener.getYaw(); // 바로미터, 기압을 고도로 바꾸기 위해서 사용
                     presure = (float) (Math.round(presure*100)/100.0);
                     float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE,presure);
@@ -202,4 +249,9 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
             }
         }
     };
+
+    @Override
+    public void onUpdate(FrameTime frameTime) {
+
+    }
 }

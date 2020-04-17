@@ -14,12 +14,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"/>
 
-    <ImageView
-        android:id="@+id/focus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/focus"
-        android:layout_centerInParent="true"/>
 
     <ImageButton
         android:id="@+id/Btn_height"
@@ -28,7 +22,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="65dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/heigth"/>
 
@@ -40,7 +35,8 @@
         android:layout_marginBottom="65dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="30dp"
-        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/calculate"/>
 
