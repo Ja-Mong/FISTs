@@ -63,7 +63,7 @@ public class InclinometerFragment extends Fragment implements CameraAPI.Camera2I
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_inclinometer, container, false);
         mInclinometerCameraAPI = new CameraAPI(this);
-        mCameraPreview_Inclino = (TextureView) root.findViewById(R.id.camera_preview);
+        mCameraPreview_Inclino = (TextureView) root.findViewById(R.id.camera_preview_fr);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);

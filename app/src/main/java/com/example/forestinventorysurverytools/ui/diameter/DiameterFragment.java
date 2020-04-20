@@ -63,7 +63,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, container, false);
         mDiamCameraAPI = new CameraAPI(this);
-        mCameraPreview_diam = (TextureView) root.findViewById(R.id.camera_preview);
+        mCameraPreview_diam = (TextureView) root.findViewById(R.id.camera_preview_fr);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);

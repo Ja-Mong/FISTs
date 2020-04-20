@@ -7,7 +7,7 @@
     tools:context=".ui.diameter.DiameterFragment">
 
     <TextureView
-        android:id="@+id/camera_preview"
+        android:id="@+id/camera_preview_fr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"

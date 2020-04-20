@@ -64,7 +64,7 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_height, container, false);
         mHeightCameraAPI = new CameraAPI(this);
-        mCameraPreview_height = (TextureView) root.findViewById(R.id.camera_preview);
+        mCameraPreview_height = (TextureView) root.findViewById(R.id.camera_preview_fr);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);

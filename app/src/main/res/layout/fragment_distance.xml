@@ -7,7 +7,8 @@
     tools:context=".ui.distance.DistanceFragment">
 
     <fragment
-        android:id="@+id/camera_preview"
+        android:id="@+id/camera_preview_fr"
+        android:name="com.google.ar.sceneform.ux.ArFragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentStart="true"

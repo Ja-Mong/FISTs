@@ -1,17 +1,15 @@
 package com.example.forestinventorysurverytools.ui.distance;
 
-import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
+
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Size;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,26 +17,32 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
+import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
-import static android.content.Context.SENSOR_SERVICE;
+import android.util.Log;
 
+import java.util.Objects;
 
-public class DistanceFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener, Scene.OnUpdateListener {
+public class DistanceFragment extends Fragment implements  Scene.OnUpdateListener {
 
     View root;
     CameraAPI mDistCameraAPI;
@@ -62,58 +66,114 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
     AnchorNode anchorNode;
     ModelRenderable modelRenderable;
 
-    DistanceFragment distanceFR = null;
-    public DistanceFragment(DistanceFragment distanceFR){this.distanceFR=distanceFR;}
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_distance, container, false);
-        mDistCameraAPI = new CameraAPI(this);
-        mCameraPreview_dist = (TextureView) root.findViewById(R.id.camera_preview);
 
+        //AR 지원 가능 여부 체크
+        if (!checkIsSupportedDeviceOrFinish((MainActivity)getActivity())) {
+            Toast.makeText(ma.getApplicationContext(), "Device not supported", Toast.LENGTH_LONG).show();
+        }
 
-        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-        mMySensorEventListener = new MySensorEventListener(mSensorManager);
+        root = inflater.inflate(R.layout.fragment_distance, null);
 
-        mBtn_distance = (ImageButton) root.findViewById(R.id.Btn_distance);
-        mBtn_distance.setOnClickListener(measureDistance);
+        //layout에 정의한 아이디 구현 및 정의
+        FragmentManager fm = getChildFragmentManager();
+       distance_arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-
-        distance_arFragment = (ArFragment)getActivity().getSupportFragmentManager().findFragmentById(R.id.camera_preview);
 
         initModel();
 
-        distance_arFragment.setOnTapArPlaneListener(((hitResult, plane, motionEvent) -> {
+        distance_arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+
+
             if (modelRenderable == null)
                 return;
 
-            //Create Anchor
-            Anchor anchor = hitResult.createAnchor();
-            AnchorNode anchorNode = new AnchorNode(anchor);
-            anchorNode.setParent(distance_arFragment.getArSceneView().getScene());
+            // Creating Anchor.
+            Anchor anchor2 = hitResult.createAnchor();
+            AnchorNode anchorNode2 = new AnchorNode(anchor2);
+
+            anchorNode2.setParent(distance_arFragment.getArSceneView().getScene());
 
             clearAnchor();
 
-            this.anchor = anchor;
-            this.anchorNode = anchorNode;
+            anchor = anchor2;
+            anchorNode = anchorNode2;
 
-            TransformableNode transformableNode = new TransformableNode(distance_arFragment.getTransformationSystem());
-            transformableNode.setRenderable(modelRenderable);
-            transformableNode.setParent(anchorNode);
-            distance_arFragment.getArSceneView().getScene().addOnUpdateListener(this);
-            distance_arFragment.getArSceneView().getScene().addChild(anchorNode);
-            transformableNode.select();
+            TransformableNode node = new TransformableNode(distance_arFragment.getTransformationSystem());
+            node.setRenderable(modelRenderable);
+            node.setParent(anchorNode2);
+            distance_arFragment.getArSceneView().getScene().addOnUpdateListener(distance_arFragment);
+            distance_arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            node.select();
 
-        }));
+
+
+            if (anchorNode != null) {
+                Frame frame = distance_arFragment.getArSceneView().getArFrame();
+
+                Pose objectPose = anchor.getPose();
+                Pose cameraPose = frame.getCamera().getPose();
+
+                float dx = objectPose.tx() - cameraPose.tx();
+                float dy = objectPose.ty() - cameraPose.ty();
+                float dz = objectPose.tz() - cameraPose.tz();
+
+                ///Compute the straight-line distance.
+                float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                String meter = String.format("%.2f", distanceMeters);;
+                ma.mDistance_tv.setText("거        리 : " + meter+"m");
+                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
+            }
+        });
+
 
 
         return root;
     }
 
-    public void initModel() {
-        MaterialFactory.makeTransparentWithColor(distanceFR, new Color(android.graphics.Color.RED));
+    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
+
+        String openGlVersionString =
+                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
+                        .getDeviceConfigurationInfo()
+                        .getGlEsVersion();
+        if (Double.parseDouble(openGlVersionString) < 3.0) {
+            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
+                    .show();
+            activity.finish();
+            return false;
+        }
+        return true;
     }
+
+
+    public void initModel() {
+        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.RED))
+                .thenAccept(
+                        material -> {
+
+                            Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
+                            modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
+                            modelRenderable.setShadowCaster(false);
+                            modelRenderable.setShadowReceiver(false);
+                            Boolean b  = (modelRenderable==null);
+
+                        });
+    }
+    private void clearAnchor() {
+        anchor = null;
+
+
+        if (anchorNode != null) {
+            distance_arFragment.getArSceneView().getScene().removeChild(anchorNode);
+            anchorNode.getAnchor().detach();
+            anchorNode.setParent(null);
+            anchorNode = null;
+        }
+    }
+
 
 
 
@@ -124,134 +184,38 @@ public class DistanceFragment extends Fragment implements CameraAPI.Camera2Inter
 
 
 
-    //Camera
-    private void openCamera() {
-
-        CameraManager cameraManager = mDistCameraAPI.cameraManager_1_D(this);
-        String cameraID = mDistCameraAPI.CameraCharacteristics_2(cameraManager);
-        mDistCameraAPI.CameraDevice_3_D(cameraManager, cameraID);
-        showToast("거리측정 기능 수행");
-        // 카메라 가로 변환
-        mDistCameraAPI.transformImage(mCameraPreview_dist, mCameraPreview_dist.getWidth(),mCameraPreview_dist.getHeight());
-    }
-
-
-    @Override
-    public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
-        SurfaceTexture surfaceTexture = mCameraPreview_dist.getSurfaceTexture();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            surfaceTexture.setDefaultBufferSize(cameraSize.getWidth(), cameraSize.getHeight());
-        }
-        Surface surface = new Surface(surfaceTexture);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDistCameraAPI.CaptureSession_4_D(cameraDevice, surface);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDistCameraAPI.CaptureSession_5(cameraDevice, surface);
-        }
-    }
-
-
-    private void closeCamera() {
-        mDistCameraAPI.closeCamera();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mCameraPreview_dist.isAvailable()) {
-            openCamera();
-        } else {
-            mCameraPreview_dist.setSurfaceTextureListener(this);
-        }
-        startCameraHandlerThread();
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
-
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
-    }
-
-
-    @Override
-    public void onPause() {
-        closeCamera();
-        stopCameraHandlerThread();
-        mSensorManager.unregisterListener(mMySensorEventListener);
-        super.onPause();
-    }
-
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        openCamera();
-    }
-
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
-
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
-    }
-
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
-
-
-
-    //Handler
-    private void startCameraHandlerThread() {
-        mCameraThread = new HandlerThread("Camera Background");
-        mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
-    }
-    private void stopCameraHandlerThread() {
-        mCameraThread.quitSafely();
-        mCameraThread = null;
-        mCameraHandler = null;
-    }
-
-
-
-
-    //Button
-    ImageButton.OnClickListener measureDistance = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View distance) {
-            mMySensorEventListener.updateOrientationAngles();
-            if (distance.getId() == R.id.Btn_distance) {
-//                angle = Math.abs(mMySensorEventListener.getPitch());
-                angle = Math.abs(mMySensorEventListener.getRoll());
-                if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                    float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f; // 왜? 100을 나누지??? 170을 입력시 170m로 되니 100을 나눔으로 인해서 170cm로 변환하는 건가?
-
-
-                    float presure = mMySensorEventListener.getYaw(); // 바로미터, 기압을 고도로 바꾸기 위해서 사용
-                    presure = (float) (Math.round(presure*100)/100.0);
-                    float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE,presure);
-                    altitude = (float) (Math.round(altitude*100)/100.0);
-
-
-                    ma.mDistance_val = phoneHeight * (float) Math.tan(angle);
-                    ma.mDistance_tv.setText("거        리 :" + String.format("%.1f",  ma.mDistance_val) + "m");
-                    ma.mAltitude_tv.setText("고        도 :"+altitude+"m");
-                } else {
-                    showToast("핸드폰의 높이를 입력해주세요.");
-                }
-            }
-        }
-    };
-
     @Override
     public void onUpdate(FrameTime frameTime) {
+        // 실시간으로 거리 측정해주는것 같지만... 아직 동작은 안됨. (위에 setonTap으로 옮겨놨음.)
+        Frame frame = distance_arFragment.getArSceneView().getArFrame();
 
+        Log.d("API123", "onUpdateframe... current anchor node " + (anchorNode == null));
+
+        // 거리값 계산=> 데이터 크기 때문에 float으로 한듯???
+        if (anchorNode != null) {
+            Pose objectPose = anchor.getPose();
+            Pose cameraPose = frame.getCamera().getPose();
+
+            float dx = objectPose.tx() - cameraPose.tx();
+            float dy = objectPose.ty() - cameraPose.ty();
+            float dz = objectPose.tz() - cameraPose.tz();
+
+            ///Compute the straight-line distance.
+            float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+            String meter=String.format("%.2f",distanceMeters);;
+
+            ma.mDistance_tv.setText("거리: " + meter);
+            Toast.makeText(ma.getApplicationContext(),meter,Toast.LENGTH_LONG).show();
+
+            //float[] distance_vector = currentAnchor.getPose().inverse()
+            //        .compose(cameraPose).getTranslation();
+            //float totalDistanceSquared = 0;
+            //for (int i = 0; i < 3; ++i)
+            //    totalDistanceSquared += distance_vector[i] * distance_vector[i];
+        }
     }
+
+
+
+
 }
