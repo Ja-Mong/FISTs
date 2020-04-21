@@ -6,6 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".ui.diameter.DiameterFragment">
 
+    <fragment
+        android:id="@+id/ar_preview_fr"
+        android:name="com.google.ar.sceneform.ux.ArFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:paddingLeft="1dp"
+        android:paddingTop="1dp"
+        android:paddingRight="1dp"
+        android:paddingBottom="1dp"
+        android:rotation="0" />
+
     <TextureView
         android:id="@+id/camera_preview_fr"
         android:layout_width="match_parent"

@@ -1,5 +1,8 @@
 package com.example.forestinventorysurverytools.ui.diameter;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -9,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -19,16 +23,33 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
+import com.google.ar.core.Pose;
+import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.MaterialFactory;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.ShapeFactory;
+import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
+
+import java.util.Objects;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener {
+        TextureView.SurfaceTextureListener, Scene.OnUpdateListener {
 
     View root;
     CameraAPI mDiamCameraAPI;
@@ -56,12 +77,22 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     MainActivity ma=null;
     public DiameterFragment(MainActivity ma){this.ma=ma;}
 
+    ArFragment diameter_arFragment;
+    Anchor anchor = null;
+    AnchorNode anchorNode;
+    ModelRenderable modelRenderable;
+
+    DistanceFragment distanceFragment;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_diameter, container, false);
+        root = inflater.inflate(R.layout.fragment_diameter, null);
+
+        FragmentManager fm = getChildFragmentManager();
+        diameter_arFragment = (ArFragment) fm.findFragmentById(R.id.ar_preview_fr);
+
         mDiamCameraAPI = new CameraAPI(this);
         mCameraPreview_diam = (TextureView) root.findViewById(R.id.camera_preview_fr);
 
@@ -74,9 +105,97 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         mBtn_diameter.setOnClickListener(measureDiameter);
         mBtn_calculate.setOnClickListener(getMeasureDiameter);
 
+        initModel();
+
+        diameter_arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+
+
+            if (modelRenderable == null)
+                return;
+
+            // Creating Anchor.
+            Anchor anchor2 = hitResult.createAnchor();
+            AnchorNode anchorNode2 = new AnchorNode(anchor2);
+
+            anchorNode2.setParent(diameter_arFragment.getArSceneView().getScene());
+
+            clearAnchor();
+
+            anchor = anchor2;
+            anchorNode = anchorNode2;
+
+            TransformableNode node = new TransformableNode(diameter_arFragment.getTransformationSystem());
+            node.setRenderable(modelRenderable);
+            node.setParent(anchorNode2);
+            diameter_arFragment.getArSceneView().getScene().addOnUpdateListener(diameter_arFragment);
+            diameter_arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            node.select();
+
+
+
+            if (anchorNode != null) {
+                Frame frame = diameter_arFragment.getArSceneView().getArFrame();
+
+                Pose objectPose = anchor.getPose();
+                Pose cameraPose = frame.getCamera().getPose();
+
+                float dx = objectPose.tx() - cameraPose.tx();
+                float dy = objectPose.ty() - cameraPose.ty();
+                float dz = objectPose.tz() - cameraPose.tz();
+
+                ///Compute the straight-line distance.
+                float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                String meter = String.format("%.2f", distanceMeters);;
+//                ma.mDistance_tv.setText("거        리 : " + meter+"m");
+//                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
         return root;
     }
 
+    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
+
+        String openGlVersionString =
+                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
+                        .getDeviceConfigurationInfo()
+                        .getGlEsVersion();
+        if (Double.parseDouble(openGlVersionString) < 3.0) {
+            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
+                    .show();
+            activity.finish();
+            return false;
+        }
+        return true;
+    }
+
+    public void initModel() {
+        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.RED))
+                .thenAccept(
+                        material -> {
+
+                            Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
+                            modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
+                            modelRenderable.setShadowCaster(false);
+                            modelRenderable.setShadowReceiver(false);
+                            Boolean b  = (modelRenderable==null);
+
+                        });
+    }
+
+    private void clearAnchor() {
+        anchor = null;
+
+
+        if (anchorNode != null) {
+            diameter_arFragment.getArSceneView().getScene().removeChild(anchorNode);
+            anchorNode.getAnchor().detach();
+            anchorNode.setParent(null);
+            anchorNode = null;
+        }
+    }
 
     // Toast
     public void showToast(String data) {
@@ -230,5 +349,10 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
         }
     };
 
+    @Override
+    public void onUpdate(FrameTime frameTime) {
+
+    }
 }
+
 
