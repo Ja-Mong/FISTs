@@ -41,6 +41,7 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
             System.arraycopy(event.values, 0, mGyroscopeReading,
                     0, mGyroscopeReading.length);
         }
+
     }
 
 
@@ -84,7 +85,10 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         return roll;
     }//y축
 
-
+    public float getAltitude() {
+        float altitude = getAltitude();
+        return altitude;
+    }
 
     //Compass
     public String matchDirection(float compass) {
@@ -95,7 +99,8 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         if(compass >= 203 && compass < 248) { return "SE"; }
         if(compass >= 248 && compass < 293) { return "S"; }
         if(compass >= 293 && compass < 338) { return "SW"; }
-        if(compass >= 338 && compass < 23) { return "W"; }
+        if(compass >= 338 && compass <=360) { return "W"; }
+        if(compass >= 360 && compass < 23) { return "W"; }
         if(compass >= 23 && compass < 68) { return "NW"; }
         return null;
     }

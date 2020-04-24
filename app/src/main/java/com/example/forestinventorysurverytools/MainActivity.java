@@ -152,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
         mHeight_val = 0.0;
         height_vec.removeAllElements();
         angle_vec.removeAllElements();
+
+
     }
 
 
