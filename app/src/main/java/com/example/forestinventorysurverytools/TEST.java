@@ -6,10 +6,13 @@
 //
 //import androidx.fragment.app.Fragment;
 //
+//import static java.lang.Math.PI;
 //
 //public class TEST extends Fragment  {
 //
-//    float volume;
+//    double volume;
+//    double radius;
+//    double circle;
 //
 //    MainActivity ma=null;
 //
@@ -18,8 +21,10 @@
 //
 //
 //    public void onClick(View view) {
-//        volume = (float)Math.abs(ma.mDiameter_val*ma.mHeight_val);
-//        ma.단재적.setText("단재적 :"+ volume+"m²");
+//        radius = Math.abs(ma.mDiameter_val/2);
+//        circle=Math.pow(radius,2);
+//        volume = (float)Math.abs((circle*PI)/10000);
+//        //ma.단재적.setText("단재적 :"+ volume+"m²");
 //    }
 //}
 //
