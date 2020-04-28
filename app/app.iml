@@ -157,6 +157,6 @@
     <orderEntry type="library" name="Gradle: com.google.ar:core:1.16.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.ar.sceneform:sceneform-base:1.10.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.ar.sceneform:filament-android:1.10.0@aar" level="project" />
-    <orderEntry type="module" module-name="FIST-poi-4.1.2" />
+    <orderEntry type="module" module-name="FISTs_Project-poi-4.1.2" />
   </component>
 </module>

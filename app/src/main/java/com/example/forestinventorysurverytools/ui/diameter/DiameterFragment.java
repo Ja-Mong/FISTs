@@ -48,12 +48,9 @@ import java.util.Objects;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener, Scene.OnUpdateListener {
+public class DiameterFragment extends Fragment implements  Scene.OnUpdateListener {
 
     View root;
-    CameraAPI mDiamCameraAPI;
-    TextureView mCameraPreview_diam;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
@@ -90,11 +87,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, null);
 
-        FragmentManager fm = getChildFragmentManager();
-        diameter_arFragment = (ArFragment) fm.findFragmentById(R.id.ar_preview_fr);
-
-        mDiamCameraAPI = new CameraAPI(this);
-        mCameraPreview_diam = (TextureView) root.findViewById(R.id.camera_preview_fr);
+        diameter_arFragment=ma.arFragment;
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
@@ -107,6 +100,8 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
 
         initModel();
 
+        // 현재 이 부분으로 인해서 거리에서 탭해서 생긴 앵커, 직경에서 탭해서 생긴 앵커 이렇게 따로따로 있음.
+        // 추후 MainActivity에서 anchor, anchorNode를 List나 Vector타입으로 관리하면 될듯 싶습니다.
         diameter_arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
 
@@ -150,6 +145,7 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
 //                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
             }
         });
+
 
 
 
@@ -201,89 +197,6 @@ public class DiameterFragment extends Fragment implements CameraAPI.Camera2Inter
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
-
-
-
-    //Camera
-    private void openCamera() {
-
-        CameraManager cameraManager = mDiamCameraAPI.cameraManager_1_DBH(this);
-        String cameraID = mDiamCameraAPI.CameraCharacteristics_2(cameraManager);
-        mDiamCameraAPI.CameraDevice_3_DBH(cameraManager, cameraID);
-        showToast("흉고직경측정 기능 수행");
-        // 카메라 가로 변환
-        mDiamCameraAPI.transformImage(mCameraPreview_diam,mCameraPreview_diam.getWidth(), mCameraPreview_diam.getHeight());
-    }
-
-
-    @Override
-    public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
-        SurfaceTexture surfaceTexture = mCameraPreview_diam.getSurfaceTexture();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            surfaceTexture.setDefaultBufferSize(cameraSize.getWidth(), cameraSize.getHeight());
-        }
-        Surface surface = new Surface(surfaceTexture);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDiamCameraAPI.CaptureSession_4_DBH(cameraDevice, surface);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mDiamCameraAPI.CaptureSession_5(cameraDevice, surface);
-        }
-    }
-
-
-    private void closeCamera() {
-        mDiamCameraAPI.closeCamera();
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mCameraPreview_diam.isAvailable()) {
-            openCamera();
-        } else {
-            mCameraPreview_diam.setSurfaceTextureListener(this);
-        }
-        startCameraHandlerThread();
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-    }
-
-
-    @Override
-    public void onPause() {
-        closeCamera();
-        stopCameraHandlerThread();
-        mSensorManager.unregisterListener(mMySensorEventListener);
-        super.onPause();
-    }
-
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        openCamera();
-    }
-
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    }
-
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
-    }
-
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
-
 
 
     //Handler

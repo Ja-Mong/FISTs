@@ -1,5 +1,9 @@
 package com.example.forestinventorysurverytools.ui.height;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -7,10 +11,12 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
 import android.view.LayoutInflater;
+import android.view.PixelCopy;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -24,16 +30,20 @@ import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.ux.ArFragment;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class HeightFragment extends Fragment implements CameraAPI.Camera2Interface,
-        TextureView.SurfaceTextureListener {
+public class HeightFragment extends Fragment {
 
     View root;
-    CameraAPI mHeightCameraAPI;
-    TextureView mCameraPreview_height;
 
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
@@ -43,12 +53,12 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
 
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
+    ImageButton mBtn_capture;
 
     double x_height;
     double t_height;
     double new_height;
 
-    float altitude;
     float compass;
     float f_angle = 0;
     float t_angle = 0;
@@ -56,26 +66,28 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     float x_angle = 0;
     float y_angle = 0;
 
-    MainActivity ma=null;
-    public HeightFragment(MainActivity ma){this.ma=ma;}
+    MainActivity ma = null;
 
+    public HeightFragment(MainActivity ma) {
+        this.ma = ma;
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_height, container, false);
-        mHeightCameraAPI = new CameraAPI(this);
-        mCameraPreview_height = (TextureView) root.findViewById(R.id.camera_preview_fr);
+
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
+        mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
 
         mBtn_height.setOnClickListener(measureHeight);
         mBtn_calculate.setOnClickListener(getCalculateHeight);
-
+        mBtn_capture.setOnClickListener(takeCapture);
         return root;
     }
 
@@ -84,110 +96,6 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
-
-
-
-
-    //Camera
-    private void openCamera() {
-        CameraManager cameraManager = mHeightCameraAPI.cameraManager_1_H(this);
-        String cameraID = mHeightCameraAPI.CameraCharacteristics_2(cameraManager);
-        mHeightCameraAPI.CameraDevice_3_H(cameraManager, cameraID);
-        showToast("수고측정 기능 수행");
-        // 카메라 가로 변환
-        mHeightCameraAPI.transformImage(mCameraPreview_height,mCameraPreview_height.getWidth(),mCameraPreview_height.getHeight());
-    }
-
-
-    @Override
-    public void onCameraDeviceOpen(CameraDevice cameraDevice, Size cameraSize) {
-        SurfaceTexture surfaceTexture = mCameraPreview_height.getSurfaceTexture();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            surfaceTexture.setDefaultBufferSize(cameraSize.getWidth(), cameraSize.getHeight());
-        }
-        Surface surface = new Surface(surfaceTexture);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mHeightCameraAPI.CaptureSession_4_H(cameraDevice, surface);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mHeightCameraAPI.CaptureSession_5(cameraDevice, surface);
-        }
-    }
-
-
-    private void closeCamera() {
-        mHeightCameraAPI.closeCamera();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mCameraPreview_height.isAvailable()) {
-            openCamera();
-        } else {
-            mCameraPreview_height.setSurfaceTextureListener(this);
-        }
-        startCameraHandlerThread();
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-    }
-
-
-    @Override
-    public void onPause() {
-        closeCamera();
-        stopCameraHandlerThread();
-        mSensorManager.unregisterListener(mMySensorEventListener);
-        super.onPause();
-    }
-
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        openCamera();
-    }
-
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-    }
-
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
-    }
-
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
-
-
-
-
-    //Handler
-    private void startCameraHandlerThread() {
-        mCameraThread = new HandlerThread("Camera Background");
-        mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
-    }
-
-    private void stopCameraHandlerThread() {
-        mCameraThread.quitSafely();
-        mCameraThread = null;
-        mCameraHandler = null;
-    }
-
 
 
     // 이렇게 하게 되면 "theta_vec"에 저장되는 값은
@@ -224,32 +132,105 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
     /**
      * 두번째 고도값 가져오기
      * if(calculate.getId() == R.id.Btn_calculate) {
-     *     float altitude2 = Math.abs(mMySensorEventListener.getAltitude());
-     *     ...
-     *     for(...) { //Up slope
-     *         h = altitude - altitude2;
-     *         d = h/ Math.tan(slope);
-     *         t_height = (Math.tan(angle + slope) * distance) - h;
-     *     }
-     *     for(...) { //down slope
-     *         h = altitude2;
-     *         d = h/Math.tan(slope);
-     *         t_height = (Math.tan(angle - slope) * distance) + h;
-     *     }
+     * float altitude2 = Math.abs(mMySensorEventListener.getAltitude());
+     * ...
+     * for(...) { //Up slope
+     * h = altitude - altitude2;
+     * d = h/ Math.tan(slope);
+     * t_height = (Math.tan(angle + slope) * distance) - h;
+     * }
+     * for(...) { //down slope
+     * h = altitude2;
+     * d = h/Math.tan(slope);
+     * t_height = (Math.tan(angle - slope) * distance) + h;
+     * }
      * }
      */
+
+
+
+    /*캡쳐*/
+    final ImageButton.OnClickListener takeCapture = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View capture) {
+            String mPath;
+
+            try{
+                Calendar c = Calendar.getInstance();
+                String fileName = String.format("%02d%02d_%02d%02d%02d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+                        c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+
+                // 내장 메모리 /Pictures에 저장됨. (갤러리에서 확인은 안됨. 폴더에서 확인은 가능) 경우에 따라선 /ScreenShots 에 넣을 수 도 있음.
+                mPath = Environment.getExternalStorageDirectory().toString()+  "/Pictures" + "/" + fileName + ".jpg";
+                // create bitmap screen capture
+                // 화면 이미지 만들기
+                ArFragment af = ma.arFragment;
+
+
+                ArSceneView view = af.getArSceneView();
+                final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+                handlerThread.start();
+
+                PixelCopy.request(view, mybitmap, (copyResult) -> {
+                    if (copyResult == PixelCopy.SUCCESS) {
+                        try {
+                            saveBitmapToDisk(mybitmap, mPath);
+                        } catch (IOException e) {
+                            return;
+                        }
+                    }
+                    handlerThread.quitSafely();
+                }, new Handler(handlerThread.getLooper()));
+                Toast.makeText(ma, mPath, Toast.LENGTH_LONG).show();
+            } catch(Throwable e){
+                // Several error may come out with file handling or OOM
+                e.printStackTrace();
+            }
+
+
+
+        }
+    };
+
+
+    public void saveBitmapToDisk(Bitmap bitmap, String path) throws IOException {
+
+        //  String path = Environment.getExternalStorageDirectory().toString() +  "/Pictures/Screenshots/";
+
+        Bitmap rotatedImage = bitmap;
+
+
+        if(ma.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.postRotate(90);
+            rotatedImage = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
+        }
+
+        File mediaFile = new File(path);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(mediaFile);
+        rotatedImage.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+
+
+        fileOutputStream.flush();
+        fileOutputStream.close();
+
+
+    }
+
 
 
 
     final ImageButton.OnClickListener getCalculateHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
+
+
             if (calculate.getId() == R.id.Btn_calculate) {
                 float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
                 float distance = (float) (Math.tan(x_angle) * phoneHeight);
                 compass = Math.abs(mMySensorEventListener.getYaw());
-                altitude = Math.abs(mMySensorEventListener.getAltitude());
-
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
@@ -267,9 +248,6 @@ public class HeightFragment extends Fragment implements CameraAPI.Camera2Interfa
                 ma.mHeight_val=t_height;
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
                 ma.mCompass_tv.setText("방        위 :"+compass+"°"+mMySensorEventListener.matchDirection(compass));
-                ma.mAltitude_tv.setText("고        도 :"+altitude+"m");
-
-
             }
         }
     };

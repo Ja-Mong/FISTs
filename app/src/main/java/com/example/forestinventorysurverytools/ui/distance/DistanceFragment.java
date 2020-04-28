@@ -61,59 +61,51 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
     MainActivity ma=null;
     public DistanceFragment(MainActivity ma){this.ma=ma;}
 
-    ArFragment distance_arFragment;
-    Anchor anchor = null;
-    AnchorNode anchorNode;
-    ModelRenderable modelRenderable;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        //AR 지원 가능 여부 체크
-        if (!checkIsSupportedDeviceOrFinish((MainActivity)getActivity())) {
-            Toast.makeText(ma.getApplicationContext(), "Device not supported", Toast.LENGTH_LONG).show();
-        }
+
 
         root = inflater.inflate(R.layout.fragment_distance, null);
 
         //layout에 정의한 아이디 구현 및 정의
-        FragmentManager fm = getChildFragmentManager();
-       distance_arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
 
-        initModel();
 
-        distance_arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+        ma.initModel();
+
+        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
 
-            if (modelRenderable == null)
+            if (ma.modelRenderable == null)
                 return;
 
             // Creating Anchor.
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
 
-            anchorNode2.setParent(distance_arFragment.getArSceneView().getScene());
+            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
 
-            clearAnchor();
+            ma.clearAnchor();
 
-            anchor = anchor2;
-            anchorNode = anchorNode2;
+            ma.anchor = anchor2;
+            ma.anchorNode = anchorNode2;
 
-            TransformableNode node = new TransformableNode(distance_arFragment.getTransformationSystem());
-            node.setRenderable(modelRenderable);
+            TransformableNode node = new TransformableNode(ma.arFragment.getTransformationSystem());
+            node.setRenderable(ma.modelRenderable);
             node.setParent(anchorNode2);
-            distance_arFragment.getArSceneView().getScene().addOnUpdateListener(distance_arFragment);
-            distance_arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
             node.select();
 
 
 
-            if (anchorNode != null) {
-                Frame frame = distance_arFragment.getArSceneView().getArFrame();
+            if (ma.anchorNode != null) {
+                Frame frame = ma.arFragment.getArSceneView().getArFrame();
 
-                Pose objectPose = anchor.getPose();
+                Pose objectPose = ma.anchor.getPose();
                 Pose cameraPose = frame.getCamera().getPose();
 
                 float dx = objectPose.tx() - cameraPose.tx();
@@ -133,47 +125,6 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
         return root;
     }
 
-    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
-
-        String openGlVersionString =
-                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
-                        .getDeviceConfigurationInfo()
-                        .getGlEsVersion();
-        if (Double.parseDouble(openGlVersionString) < 3.0) {
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                    .show();
-            activity.finish();
-            return false;
-        }
-        return true;
-    }
-
-
-    public void initModel() {
-        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.RED))
-                .thenAccept(
-                        material -> {
-
-                            Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
-                            modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
-                            modelRenderable.setShadowCaster(false);
-                            modelRenderable.setShadowReceiver(false);
-                            Boolean b  = (modelRenderable==null);
-
-                        });
-    }
-    private void clearAnchor() {
-        anchor = null;
-
-
-        if (anchorNode != null) {
-            distance_arFragment.getArSceneView().getScene().removeChild(anchorNode);
-            anchorNode.getAnchor().detach();
-            anchorNode.setParent(null);
-            anchorNode = null;
-        }
-    }
-
 
 
 
@@ -182,18 +133,16 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
-
-
     @Override
     public void onUpdate(FrameTime frameTime) {
         // 실시간으로 거리 측정해주는것 같지만... 아직 동작은 안됨. (위에 setonTap으로 옮겨놨음.)
-        Frame frame = distance_arFragment.getArSceneView().getArFrame();
+        Frame frame = ma.arFragment.getArSceneView().getArFrame();
 
-        Log.d("API123", "onUpdateframe... current anchor node " + (anchorNode == null));
+        Log.d("API123", "onUpdateframe... current anchor node " + (ma.anchorNode == null));
 
         // 거리값 계산=> 데이터 크기 때문에 float으로 한듯???
-        if (anchorNode != null) {
-            Pose objectPose = anchor.getPose();
+        if (ma.anchorNode != null) {
+            Pose objectPose = ma.anchor.getPose();
             Pose cameraPose = frame.getCamera().getPose();
 
             float dx = objectPose.tx() - cameraPose.tx();
@@ -214,8 +163,4 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
             //    totalDistanceSquared += distance_vector[i] * distance_vector[i];
         }
     }
-
-
-
-
 }
