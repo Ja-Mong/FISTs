@@ -148,15 +148,15 @@
         android:id="@+id/Btn_save"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:background="@drawable/circle_background"
-        android:src="@drawable/save"
-        android:layout_toRightOf="@id/Btn_back_step"
-        android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
         android:layout_marginBottom="65dp"
-        />
+        android:layout_toRightOf="@id/Btn_back_step"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:onClick="Save_data"
+        android:scaleType="fitCenter"
+        android:src="@drawable/save" />
 
 
 </RelativeLayout>

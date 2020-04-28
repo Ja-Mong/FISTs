@@ -25,7 +25,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
@@ -36,6 +35,7 @@ import com.google.ar.sceneform.ux.ArFragment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static android.content.Context.SENSOR_SERVICE;
@@ -156,12 +156,15 @@ public class HeightFragment extends Fragment {
             String mPath;
 
             try{
-                Calendar c = Calendar.getInstance();
-                String fileName = String.format("%02d%02d_%02d%02d%02d", c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-                        c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+                SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+                String filename = "fistIMG_"+dateformat.format(System.currentTimeMillis());
 
-                // 내장 메모리 /Pictures에 저장됨. (갤러리에서 확인은 안됨. 폴더에서 확인은 가능) 경우에 따라선 /ScreenShots 에 넣을 수 도 있음.
-                mPath = Environment.getExternalStorageDirectory().toString()+  "/Pictures" + "/" + fileName + ".jpg";
+                String dirPath = Environment.getExternalStorageDirectory().toString()+  "/FIST";
+                File dir = new File(dirPath);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+                mPath =  dirPath+"/" + filename + ".jpg";
                 // create bitmap screen capture
                 // 화면 이미지 만들기
                 ArFragment af = ma.arFragment;
@@ -218,7 +221,15 @@ public class HeightFragment extends Fragment {
 
 
     }
+    private boolean CheckWrite() {  // sdcard mount check
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        } else {
+            return false;
+        }
 
+    }
 
 
 

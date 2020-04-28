@@ -168,7 +168,7 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
     }
 
     public void initModel() {
-        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.RED))
+        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.BLUE))
                 .thenAccept(
                         material -> {
 

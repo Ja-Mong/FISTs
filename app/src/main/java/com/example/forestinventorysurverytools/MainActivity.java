@@ -6,9 +6,12 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +39,24 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Vector;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     InclinometerFragment inclinometerFragment;
     DistanceFragment distanceFragment;
@@ -82,20 +98,18 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mInclinometer_tv = (TextView)this.findViewById(R.id.tv_inclinometer);
-        mDistance_tv = (TextView)this.findViewById(R.id.tv_distance);
-        mDiameter_tv = (TextView)this.findViewById(R.id.tv_diameter);
-        mHeight_tv = (TextView)this.findViewById(R.id.tv_height);
-        mCompass_tv = (TextView)this.findViewById(R.id.tv_compass);
-        mAltitude_tv = (TextView)this.findViewById(R.id.tv_alititude);
-        mInputHeight = (EditText)this.findViewById(R.id.input_height);
-
+        mInclinometer_tv = (TextView) this.findViewById(R.id.tv_inclinometer);
+        mDistance_tv = (TextView) this.findViewById(R.id.tv_distance);
+        mDiameter_tv = (TextView) this.findViewById(R.id.tv_diameter);
+        mHeight_tv = (TextView) this.findViewById(R.id.tv_height);
+        mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
+        mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
+        mInputHeight = (EditText) this.findViewById(R.id.input_height);
 
         inclinometerFragment = new InclinometerFragment(this);
         distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
-
 
 
         //AR 지원 가능 여부 체크
@@ -179,10 +193,11 @@ public class MainActivity extends AppCompatActivity{
                             modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
-                            Boolean b  = (modelRenderable==null);
+                            Boolean b = (modelRenderable == null);
 
                         });
     }
+
     public void clearAnchor() {
         anchor = null;
         if (anchorNode != null) {
@@ -192,7 +207,6 @@ public class MainActivity extends AppCompatActivity{
             anchorNode = null;
         }
     }
-
 
 
     public void onRequestPermissionsResults(int requsetCode, String[] permissions, int[] grantResults) {
@@ -208,9 +222,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-
-
-    public void tv_Reset(){
+    public void tv_Reset() {
         // 초기화(리셋) 버튼 기능, 버튼 연결 보류
         mInclinometer_tv.setText("경        사 :");
         mDistance_tv.setText("거        리 :");
@@ -229,15 +241,57 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
+    String dirPath;
 
-    public void Save_data(){
-        //저장 버튼 기능, 버튼 연결 보류
-        //POI 라이브러리 다운 필요
-        if((mDistance_val != 0.0 ) &&(mDiameter_val != 0.0 ) &&(mHeight_val != 0.0))
-        {
-            SimpleDateFormat dateformat = new SimpleDateFormat("forest_yyMMdd_HHmmss");
-            String filename = dateformat.format(System.currentTimeMillis());
+    public void Save_data(View v) {
+        //txt대신 서버 전송시 유리한 json 형식으로 핸드폰 내부 저장.
 
+        // 추후 조건식 (mDistance_val != 0.0 ) &&(mDiameter_val != 0.0 ) &&(mHeight_val != 0.0)
+        if (true) {
+            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+            String filename = "fist_" + dateformat.format(System.currentTimeMillis());
+
+            if (CheckWrite()) {
+                dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FIST";
+                File dir = new File(dirPath);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                    Log.d("tag", "directory 생성");
+                }
+                //File savefile = new File(dirPath+"/"+filename+".txt");
+                File savefile = new File(dirPath + "/" + filename + ".json");
+                try {
+                    Log.d("tag", "File 생성시작");
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("distance", mDistance_val);
+                    obj.put("diameter", mDiameter_val);
+                    obj.put("height", mHeight_val);
+                    obj.put("inclinometer", mInclinometer_val);
+
+                    FileWriter fw = new FileWriter(savefile);
+                    fw.write(obj.toString());
+                    fw.flush();
+                    fw.close();
+
+                    Log.d("tag", "File 생성완료");
+                    Toast.makeText(this,dirPath+"에 저장 하였습니다.",Toast.LENGTH_LONG).show();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+
+        }
+
+    }
+
+    private boolean CheckWrite() {  // sdcard mount check
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        } else {
+            return false;
         }
 
     }
