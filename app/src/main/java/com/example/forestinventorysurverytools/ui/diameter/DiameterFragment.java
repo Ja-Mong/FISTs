@@ -55,39 +55,23 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
 
-    Handler mCameraHandler;
-    HandlerThread mCameraThread;
-
     ImageButton mBtn_diameter;
     ImageButton mBtn_calculate;
 
-    double dbh_Height = 12000/100f;
-    double distance;
     double diameter1;
     double diameter2;
-    double t_diameter;
 
     float angle;
     float angle2;
-    int click_count = 0;
 
     MainActivity ma=null;
     public DiameterFragment(MainActivity ma){this.ma=ma;}
-
-    ArFragment diameter_arFragment;
-    Anchor anchor = null;
-    AnchorNode anchorNode;
-    ModelRenderable modelRenderable;
-
-    DistanceFragment distanceFragment;
-
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, null);
 
-        diameter_arFragment=ma.arFragment;
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
@@ -102,51 +86,32 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
 
         // 현재 이 부분으로 인해서 거리에서 탭해서 생긴 앵커, 직경에서 탭해서 생긴 앵커 이렇게 따로따로 있음.
         // 추후 MainActivity에서 anchor, anchorNode를 List나 Vector타입으로 관리하면 될듯 싶습니다.
-        diameter_arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
 
-            if (modelRenderable == null)
+            if (ma.modelRenderable == null)
                 return;
 
             // Creating Anchor.
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
 
-            anchorNode2.setParent(diameter_arFragment.getArSceneView().getScene());
+            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
 
             clearAnchor();
 
-            anchor = anchor2;
-            anchorNode = anchorNode2;
+            ma.anchor = anchor2;
+            ma.anchorNode = anchorNode2;
 
-            TransformableNode node = new TransformableNode(diameter_arFragment.getTransformationSystem());
-            node.setRenderable(modelRenderable);
+            TransformableNode node = new TransformableNode(ma.arFragment.getTransformationSystem());
+            node.setRenderable(ma.modelRenderable);
             node.setParent(anchorNode2);
-            diameter_arFragment.getArSceneView().getScene().addOnUpdateListener(diameter_arFragment);
-            diameter_arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
             node.select();
 
 
-
-            if (anchorNode != null) {
-                Frame frame = diameter_arFragment.getArSceneView().getArFrame();
-
-                Pose objectPose = anchor.getPose();
-                Pose cameraPose = frame.getCamera().getPose();
-
-                float dx = objectPose.tx() - cameraPose.tx();
-                float dy = objectPose.ty() - cameraPose.ty();
-                float dz = objectPose.tz() - cameraPose.tz();
-
-                ///Compute the straight-line distance.
-                float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-                String meter = String.format("%.2f", distanceMeters);;
-//                ma.mDistance_tv.setText("거        리 : " + meter+"m");
-//                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
-            }
         });
-
-
 
 
         return root;
@@ -173,23 +138,23 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
                         material -> {
 
                             Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
-                            modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
-                            modelRenderable.setShadowCaster(false);
-                            modelRenderable.setShadowReceiver(false);
-                            Boolean b  = (modelRenderable==null);
+                            ma.modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
+                            ma.modelRenderable.setShadowCaster(false);
+                            ma.modelRenderable.setShadowReceiver(false);
+                            Boolean b  = (ma.modelRenderable==null);
 
                         });
     }
 
     private void clearAnchor() {
-        anchor = null;
+        ma.anchor = null;
 
 
-        if (anchorNode != null) {
-            diameter_arFragment.getArSceneView().getScene().removeChild(anchorNode);
-            anchorNode.getAnchor().detach();
-            anchorNode.setParent(null);
-            anchorNode = null;
+        if (ma.anchorNode != null) {
+            ma.arFragment.getArSceneView().getScene().removeChild(ma.anchorNode);
+            ma.anchorNode.getAnchor().detach();
+            ma.anchorNode.setParent(null);
+            ma.anchorNode = null;
         }
     }
 
@@ -197,22 +162,6 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
-
-
-    //Handler
-    private void startCameraHandlerThread() {
-        mCameraThread = new HandlerThread("Camera Background");
-        mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
-    }
-
-    private void stopCameraHandlerThread() {
-        mCameraThread.quitSafely();
-        mCameraThread = null;
-        mCameraHandler = null;
-    }
-
-
 
 
     /**
@@ -230,41 +179,62 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
         @Override
         public void onClick(View diameter) {
             mMySensorEventListener.updateOrientationAngles();
-            if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                if (click_count % 2 == 0) {
-                    angle = Math.abs(mMySensorEventListener.getPitch());
-                    click_count++;
-                    showToast("1");
-                } else if (click_count % 2 == 1) {
-                    angle2 = Math.abs(mMySensorEventListener.getPitch());
-                    click_count++;
-                    showToast("2");
-                }
+            if (ma.angle_vec.isEmpty()) {
+                angle = Math.abs(mMySensorEventListener.getPitch());
+                ma.angle_vec.add((float) angle);
+                showToast(Integer.toString(ma.angle_vec.size()));
+            } else {
+                angle2 = Math.abs(mMySensorEventListener.getPitch());
+                angle2 = angle2 + angle;
+                angle2 = angle2/2;
+                ma.angle_vec.add((float) angle2);
+                showToast(Integer.toString(ma.angle_vec.size()));
             }
         }
     };
+
 
 
     ImageButton.OnClickListener getMeasureDiameter = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calculate) {
             if (calculate.getId() == R.id.Btn_calculate) {
-                float userHeight = Float.valueOf(ma.mInputHeight.getText().toString()) / 100f;
-                double length = userHeight * Math.tan(angle);
-                double angleCalc = Math.PI / 2.0 - Math.abs(angle2);
-                double dist = length * Math.tan(angleCalc);
-                double finalDisp = dist * (-1) / Math.signum(angle2);
-                String height_value = String.format("%.1f", userHeight + finalDisp);
-                ma.mDiameter_val = userHeight + finalDisp;
-                ma.mDiameter_tv.setText("흉고직경 :" + height_value + "cm");
-                showToast("calculate"); //단위 변환이 필요함
+                float x_angle = angle2;
+                float y_angle = angle2;
+                diameter1 = Math.tan(x_angle) * ma.mDistance_val;
+                diameter2 = Math.tan(y_angle) * ma.mDistance_val;
+                ma.mDiameter_val = diameter1 + diameter2;
+                String dbh = String.format("%.2f", ma.mDiameter_val);
+                ma.mDiameter_tv.setText("흉고직경: " + dbh + "cm");
+                showToast("계산완료");
             }
         }
     };
 
-    @Override
-    public void onUpdate(FrameTime frameTime) {
 
+
+    @Override
+    public void onUpdate(FrameTime frameTime) { }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+    }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mMySensorEventListener);
     }
 }
 

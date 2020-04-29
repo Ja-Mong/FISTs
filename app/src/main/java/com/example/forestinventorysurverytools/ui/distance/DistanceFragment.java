@@ -134,33 +134,5 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
     }
 
     @Override
-    public void onUpdate(FrameTime frameTime) {
-        // 실시간으로 거리 측정해주는것 같지만... 아직 동작은 안됨. (위에 setonTap으로 옮겨놨음.)
-        Frame frame = ma.arFragment.getArSceneView().getArFrame();
-
-        Log.d("API123", "onUpdateframe... current anchor node " + (ma.anchorNode == null));
-
-        // 거리값 계산=> 데이터 크기 때문에 float으로 한듯???
-        if (ma.anchorNode != null) {
-            Pose objectPose = ma.anchor.getPose();
-            Pose cameraPose = frame.getCamera().getPose();
-
-            float dx = objectPose.tx() - cameraPose.tx();
-            float dy = objectPose.ty() - cameraPose.ty();
-            float dz = objectPose.tz() - cameraPose.tz();
-
-            ///Compute the straight-line distance.
-            float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-            String meter=String.format("%.2f",distanceMeters);;
-
-            ma.mDistance_tv.setText("거리: " + meter);
-            Toast.makeText(ma.getApplicationContext(),meter,Toast.LENGTH_LONG).show();
-
-            //float[] distance_vector = currentAnchor.getPose().inverse()
-            //        .compose(cameraPose).getTranslation();
-            //float totalDistanceSquared = 0;
-            //for (int i = 0; i < 3; ++i)
-            //    totalDistanceSquared += distance_vector[i] * distance_vector[i];
-        }
-    }
+    public void onUpdate(FrameTime frameTime) {  }
 }

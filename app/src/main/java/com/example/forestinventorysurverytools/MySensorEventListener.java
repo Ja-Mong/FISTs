@@ -100,7 +100,7 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         if(compass >= 248 && compass < 293) { return "S"; }
         if(compass >= 293 && compass < 338) { return "SW"; }
         if(compass >= 338 && compass <=360) { return "W"; }
-        if(compass >= 360 && compass < 23) { return "W"; }
+        if(compass >= 0 && compass < 23) { return "W"; }
         if(compass >= 23 && compass < 68) { return "NW"; }
         return null;
     }

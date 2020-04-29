@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_inclinometer"
-        android:icon="@drawable/slope"
-        android:title="@string/title_inclinometer" />
-
-    <item
         android:id="@+id/navigation_distance"
         android:icon="@drawable/ruler"
         android:title="@string/title_distance" />

@@ -48,9 +48,6 @@ public class HeightFragment extends Fragment {
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
 
-    Handler mCameraHandler;
-    HandlerThread mCameraThread;
-
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
     ImageButton mBtn_capture;
@@ -122,6 +119,7 @@ public class HeightFragment extends Fragment {
                     xy_angle = t_angle - ma.angle_vec.elementAt(0);
                     y_angle = Math.abs(xy_angle - x_angle);
                     ma.angle_vec.add(y_angle);
+                    showToast(Integer.toString(ma.angle_vec.size()));
                 }
             }
         }
@@ -242,6 +240,7 @@ public class HeightFragment extends Fragment {
                 float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
                 float distance = (float) (Math.tan(x_angle) * phoneHeight);
                 compass = Math.abs(mMySensorEventListener.getYaw());
+                compass = Math.round(compass);
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
@@ -262,6 +261,23 @@ public class HeightFragment extends Fragment {
             }
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mMySensorEventListener);
+    }
 }
 
 

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Forest Inventory Survery Tools</string>
-    <string name="title_inclinometer">경사</string>
     <string name="title_distance">거리</string>
     <string name="title_diameter">흉고직경</string>
     <string name="title_height">수고</string>

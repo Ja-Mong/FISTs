@@ -24,7 +24,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
-import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
+//import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
@@ -58,7 +58,7 @@ import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
-    InclinometerFragment inclinometerFragment;
+//    InclinometerFragment inclinometerFragment;
     DistanceFragment distanceFragment;
     DiameterFragment diameterFragment;
     HeightFragment heightFragment;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     //heightfragment에서 메인으로 이동
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
-    public Vector<Double> diameter_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+
 
     //AR관련
     public ArFragment arFragment;
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
         mInputHeight = (EditText) this.findViewById(R.id.input_height);
 
-        inclinometerFragment = new InclinometerFragment(this);
+//        inclinometerFragment = new InclinometerFragment(this);
         distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
@@ -120,16 +120,16 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.navigation_inclinometer:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
-                        return true;
+//                    case R.id.navigation_inclinometer:
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
+//                        return true;
                     case R.id.navigation_distance:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
                         return true;
