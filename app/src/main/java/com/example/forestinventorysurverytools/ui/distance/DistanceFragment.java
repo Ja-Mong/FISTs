@@ -117,6 +117,7 @@ public class DistanceFragment extends Fragment {
                 String meter = String.format("%.2f", distanceMeters);;
                 ma.mDistance_tv.setText("거        리 : " + meter+"m");
                 Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
+
             }
         });
 

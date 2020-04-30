@@ -59,7 +59,7 @@ public class HeightFragment extends Fragment {
     double t_height;
     double new_height;
 
-    float altitude;
+
     float compass;
     float f_angle = 0;
     float t_angle = 0;
@@ -253,7 +253,8 @@ public class HeightFragment extends Fragment {
                 float distance = (float) (Math.tan(x_angle) * phoneHeight);
                 compass = Math.abs(mMySensorEventListener.getYaw());
                 compass = Math.round(compass);
-                altitude = Math.abs(mMySensorEventListener.getAltitude());
+
+
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
@@ -272,7 +273,7 @@ public class HeightFragment extends Fragment {
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
                 ma.mCompass_tv.setText("방        위 :"+compass+"°"
                         + mMySensorEventListener.matchDirection(compass));
-                ma.mAltitude_tv.setText(("고        도 :"+ altitude + "m"));
+
             }
         }
     };

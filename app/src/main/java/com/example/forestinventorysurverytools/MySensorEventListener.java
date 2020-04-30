@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 public class MySensorEventListener extends Fragment implements SensorEventListener {
 
     SensorManager mSensorManager;
+    Sensor sensor;
 
     //Motion sensor
     final float[] mAccelerometerReading = new float[3];
@@ -20,11 +21,15 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
     final float[] mOrientationAngles = new float[3];
     final float[] mRotationMatrix = new float[9];
 
+
     public MySensorEventListener(SensorManager mSensorManager) {
         super();
+  //      mSensorManager = (SensorManager);
+  //      ㄴ mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);  이런식으로 센서매니저 등록해야 하는데 Fragment로 extends된 상황에서 명령어를 어떻게 수정해야 할지 모르겠습니다.
+  //      sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+  //      mSensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
         this.mSensorManager = mSensorManager;
     }
-
 
 
 
@@ -42,6 +47,9 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
                     0, mGyroscopeReading.length);
         }
 
+
+
+
     }
 
 
@@ -54,6 +62,7 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
                 mAccelerometerReading, mMagnetometerReading);
 
         mSensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
+
     }
 
 
@@ -85,10 +94,14 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         return roll;
     }//y축
 
-    public float getAltitude() {
-        float altitude = getAltitude();
-        return altitude;
-    }
+
+//    public void getAltitude(SensorEvent sensorEvent){
+//        float presure = sensorEvent.values[0];
+//        presure = (float)(Math.round(presure*100)/100.0);
+//        float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE,presure);
+//        altitude = (float)(Math.round(altitude*100)/100.0);
+//    }
+// 기압계 센서를 기반으로 고도 나타내나, mMySensorListener 메소드에서 센서매니저 등록이 안되어서 사용 시 앱 다운 현상 발생합니다.
 
     //Compass
     public String matchDirection(float compass) {
