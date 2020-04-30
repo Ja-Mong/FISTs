@@ -232,15 +232,19 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public float radius = 0.1f;
+    public float axis_z = 0.0f;
+
 
     public void initModel() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(android.graphics.Color.RED))
+        MaterialFactory.makeTransparentWithColor(this,
+                new Color(1.0f, 0.0f,0.0f,0.5f))
                 .thenAccept(
                         material -> {
 
                             modelRenderable = ShapeFactory.makeCylinder
-                                    (0.1f,  1.2f,
-                                    new Vector3(0.0f, 0.6f, 0.0f), material);
+                                    (radius,  1.2f,
+                                    new Vector3(0.0f, 0.6f, axis_z), material);
 
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);

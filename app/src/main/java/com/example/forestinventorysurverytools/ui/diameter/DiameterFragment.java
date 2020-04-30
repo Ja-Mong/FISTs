@@ -20,6 +20,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -44,6 +46,8 @@ import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import org.w3c.dom.Text;
+
 import java.util.Objects;
 
 import static android.content.Context.SENSOR_SERVICE;
@@ -57,6 +61,12 @@ public class DiameterFragment extends Fragment {
 
     ImageButton mBtn_diameter;
     ImageButton mBtn_calculate;
+
+    TextView radiusTitle;
+    TextView positionTitle;
+
+    SeekBar controller_radius;
+    SeekBar controller_position;
 
     double diameter1;
     double diameter2;
@@ -79,6 +89,23 @@ public class DiameterFragment extends Fragment {
 
         mBtn_diameter = (ImageButton) root.findViewById(R.id.Btn_diameter);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
+
+        radiusTitle = (TextView)root.findViewById(R.id.radius_controller_Name);
+        positionTitle = (TextView)root.findViewById(R.id.position_controller_Name);
+
+        controller_radius = (SeekBar)root.findViewById(R.id.radius_controller);
+        controller_position = (SeekBar)root.findViewById(R.id.position_controller);
+
+
+        controller_radius.setMax(70);
+        controller_radius.setProgress((int) ma.radius);
+
+        controller_position.setMax(70);
+        controller_radius.setProgress((int) ma.axis_z);
+
+        controller_radius.setOnSeekBarChangeListener(controllRadius);
+        controller_position.setOnSeekBarChangeListener(controllerPosition);
+
 
         mBtn_diameter.setOnClickListener(measureDiameter);
         mBtn_calculate.setOnClickListener(getMeasureDiameter);
@@ -108,6 +135,43 @@ public class DiameterFragment extends Fragment {
      * diameter2 = Math.tan(y_angle) * distance;
      * t_diameter = diameter1 + diameter2;
      */
+
+
+    //SeekBar
+    SeekBar.OnSeekBarChangeListener controllRadius = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ma.radius = controller_radius.getProgress();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+
+    SeekBar.OnSeekBarChangeListener controllerPosition = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ma.axis_z = controller_position.getProgress();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 
     //Button
     ImageButton.OnClickListener measureDiameter = new ImageButton.OnClickListener() {

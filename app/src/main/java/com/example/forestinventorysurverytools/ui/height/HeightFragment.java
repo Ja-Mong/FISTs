@@ -51,6 +51,9 @@ public class HeightFragment extends Fragment {
     ImageButton mBtn_height;
     ImageButton mBtn_calculate;
     ImageButton mBtn_capture;
+    ImageButton mBtn_calPlat;
+    ImageButton mBtn_calDown;
+    ImageButton mBtn_calUp;
 
     double x_height;
     double t_height;
@@ -81,10 +84,17 @@ public class HeightFragment extends Fragment {
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
         mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
+        mBtn_calPlat = (ImageButton) root.findViewById(R.id.Btn_calPlat);
+        mBtn_calDown = (ImageButton) root.findViewById(R.id.Btn_calDown);
+        mBtn_calUp = (ImageButton) root.findViewById(R.id.Btn_calUp);
+
 
         mBtn_height.setOnClickListener(measureHeight);
         mBtn_calculate.setOnClickListener(getCalculateHeight);
         mBtn_capture.setOnClickListener(takeCapture);
+        mBtn_calPlat.setOnClickListener(getCalculatePlatHeight);
+        mBtn_calDown.setOnClickListener(getCalculateDownHeight);
+        mBtn_calUp.setOnClickListener(getCalculateUpHeight);
         return root;
     }
 
@@ -261,6 +271,37 @@ public class HeightFragment extends Fragment {
             }
         }
     };
+
+    final ImageButton.OnClickListener getCalculatePlatHeight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calPlat) {
+
+        }
+    };
+
+
+
+
+    final ImageButton.OnClickListener getCalculateDownHeight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calDown) {
+
+        }
+    };
+
+
+
+
+    final ImageButton.OnClickListener getCalculateUpHeight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calUp) {
+
+        }
+    };
+
+
+
+
 
     @Override
     public void onResume() {

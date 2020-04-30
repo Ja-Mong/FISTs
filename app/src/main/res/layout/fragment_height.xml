@@ -45,4 +45,43 @@
         android:background="@drawable/circle_background"
         android:scaleType="fitCenter"
         android:src="@drawable/capture" />
+
+    <ImageButton
+        android:id="@+id/Btn_calPlat"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentRight="true"
+
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:src="@drawable/plat" />
+
+    <ImageButton
+        android:id="@+id/Btn_calDown"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Btn_calPlat"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:src="@drawable/down" />
+
+    <ImageButton
+        android:id="@+id/Btn_calUp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/Btn_calDown"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:src="@drawable/up" />
 </RelativeLayout>
