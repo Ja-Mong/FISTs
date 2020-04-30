@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -26,18 +27,31 @@ import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.ArCoreApk;
+import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
+import com.google.ar.core.Session;
+import com.google.ar.core.exceptions.UnavailableApkTooOldException;
+import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
+import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
+import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
+import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.collision.Box;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -58,7 +72,7 @@ import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
-//    InclinometerFragment inclinometerFragment;
+
     DistanceFragment distanceFragment;
     DiameterFragment diameterFragment;
     HeightFragment heightFragment;
@@ -92,11 +106,17 @@ public class MainActivity extends AppCompatActivity {
     public Anchor anchor = null;
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
+    public Session mSession;
+
+
+
+    private boolean mUserRequestedInstall = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mInclinometer_tv = (TextView) this.findViewById(R.id.tv_inclinometer);
         mDistance_tv = (TextView) this.findViewById(R.id.tv_distance);
@@ -106,10 +126,40 @@ public class MainActivity extends AppCompatActivity {
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
         mInputHeight = (EditText) this.findViewById(R.id.input_height);
 
-//        inclinometerFragment = new InclinometerFragment(this);
+
+
         distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
+
+
+
+
+
+        //ARCore API 접근 개체 생성
+        try {
+            if (mSession == null) {
+                switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
+                    case INSTALLED:
+                        mSession = new Session(this);
+                        break;
+                    case INSTALL_REQUESTED:
+                        mUserRequestedInstall = false;
+                        break;
+                }
+            }
+        } catch (UnavailableDeviceNotCompatibleException e) {
+            e.printStackTrace();
+        } catch (UnavailableUserDeclinedInstallationException e) {
+            e.printStackTrace();
+        } catch (UnavailableArcoreNotInstalledException e) {
+            e.printStackTrace();
+        } catch (UnavailableSdkTooOldException e) {
+            e.printStackTrace();
+        } catch (UnavailableApkTooOldException e) {
+            e.printStackTrace();
+        }
+
 
 
         //AR 지원 가능 여부 체크
@@ -127,9 +177,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-//                    case R.id.navigation_inclinometer:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
-//                        return true;
                     case R.id.navigation_distance:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
                         return true;
@@ -168,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
 
         String openGlVersionString =
@@ -189,13 +238,16 @@ public class MainActivity extends AppCompatActivity {
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
-                            modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
+                            modelRenderable = ShapeFactory.makeCylinder
+                                    (0.1f,  1.2f,
+                                    new Vector3(0.0f, 0.6f, 0.0f), material);
+
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
                             Boolean b = (modelRenderable == null);
 
                         });
+
     }
 
     public void clearAnchor() {

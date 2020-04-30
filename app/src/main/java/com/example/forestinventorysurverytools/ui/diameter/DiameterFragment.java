@@ -48,7 +48,7 @@ import java.util.Objects;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment implements  Scene.OnUpdateListener {
+public class DiameterFragment extends Fragment {
 
     View root;
 
@@ -65,6 +65,7 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
     float angle2;
 
     MainActivity ma=null;
+
     public DiameterFragment(MainActivity ma){this.ma=ma;}
 
 
@@ -82,81 +83,15 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
         mBtn_diameter.setOnClickListener(measureDiameter);
         mBtn_calculate.setOnClickListener(getMeasureDiameter);
 
-        initModel();
+
 
         // 현재 이 부분으로 인해서 거리에서 탭해서 생긴 앵커, 직경에서 탭해서 생긴 앵커 이렇게 따로따로 있음.
         // 추후 MainActivity에서 anchor, anchorNode를 List나 Vector타입으로 관리하면 될듯 싶습니다.
-        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
-
-            if (ma.modelRenderable == null)
-                return;
-
-            // Creating Anchor.
-            Anchor anchor2 = hitResult.createAnchor();
-            AnchorNode anchorNode2 = new AnchorNode(anchor2);
-
-            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
-
-            clearAnchor();
-
-            ma.anchor = anchor2;
-            ma.anchorNode = anchorNode2;
-
-            TransformableNode node = new TransformableNode(ma.arFragment.getTransformationSystem());
-            node.setRenderable(ma.modelRenderable);
-            node.setParent(anchorNode2);
-            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-            node.select();
-
-
-        });
-
 
         return root;
     }
 
-    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
 
-        String openGlVersionString =
-                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
-                        .getDeviceConfigurationInfo()
-                        .getGlEsVersion();
-        if (Double.parseDouble(openGlVersionString) < 3.0) {
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                    .show();
-            activity.finish();
-            return false;
-        }
-        return true;
-    }
-
-    public void initModel() {
-        MaterialFactory.makeTransparentWithColor(this.getContext(), new Color(android.graphics.Color.BLUE))
-                .thenAccept(
-                        material -> {
-
-                            Vector3 vector3 = new Vector3(0.05f, 0.01f, 0.01f);
-                            ma.modelRenderable = ShapeFactory.makeCube(vector3, Vector3.zero(), material);
-                            ma.modelRenderable.setShadowCaster(false);
-                            ma.modelRenderable.setShadowReceiver(false);
-                            Boolean b  = (ma.modelRenderable==null);
-
-                        });
-    }
-
-    private void clearAnchor() {
-        ma.anchor = null;
-
-
-        if (ma.anchorNode != null) {
-            ma.arFragment.getArSceneView().getScene().removeChild(ma.anchorNode);
-            ma.anchorNode.getAnchor().detach();
-            ma.anchorNode.setParent(null);
-            ma.anchorNode = null;
-        }
-    }
 
     // Toast
     public void showToast(String data) {
@@ -212,9 +147,6 @@ public class DiameterFragment extends Fragment implements  Scene.OnUpdateListene
     };
 
 
-
-    @Override
-    public void onUpdate(FrameTime frameTime) { }
 
 
 

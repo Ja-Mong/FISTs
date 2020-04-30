@@ -42,7 +42,7 @@ import android.util.Log;
 
 import java.util.Objects;
 
-public class DistanceFragment extends Fragment implements  Scene.OnUpdateListener {
+public class DistanceFragment extends Fragment {
 
     View root;
     CameraAPI mDistCameraAPI;
@@ -133,6 +133,4 @@ public class DistanceFragment extends Fragment implements  Scene.OnUpdateListene
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onUpdate(FrameTime frameTime) {  }
 }
