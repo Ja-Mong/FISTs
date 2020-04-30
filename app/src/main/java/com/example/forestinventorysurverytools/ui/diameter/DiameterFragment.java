@@ -96,13 +96,6 @@ public class DiameterFragment extends Fragment {
         controller_radius = (SeekBar)root.findViewById(R.id.radius_controller);
         controller_position = (SeekBar)root.findViewById(R.id.position_controller);
 
-
-        controller_radius.setMax(70);
-        controller_radius.setProgress((int) ma.radius);
-
-        controller_position.setMax(70);
-        controller_radius.setProgress((int) ma.axis_z);
-
         controller_radius.setOnSeekBarChangeListener(controllRadius);
         controller_position.setOnSeekBarChangeListener(controllerPosition);
 
@@ -141,6 +134,7 @@ public class DiameterFragment extends Fragment {
     SeekBar.OnSeekBarChangeListener controllRadius = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
             ma.radius = controller_radius.getProgress();
         }
 

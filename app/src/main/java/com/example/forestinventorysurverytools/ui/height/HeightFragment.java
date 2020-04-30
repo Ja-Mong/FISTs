@@ -59,12 +59,14 @@ public class HeightFragment extends Fragment {
     double t_height;
     double new_height;
 
+    float altitude;
     float compass;
     float f_angle = 0;
     float t_angle = 0;
     float xy_angle = 0;
     float x_angle = 0;
     float y_angle = 0;
+
 
     MainActivity ma = null;
 
@@ -251,6 +253,76 @@ public class HeightFragment extends Fragment {
                 float distance = (float) (Math.tan(x_angle) * phoneHeight);
                 compass = Math.abs(mMySensorEventListener.getYaw());
                 compass = Math.round(compass);
+                altitude = Math.abs(mMySensorEventListener.getAltitude());
+                for (int i = 1; i < ma.angle_vec.size(); i++) {
+                    if (ma.height_vec.isEmpty()) {
+                        x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        ma.height_vec.add(x_height);
+                        t_height += x_height;
+                    } else {
+                        double tmp_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        new_height = tmp_height - t_height;
+                        ma.height_vec.add(new_height);
+                        t_height += new_height;
+                    }
+                }
+                t_height += phoneHeight;
+                String totalHeightValue = String.format("%.1f", t_height);
+                ma.mHeight_val=t_height;
+                ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"
+                        + mMySensorEventListener.matchDirection(compass));
+                ma.mAltitude_tv.setText(("고        도 :"+ altitude + "m"));
+            }
+        }
+    };
+
+
+
+
+    final ImageButton.OnClickListener getCalculatePlatHeight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calPlat) {
+
+            if (calPlat.getId() == R.id.Btn_calPlat) {
+                float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
+                float distance = (float) (Math.tan(x_angle) * phoneHeight);
+                compass = Math.abs(mMySensorEventListener.getYaw());
+                compass = Math.round(compass);
+                for (int i = 1; i < ma.angle_vec.size(); i++) {
+                    if (ma.height_vec.isEmpty()) {
+                        x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        ma.height_vec.add(x_height);
+                        t_height += x_height;
+                    } else {
+                        double tmp_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        new_height = tmp_height - t_height;
+                        ma.height_vec.add(new_height);
+                        t_height += new_height;
+                    }
+                }
+                t_height += phoneHeight;
+                String totalHeightValue = String.format("%.1f", t_height);
+                ma.mHeight_val=t_height;
+                ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"+mMySensorEventListener.matchDirection(compass));
+
+            }
+        }
+    };
+
+
+
+
+    final ImageButton.OnClickListener getCalculateDownHeight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View calDown) {
+
+            if (calDown.getId() == R.id.Btn_calPlat) {
+                float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
+                float distance = (float) (Math.tan(x_angle) * phoneHeight);
+                compass = Math.abs(mMySensorEventListener.getYaw());
+                compass = Math.round(compass);
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
@@ -272,23 +344,6 @@ public class HeightFragment extends Fragment {
         }
     };
 
-    final ImageButton.OnClickListener getCalculatePlatHeight = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View calPlat) {
-
-        }
-    };
-
-
-
-
-    final ImageButton.OnClickListener getCalculateDownHeight = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View calDown) {
-
-        }
-    };
-
 
 
 
@@ -296,6 +351,29 @@ public class HeightFragment extends Fragment {
         @Override
         public void onClick(View calUp) {
 
+            if (calUp.getId() == R.id.Btn_calPlat) {
+                float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
+                float distance = (float) (Math.tan(x_angle) * phoneHeight);
+                compass = Math.abs(mMySensorEventListener.getYaw());
+                compass = Math.round(compass);
+                for (int i = 1; i < ma.angle_vec.size(); i++) {
+                    if (ma.height_vec.isEmpty()) {
+                        x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        ma.height_vec.add(x_height);
+                        t_height += x_height;
+                    } else {
+                        double tmp_height = distance * Math.tan(ma.angle_vec.elementAt(i));
+                        new_height = tmp_height - t_height;
+                        ma.height_vec.add(new_height);
+                        t_height += new_height;
+                    }
+                }
+                t_height += phoneHeight;
+                String totalHeightValue = String.format("%.1f", t_height);
+                ma.mHeight_val=t_height;
+                ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
+                ma.mCompass_tv.setText("방        위 :"+compass+"°"+ mMySensorEventListener.matchDirection(compass));
+            }
         }
     };
 
@@ -312,6 +390,7 @@ public class HeightFragment extends Fragment {
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
     }
 
     @Override

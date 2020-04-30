@@ -46,6 +46,7 @@
         android:id="@+id/radius_controller"
         android:layout_width="300dp"
         android:layout_height="30dp"
+        android:max="70"
         android:layout_alignParentRight="true"/>
 
     <TextView
@@ -62,6 +63,7 @@
         android:id="@+id/position_controller"
         android:layout_width="300dp"
         android:layout_height="30dp"
+        android:max="70"
         android:layout_below="@id/radius_controller"
         android:layout_alignParentRight="true"/>
 
