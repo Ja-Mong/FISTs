@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     //heightfragment에서 메인으로 이동
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
 
 
     //AR관련

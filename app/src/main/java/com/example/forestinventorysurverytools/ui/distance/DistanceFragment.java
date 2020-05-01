@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -41,22 +44,19 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import android.util.Log;
 
 import java.util.Objects;
+import java.util.Vector;
 
-public class DistanceFragment extends Fragment {
+import static android.content.Context.LOCATION_SERVICE;
+
+public class DistanceFragment extends Fragment implements LocationListener {
 
     View root;
-    CameraAPI mDistCameraAPI;
-    TextureView mCameraPreview_dist;
 
-    SensorManager mSensorManager;
-    MySensorEventListener mMySensorEventListener;
+    LocationManager mLocationManager;
 
-    Handler mCameraHandler;
-    HandlerThread mCameraThread;
-
-    ImageButton mBtn_distance;
-
-    float angle;
+    double longitude;
+    double latitude;
+    double altitude;
 
     MainActivity ma=null;
     public DistanceFragment(MainActivity ma){this.ma=ma;}
@@ -69,6 +69,8 @@ public class DistanceFragment extends Fragment {
 
 
         root = inflater.inflate(R.layout.fragment_distance, null);
+
+        mLocationManager = (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
 
         //layout에 정의한 아이디 구현 및 정의
 
@@ -118,6 +120,11 @@ public class DistanceFragment extends Fragment {
                 ma.mDistance_tv.setText("거        리 : " + meter+"m");
                 Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
 
+                if (ma.altitude_vec.isEmpty()) {
+                    ma.altitude_vec.add(altitude);
+
+                }
+
             }
         });
 
@@ -134,4 +141,28 @@ public class DistanceFragment extends Fragment {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
+
+    //Altitude
+    @Override
+    public void onLocationChanged(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        altitude = location.getAltitude();
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }

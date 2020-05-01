@@ -9,6 +9,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,6 +32,7 @@ import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.ux.ArFragment;
 
@@ -38,14 +42,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class HeightFragment extends Fragment {
+public class HeightFragment extends Fragment implements LocationListener {
 
     View root;
 
     SensorManager mSensorManager;
+    LocationManager mLocationManager;
     MySensorEventListener mMySensorEventListener;
 
     ImageButton mBtn_height;
@@ -58,6 +64,10 @@ public class HeightFragment extends Fragment {
     double x_height;
     double t_height;
     double new_height;
+    double longitude;
+    double latitude;
+    double altitude;
+
 
 
     float compass;
@@ -75,12 +85,15 @@ public class HeightFragment extends Fragment {
     }
 
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_height, container, false);
 
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
@@ -255,6 +268,7 @@ public class HeightFragment extends Fragment {
                 compass = Math.round(compass);
 
 
+
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
@@ -273,6 +287,7 @@ public class HeightFragment extends Fragment {
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
                 ma.mCompass_tv.setText("방        위 :"+compass+"°"
                         + mMySensorEventListener.matchDirection(compass));
+                ma.mAltitude_tv.setText("고        도 :" + Integer.toString((int) altitude) + "m");
 
             }
         }
@@ -391,6 +406,7 @@ public class HeightFragment extends Fragment {
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
@@ -398,6 +414,30 @@ public class HeightFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mMySensorEventListener);
+        mLocationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        altitude = location.getAltitude();
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
 
