@@ -55,7 +55,6 @@ public class HeightFragment extends Fragment implements LocationListener {
     MySensorEventListener mMySensorEventListener;
 
     ImageButton mBtn_height;
-    ImageButton mBtn_calculate;
     ImageButton mBtn_capture;
     ImageButton mBtn_calPlat;
     ImageButton mBtn_calDown;
@@ -97,7 +96,6 @@ public class HeightFragment extends Fragment implements LocationListener {
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
         mBtn_height = (ImageButton) root.findViewById(R.id.Btn_height);
-        mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
         mBtn_calPlat = (ImageButton) root.findViewById(R.id.Btn_calPlat);
         mBtn_calDown = (ImageButton) root.findViewById(R.id.Btn_calDown);
@@ -105,7 +103,6 @@ public class HeightFragment extends Fragment implements LocationListener {
 
 
         mBtn_height.setOnClickListener(measureHeight);
-        mBtn_calculate.setOnClickListener(getCalculateHeight);
         mBtn_capture.setOnClickListener(takeCapture);
         mBtn_calPlat.setOnClickListener(getCalculatePlatHeight);
         mBtn_calDown.setOnClickListener(getCalculateDownHeight);
@@ -133,7 +130,11 @@ public class HeightFragment extends Fragment implements LocationListener {
         public void onClick(View height) {
 
             mMySensorEventListener.updateOrientationAngles();
+
+
+
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
+
                 if (ma.angle_vec.isEmpty()) {
                     f_angle = Math.abs(mMySensorEventListener.getRoll());
                     ma.angle_vec.add(f_angle);
@@ -145,7 +146,11 @@ public class HeightFragment extends Fragment implements LocationListener {
                     y_angle = Math.abs(xy_angle - x_angle);
                     ma.angle_vec.add(y_angle);
                     showToast(Integer.toString(ma.angle_vec.size()));
+
+
                 }
+            } else {
+                showToast("하얀색 Box에 사용자가 들고있는 휴대폰의 높이를 입력하여 주세요.");
             }
         }
     };
@@ -255,47 +260,6 @@ public class HeightFragment extends Fragment implements LocationListener {
     }
 
 
-
-    final ImageButton.OnClickListener getCalculateHeight = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View calculate) {
-
-
-            if (calculate.getId() == R.id.Btn_calculate) {
-                float phoneHeight = Float.valueOf(ma.mInputHeight.getText().toString()) /100f;
-                float distance = (float) (Math.tan(x_angle) * phoneHeight);
-                compass = Math.abs(mMySensorEventListener.getYaw());
-                compass = Math.round(compass);
-
-
-
-                for (int i = 1; i < ma.angle_vec.size(); i++) {
-                    if (ma.height_vec.isEmpty()) {
-                        x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
-                        ma.height_vec.add(x_height);
-                        t_height += x_height;
-                    } else {
-                        double tmp_height = distance * Math.tan(ma.angle_vec.elementAt(i));
-                        new_height = tmp_height - t_height;
-                        ma.height_vec.add(new_height);
-                        t_height += new_height;
-                    }
-                }
-                t_height += phoneHeight;
-                String totalHeightValue = String.format("%.1f", t_height);
-                ma.mHeight_val=t_height;
-                ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
-                ma.mCompass_tv.setText("방        위 :"+compass+"°"
-                        + mMySensorEventListener.matchDirection(compass));
-                ma.mAltitude_tv.setText("고        도 :" + Integer.toString((int) altitude) + "m");
-
-            }
-        }
-    };
-
-
-
-
     final ImageButton.OnClickListener getCalculatePlatHeight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View calPlat) {
@@ -322,6 +286,7 @@ public class HeightFragment extends Fragment implements LocationListener {
                 ma.mHeight_val=t_height;
                 ma.mHeight_tv.setText("수        고 :" + totalHeightValue + "m");
                 ma.mCompass_tv.setText("방        위 :"+compass+"°"+mMySensorEventListener.matchDirection(compass));
+                ma.mAltitude_tv.setText("고        도 :" + Integer.toString((int) altitude) + "m");
 
             }
         }
@@ -341,6 +306,12 @@ public class HeightFragment extends Fragment implements LocationListener {
                 compass = Math.round(compass);
                 for (int i = 1; i < ma.angle_vec.size(); i++) {
                     if (ma.height_vec.isEmpty()) {
+                        float t_altitude = (float) Math.abs(phoneHeight + Math.abs(altitude));
+
+
+
+
+
                         x_height = distance * Math.tan(ma.angle_vec.elementAt(i));
                         ma.height_vec.add(x_height);
                         t_height += x_height;
