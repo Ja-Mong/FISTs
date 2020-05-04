@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
-import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+//import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,6 +36,7 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
+import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
@@ -70,11 +72,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Vector;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Scene.OnUpdateListener {
 
 
-    DistanceFragment distanceFragment;
-    DiameterFragment diameterFragment;
+    public DiameterFragment diameterFragment;
     HeightFragment heightFragment;
 
     boolean cameraPermission;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public TextView mHeight_tv;
     public TextView mCompass_tv;
     public TextView mAltitude_tv;
-    public EditText mInputHeight;
+
 
     // 거리, 흉고직경, 높이 실제 값 저장 변수
     public double mInclinometer_val;
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
     public Session mSession;
-
+    public SeekBar radiusbar;
+    int radi = 10;
 
 
     private boolean mUserRequestedInstall = true;
@@ -125,16 +127,11 @@ public class MainActivity extends AppCompatActivity {
         mHeight_tv = (TextView) this.findViewById(R.id.tv_height);
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
-        mInputHeight = (EditText) this.findViewById(R.id.input_height);
 
 
-
-        distanceFragment = new DistanceFragment(this);
+//        distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
-
-
-
 
 
         //ARCore API 접근 개체 생성
@@ -162,25 +159,52 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         //AR 지원 가능 여부 체크
         if (!checkIsSupportedDeviceOrFinish(this)) {
-            Toast.makeText(this, "Device not supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "본 디바이스는 AR을 지원하지 않습니다.", Toast.LENGTH_LONG).show();
         }
-        //arFragment정의
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
+        radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
+        radiusbar.setMax(100);
+        radiusbar.setProgress(radi);
+        radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                showToast("기능 사용을 위해선 먼저 화면을 터치하시고, 빨간 원기둥을 생성하세요.");
+
+                radi = progress;
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                initModel();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+            }
+        });
+
+
+        //arFragment정의
+        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.navigation_distance:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
-                        return true;
+//                    case R.id.navigation_distance:
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
+//                        return true;
                     case R.id.navigation_diameter:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
                         return true;
@@ -217,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
 
         String openGlVersionString =
@@ -233,19 +256,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public float radius = 0.1f;
-    public float axis_z = 0.0f;
-
 
     public void initModel() {
         MaterialFactory.makeTransparentWithColor(this,
-                new Color(1.0f, 0.0f,0.0f,0.5f))
+                new Color(1.0f, 0.0f, 0.0f, 0.5f))
                 .thenAccept(
                         material -> {
 
+                            Vector3 vector3 = new Vector3(0.0f, 0.6f, 0.0f);
                             modelRenderable = ShapeFactory.makeCylinder
-                                    (radius,  1.2f,
-                                    new Vector3(0.0f, 0.6f, axis_z), material);
+                                    ((float) radi / 100, 1.2f,
+                                            vector3, material);
 
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
@@ -263,6 +284,27 @@ public class MainActivity extends AppCompatActivity {
             anchorNode.setParent(null);
             anchorNode = null;
         }
+    }
+
+    Anchor tmpA;
+    AnchorNode tmpAN;
+    TransformableNode node;
+
+    public void saveAnchor() {
+        tmpA = anchor;
+        tmpAN = anchorNode;
+
+    }
+
+    public void retrieveAnchor() {
+        anchor = tmpA;
+        anchorNode = tmpAN;
+        node = new TransformableNode(arFragment.getTransformationSystem());
+        node.setRenderable(modelRenderable);
+        node.setParent(anchorNode);
+        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+        arFragment.getArSceneView().getScene().addChild(anchorNode);
+        node.select();
     }
 
 
@@ -332,12 +374,12 @@ public class MainActivity extends AppCompatActivity {
                     fw.close();
 
                     Log.d("tag", "File 생성완료");
-                    Toast.makeText(this,dirPath+"에 저장 하였습니다.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, dirPath + "에 저장 하였습니다.", Toast.LENGTH_LONG).show();
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }else{
+        } else {
 
         }
 
@@ -351,5 +393,17 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+    }
+
+    @Override
+    public void onUpdate(FrameTime frameTime) {
+        com.google.ar.core.Camera camera = arFragment.getArSceneView().getArFrame().getCamera();
+        if (camera.getTrackingState() == TrackingState.TRACKING) {
+            arFragment.getPlaneDiscoveryController().hide();
+        }
+    }
+
+    public void showToast(String data) {
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
     }
 }

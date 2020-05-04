@@ -8,6 +8,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +22,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,9 +33,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
-import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
-import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+//import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Pose;
@@ -52,31 +55,20 @@ import java.util.Objects;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment {
+public class DiameterFragment extends Fragment implements LocationListener, Scene.OnUpdateListener{
 
     View root;
 
-    SensorManager mSensorManager;
-    MySensorEventListener mMySensorEventListener;
+    LocationManager mLocationManager;
 
-    ImageButton mBtn_diameter;
-    ImageButton mBtn_calculate;
+    double longitude;
+    double latitude;
+    double altitude;
 
-    TextView radiusTitle;
-    TextView positionTitle;
+    MainActivity ma = null;
 
-    SeekBar controller_radius;
-    SeekBar controller_position;
-
-    double diameter1;
-    double diameter2;
-
-    float angle;
-    float angle2;
-
-    MainActivity ma=null;
-
-    public DiameterFragment(MainActivity ma){this.ma=ma;}
+    public DiameterFragment(MainActivity ma) {this.ma = ma;}
+    public TransformableNode node;
 
 
     @Override
@@ -84,29 +76,59 @@ public class DiameterFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_diameter, null);
 
 
-        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-        mMySensorEventListener = new MySensorEventListener(mSensorManager);
-
-        mBtn_diameter = (ImageButton) root.findViewById(R.id.Btn_diameter);
-        mBtn_calculate = (ImageButton) root.findViewById(R.id.Btn_calculate);
-
-        radiusTitle = (TextView)root.findViewById(R.id.radius_controller_Name);
-        positionTitle = (TextView)root.findViewById(R.id.position_controller_Name);
-
-        controller_radius = (SeekBar)root.findViewById(R.id.radius_controller);
-        controller_position = (SeekBar)root.findViewById(R.id.position_controller);
-
-        controller_radius.setOnSeekBarChangeListener(controllRadius);
-        controller_position.setOnSeekBarChangeListener(controllerPosition);
+        ma.initModel();
 
 
-        mBtn_diameter.setOnClickListener(measureDiameter);
-        mBtn_calculate.setOnClickListener(getMeasureDiameter);
+        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
 
+            if (ma.modelRenderable == null)
+                return;
 
-        // 현재 이 부분으로 인해서 거리에서 탭해서 생긴 앵커, 직경에서 탭해서 생긴 앵커 이렇게 따로따로 있음.
-        // 추후 MainActivity에서 anchor, anchorNode를 List나 Vector타입으로 관리하면 될듯 싶습니다.
+            // Creating Anchor.
+            Anchor anchor2 = hitResult.createAnchor();
+            AnchorNode anchorNode2 = new AnchorNode(anchor2);
+
+            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
+
+            ma.clearAnchor();
+
+            ma.anchor = anchor2;
+            ma.anchorNode = anchorNode2;
+
+            node = new TransformableNode(ma.arFragment.getTransformationSystem());
+            node.setRenderable(ma.modelRenderable);
+            node.setParent(anchorNode2);
+            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            node.select();
+
+
+            if (ma.anchorNode != null) {
+                Frame frame = ma.arFragment.getArSceneView().getArFrame();
+
+                Pose objectPose = ma.anchor.getPose();
+                Pose cameraPose = frame.getCamera().getPose();
+
+                float dx = objectPose.tx() - cameraPose.tx();
+                float dy = objectPose.ty() - cameraPose.ty();
+                float dz = objectPose.tz() - cameraPose.tz();
+
+                ///Compute the straight-line distance.
+                float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                String meter = String.format("%.2f", distanceMeters);
+
+                ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
+
+                if (ma.altitude_vec.isEmpty()) {
+                    ma.altitude_vec.add(altitude);
+
+                }
+            }
+        });
+
+
 
         return root;
     }
@@ -119,113 +141,30 @@ public class DiameterFragment extends Fragment {
     }
 
 
-    /**
-     * distance(수평거리) = 경사를 측정할때 구하도록 작업하기
-     * angle = Math.abs(mMySensorEventListener.getPitch());
-     * x_angle = angle/2;
-     * y_angle = angle/2;
-     * diameter1 = Math.tan(x_angle) * distance;
-     * diameter2 = Math.tan(y_angle) * distance;
-     * t_diameter = diameter1 + diameter2;
-     */
-
-
-    //SeekBar
-    SeekBar.OnSeekBarChangeListener controllRadius = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            ma.radius = controller_radius.getProgress();
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
-
-
-    SeekBar.OnSeekBarChangeListener controllerPosition = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            ma.axis_z = controller_position.getProgress();
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
-
-    //Button
-    ImageButton.OnClickListener measureDiameter = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View diameter) {
-            mMySensorEventListener.updateOrientationAngles();
-            if (ma.angle_vec.isEmpty()) {
-                angle = Math.abs(mMySensorEventListener.getPitch());
-                ma.angle_vec.add((float) angle);
-                showToast(Integer.toString(ma.angle_vec.size()));
-            } else {
-                angle2 = Math.abs(mMySensorEventListener.getPitch());
-                angle2 = angle2 + angle;
-                angle2 = angle2/2;
-                ma.angle_vec.add((float) angle2);
-                showToast(Integer.toString(ma.angle_vec.size()));
-            }
-        }
-    };
-
-
-
-    ImageButton.OnClickListener getMeasureDiameter = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View calculate) {
-            if (calculate.getId() == R.id.Btn_calculate) {
-                float x_angle = angle2;
-                float y_angle = angle2;
-                diameter1 = Math.tan(x_angle) * ma.mDistance_val;
-                diameter2 = Math.tan(y_angle) * ma.mDistance_val;
-                ma.mDiameter_val = diameter1 + diameter2;
-                String dbh = String.format("%.2f", ma.mDiameter_val);
-                ma.mDiameter_tv.setText("흉고직경: " + dbh + "cm");
-                showToast("계산완료");
-            }
-        }
-    };
-
-
-
-
-
     @Override
-    public void onResume() {
-        super.onResume();
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+    public void onUpdate(FrameTime frameTime) {
+
     }
 
-
+    @Override
+    public void onLocationChanged(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        altitude = location.getAltitude();
+    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mSensorManager.unregisterListener(mMySensorEventListener);
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
-
-

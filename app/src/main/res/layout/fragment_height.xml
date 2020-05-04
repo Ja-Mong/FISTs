@@ -7,69 +7,31 @@
     tools:context=".ui.height.HeightFragment">
 
 
-
-    <ImageButton
-        android:id="@+id/Btn_height"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="65dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:background="@drawable/circle_background"
-        android:src="@drawable/heigth"/>
-
-
     <ImageButton
         android:id="@+id/Btn_capture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@id/Btn_height"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="40dp"
-        android:layout_marginBottom="65dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="140dp"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"
-        android:scaleType="fitCenter"
-        android:src="@drawable/capture" />
+        android:scaleType="centerInside"
+        android:src="@drawable/camera" />
 
-    <ImageButton
-        android:id="@+id/Btn_calPlat"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_above="@id/Btn_calDown"
-        android:adjustViewBounds="true"
-        android:background="@drawable/circle_background"
-        android:scaleType="fitCenter"
-        android:src="@drawable/plat" />
 
-    <ImageButton
-        android:id="@+id/Btn_calDown"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="30dp"
+    <CheckBox
+        android:id="@+id/savePortraitScreen"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/saveOriginImage"
         android:layout_alignParentRight="true"
-        android:layout_above="@id/Btn_calUp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/circle_background"
-        android:scaleType="fitCenter"
-        android:src="@drawable/down" />
+        android:checked="true"
+        android:text="세로저장" />
 
-    <ImageButton
-        android:id="@+id/Btn_calUp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="65dp"
+    <CheckBox
+        android:id="@+id/saveOriginImage"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:adjustViewBounds="true"
-        android:background="@drawable/circle_background"
-        android:scaleType="fitCenter"
-        android:src="@drawable/up" />
+        android:text="원본이미지저장" />
+
 </RelativeLayout>

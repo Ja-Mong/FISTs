@@ -6,8 +6,8 @@
     <fragment
         android:id="@+id/camera_preview_fr"
         android:name="com.google.ar.sceneform.ux.ArFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -25,14 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
+        >
+    </FrameLayout>
 
-    <ImageView
-        android:id="@+id/focus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/focus"
-        android:layout_centerInParent="true"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -46,8 +41,9 @@
 
     <TextView
         android:id="@+id/tv_inclinometer"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:text="경        사 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
@@ -56,8 +52,9 @@
         />
     <TextView
         android:id="@+id/tv_compass"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:text="방        위 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
@@ -66,8 +63,9 @@
         />
     <TextView
         android:id="@+id/tv_height"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:text="수        고 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
@@ -76,8 +74,9 @@
         />
     <TextView
         android:id="@+id/tv_diameter"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:text="흉고직경 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
@@ -86,8 +85,9 @@
         />
     <TextView
         android:id="@+id/tv_distance"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:text="거        리 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
@@ -96,25 +96,83 @@
         />
     <TextView
         android:id="@+id/tv_alititude"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:background="#757575"
         android:text="고        도 :"
         android:textColor="#FFFF"
         android:textSize="13sp"
-        android:layout_above="@id/input_height" />
+        android:layout_above="@id/radi_controller" />
 
-    <EditText
-        android:id="@+id/input_height"
-        android:layout_width="100dp"
+    <TextView
+        android:id="@+id/radi_controller"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="120dp"
-        android:background="#FFFF"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:textSize="13sp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_toLeftOf="@id/radi_controller1"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="76dp"
+        android:text="직경 조절"
+        android:textStyle="bold"/>
+
+    <SeekBar
+        android:id="@+id/radi_controller1"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="65dp"/>
+
+    <ImageButton
+        android:id="@+id/left"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/left"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
+    <ImageButton
+        android:id="@+id/bottom"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/bottom"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
+
+    <ImageButton
+        android:id="@+id/right"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/bottom"
+        android:src="@drawable/right"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
+    <ImageButton
+        android:id="@+id/up"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_above="@id/bottom"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/up"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
 
     <ImageButton
         android:id="@+id/Btn_reset"
@@ -124,12 +182,11 @@
         android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/reset"
-        android:layout_toRightOf="@id/input_height"
         android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_marginBottom="65dp"
         />
+
     <ImageButton
         android:id="@+id/Btn_back_step"
         android:layout_width="35dp"
@@ -137,10 +194,9 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
-        android:src="@drawable/undo"
+        android:src="@drawable/previous"
         android:layout_toRightOf="@id/Btn_reset"
         android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="65dp"
         />
 
@@ -148,15 +204,13 @@
         android:id="@+id/Btn_save"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_alignParentBottom="true"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="65dp"
         android:layout_toRightOf="@id/Btn_back_step"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"
         android:onClick="Save_data"
-        android:scaleType="fitCenter"
-        android:src="@drawable/save" />
-
+        android:scaleType="centerInside"
+        android:src="@drawable/save_data" />
 
 </RelativeLayout>
