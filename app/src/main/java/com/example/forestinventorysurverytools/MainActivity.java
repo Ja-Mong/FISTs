@@ -109,8 +109,23 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
     public Session mSession;
+
+    //AR controller
     public SeekBar radiusbar;
     int radi = 10;
+    public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
+    int height = 10;
+    public ImageButton mTop;
+    //Top은 MinusZ
+    public ImageButton mBottom;
+    int axis_plusZ = 0;
+    public ImageButton mRight;
+    int axis_plusX = 0;
+    public ImageButton mLeft;
+    //Left는 MinusX
+
+
+
 
 
     private boolean mUserRequestedInstall = true;
@@ -127,6 +142,16 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mHeight_tv = (TextView) this.findViewById(R.id.tv_height);
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
+
+        mTop = (ImageButton) this.findViewById(R.id.top);
+        mBottom = (ImageButton) this.findViewById(R.id.bottom);
+        mLeft = (ImageButton) this.findViewById(R.id.left);
+        mRight = (ImageButton) this.findViewById(R.id.right);
+
+        mTop.setOnClickListener(controll_BtnTop);
+        mBottom.setOnClickListener(controll_BtnBottom);
+        mLeft.setOnClickListener(controll_BtnLeft);
+        mRight.setOnClickListener(controll_BtnRight);
 
 
 //        distanceFragment = new DistanceFragment(this);
@@ -166,13 +191,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
+        //control radius
         radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
         radiusbar.setMax(100);
         radiusbar.setProgress(radi);
+
         radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                showToast("기능 사용을 위해선 먼저 화면을 터치하시고, 빨간 원기둥을 생성하세요.");
 
                 radi = progress;
                 initModel();
@@ -202,9 +228,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-//                    case R.id.navigation_distance:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, distanceFragment).commit();
-//                        return true;
                     case R.id.navigation_diameter:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
                         return true;
@@ -263,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3(0.0f, 0.6f, 0.0f);
+                            Vector3 vector3 = new Vector3((float) axis_plusX/100, 0.6f, (float) axis_plusZ/100);
                             modelRenderable = ShapeFactory.makeCylinder
                                     ((float) radi / 100, 1.2f,
                                             vector3, material);
@@ -406,4 +429,59 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public void showToast(String data) {
         Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
     }
+
+
+
+    ImageButton.OnClickListener controll_BtnTop = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllTop) {
+
+            if (controllTop == mTop) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_plusZ--;
+
+            }
+        }
+    };
+
+    ImageButton.OnClickListener controll_BtnBottom = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllBottom) {
+
+            if (controllBottom == mBottom) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_plusZ++;
+            }
+        }
+    };
+
+    ImageButton.OnClickListener controll_BtnLeft = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllLeft) {
+
+            if (controllLeft == mLeft) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_plusX--;
+            }
+        }
+    };
+
+    ImageButton.OnClickListener controll_BtnRight = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllRight) {
+
+            if (controllRight == mRight) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_plusX++;
+            }
+        }
+    };
 }
