@@ -232,4 +232,28 @@
         android:scaleType="centerInside"
         android:src="@drawable/save_data" />
 
+    <ImageButton
+        android:id="@+id/Btn_delete"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_above="@id/top"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerInside"
+        android:src="@drawable/delete" />
+
+    <ImageButton
+        android:id="@+id/Btn_add"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_above="@id/Btn_delete"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerInside"
+        android:src="@drawable/add" />
+
 </RelativeLayout>

@@ -31,8 +31,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.forestinventorysurverytools.CameraAPI;
+//import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
+import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.google.ar.core.Anchor;
@@ -53,17 +54,24 @@ import org.w3c.dom.Text;
 
 import java.util.Objects;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 public class DiameterFragment extends Fragment implements LocationListener, Scene.OnUpdateListener{
 
     View root;
 
+
+    SensorManager mSensorManager;
     LocationManager mLocationManager;
+    MySensorEventListener mMySensorEventListener;
+
 
     double longitude;
     double latitude;
     double altitude;
+    float compass;
+
 
     MainActivity ma = null;
 
@@ -76,11 +84,14 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         root = inflater.inflate(R.layout.fragment_diameter, null);
 
 
+        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        mMySensorEventListener = new MySensorEventListener(mSensorManager);
+
         ma.initModel();
 
 
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
 
             if (ma.modelRenderable == null)
                 return;
@@ -88,14 +99,15 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             // Creating Anchor.
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
-
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
 
-            ma.clearAnchor();
+            // renewal of anchor
+//            ma.clearAnchor();
 
+
+            // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
             ma.anchorNode = anchorNode2;
-
             node = new TransformableNode(ma.arFragment.getTransformationSystem());
             node.setRenderable(ma.modelRenderable);
             node.setParent(anchorNode2);
@@ -119,16 +131,21 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 String meter = String.format("%.2f", distanceMeters);
 
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                Toast.makeText(ma.getApplicationContext(), meter, Toast.LENGTH_LONG).show();
 
                 if (ma.altitude_vec.isEmpty()) {
                     ma.altitude_vec.add(altitude);
+                    ma.mAltitude_tv.setText("고        도 :" +
+                            Integer.toString((int) altitude) + "m");
+                }
 
+                if (ma.compass_vec.isEmpty()) {
+                    compass = Math.abs(mMySensorEventListener.getYaw());
+                    compass = Math.round(compass);
+                    ma.mCompass_tv.setText("방        위 : " + compass + "°"
+                            + mMySensorEventListener.matchDirection(compass));
                 }
             }
         });
-
-
 
         return root;
     }
@@ -146,6 +163,29 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
     }
 
+
+
+    //Location and Altitude
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                0, 0, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mMySensorEventListener);
+        mLocationManager.removeUpdates(this);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         longitude = location.getLongitude();
@@ -154,17 +194,14 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
 
     @Override
-    public void onProviderEnabled(String provider) {
-
-    }
+    public void onProviderEnabled(String provider) { }
 
     @Override
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(String provider) { }
 
-    }
+
 }
+

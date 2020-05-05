@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
     public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
+    public Vector<Float> compass_vec = new Vector<Float>(); // 측정한 모든 compass 값 저장
 
 
     //AR관련
@@ -113,19 +115,19 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     //AR controller
     public SeekBar radiusbar;
     int radi = 10;
+
     public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
     int height = 10;
+
     public ImageButton mTop;
-    //Top은 MinusZ
     public ImageButton mBottom;
-    int axis_plusZ = 0;
+    int axis_Z = 0;
+
     public ImageButton mRight;
-    int axis_plusX = 0;
     public ImageButton mLeft;
-    //Left는 MinusX
+    int axis_X = 0;
 
-
-
+    public ImageButton mAdd_anchor;
 
 
     private boolean mUserRequestedInstall = true;
@@ -147,14 +149,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mBottom = (ImageButton) this.findViewById(R.id.bottom);
         mLeft = (ImageButton) this.findViewById(R.id.left);
         mRight = (ImageButton) this.findViewById(R.id.right);
+        mAdd_anchor = (ImageButton) this.findViewById(R.id.Btn_add);
 
         mTop.setOnClickListener(controll_BtnTop);
         mBottom.setOnClickListener(controll_BtnBottom);
         mLeft.setOnClickListener(controll_BtnLeft);
         mRight.setOnClickListener(controll_BtnRight);
+        mAdd_anchor.setOnClickListener(addNew_anchor);
 
 
-//        distanceFragment = new DistanceFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
 
@@ -222,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //arFragment정의
         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
 
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -286,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float) axis_plusX/100, 0.6f, (float) axis_plusZ/100);
+                            Vector3 vector3 = new Vector3((float) axis_X/100, 0.6f, (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
                                     ((float) radi / 100, 1.2f,
                                             vector3, material);
@@ -432,6 +434,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
 
+    //control the object
+    //Top
     ImageButton.OnClickListener controll_BtnTop = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View controllTop) {
@@ -440,38 +444,16 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 initModel();
                 diameterFragment.node.setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_plusZ--;
+                axis_Z--;
 
             }
         }
     };
 
-    ImageButton.OnClickListener controll_BtnBottom = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View controllBottom) {
 
-            if (controllBottom == mBottom) {
-                initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_plusZ++;
-            }
-        }
-    };
 
-    ImageButton.OnClickListener controll_BtnLeft = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View controllLeft) {
 
-            if (controllLeft == mLeft) {
-                initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_plusX--;
-            }
-        }
-    };
-
+    //Bottom
     ImageButton.OnClickListener controll_BtnRight = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View controllRight) {
@@ -480,7 +462,53 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 initModel();
                 diameterFragment.node.setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_plusX++;
+                axis_X++;
+
+            }
+        }
+    };
+
+
+
+
+    //Right
+    ImageButton.OnClickListener controll_BtnBottom = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllBottom) {
+
+            if (controllBottom == mBottom) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_Z++;
+            }
+        }
+    };
+
+
+
+    //Left
+    ImageButton.OnClickListener controll_BtnLeft = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View controllLeft) {
+
+            if (controllLeft == mLeft) {
+                initModel();
+                diameterFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                axis_X--;
+            }
+        }
+    };
+
+    ImageButton.OnClickListener addNew_anchor = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View add_anchor) {
+
+            if (add_anchor == mAdd_anchor) {
+                initModel();
+
+
             }
         }
     };

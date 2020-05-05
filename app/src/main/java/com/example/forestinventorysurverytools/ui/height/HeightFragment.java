@@ -29,7 +29,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import com.example.forestinventorysurverytools.CameraAPI;
+//import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 //import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
@@ -47,7 +47,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class HeightFragment extends Fragment implements LocationListener {
+public class HeightFragment extends Fragment {
 
     View root;
 
@@ -55,15 +55,6 @@ public class HeightFragment extends Fragment implements LocationListener {
 
     CheckBox mSavePortraitScr;
     CheckBox mSaveOriginImage;
-
-    double longitude;
-    double latitude;
-    double altitude;
-
-
-    float compass;
-
-
 
     MainActivity ma = null;
 
@@ -78,8 +69,6 @@ public class HeightFragment extends Fragment implements LocationListener {
 
 
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
-
-
 
         mSaveOriginImage = (CheckBox)root.findViewById(R.id.saveOriginImage);
         mSavePortraitScr = (CheckBox)root.findViewById(R.id.savePortraitScreen);
@@ -226,30 +215,6 @@ public class HeightFragment extends Fragment implements LocationListener {
         } else {
             return false;
         }
-
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-        altitude = location.getAltitude();
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
 
     }
 }

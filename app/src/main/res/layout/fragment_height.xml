@@ -9,9 +9,11 @@
 
     <ImageButton
         android:id="@+id/Btn_capture"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginLeft="140dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"
         android:scaleType="centerInside"
