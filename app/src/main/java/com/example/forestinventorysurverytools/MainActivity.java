@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.media.Image;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -125,8 +126,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     int axis_X = 0;
     public ImageButton mAdd_anchor;
     public ImageButton mDelete_anchor;
-
-    
+//    public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
 
 
     private boolean mUserRequestedInstall = true;
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         mInclinometer_tv = (TextView) this.findViewById(R.id.tv_inclinometer);
