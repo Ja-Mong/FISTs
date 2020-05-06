@@ -115,19 +115,18 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     //AR controller
     public SeekBar radiusbar;
     int radi = 10;
-
     public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
     int height = 10;
-
     public ImageButton mTop;
     public ImageButton mBottom;
     int axis_Z = 0;
-
     public ImageButton mRight;
     public ImageButton mLeft;
     int axis_X = 0;
-
     public ImageButton mAdd_anchor;
+    public ImageButton mDelete_anchor;
+
+    
 
 
     private boolean mUserRequestedInstall = true;
@@ -150,12 +149,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mLeft = (ImageButton) this.findViewById(R.id.left);
         mRight = (ImageButton) this.findViewById(R.id.right);
         mAdd_anchor = (ImageButton) this.findViewById(R.id.Btn_add);
+        mDelete_anchor = (ImageButton) this.findViewById(R.id.Btn_delete);
 
         mTop.setOnClickListener(controll_BtnTop);
         mBottom.setOnClickListener(controll_BtnBottom);
         mLeft.setOnClickListener(controll_BtnLeft);
         mRight.setOnClickListener(controll_BtnRight);
         mAdd_anchor.setOnClickListener(addNew_anchor);
+        mDelete_anchor.setOnClickListener(delSelect_anchor);
 
 
         diameterFragment = new DiameterFragment(this);
@@ -506,6 +507,18 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         public void onClick(View add_anchor) {
 
             if (add_anchor == mAdd_anchor) {
+                initModel();
+
+
+            }
+        }
+    };
+
+    ImageButton.OnClickListener delSelect_anchor = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View delete_anchor) {
+
+            if (delete_anchor == mDelete_anchor) {
                 initModel();
 
 
