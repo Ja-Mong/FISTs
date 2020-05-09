@@ -34,8 +34,14 @@ import com.example.forestinventorysurverytools.MainActivity;
 //import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
+import com.google.ar.core.Anchor;
+import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +53,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 
-public class HeightFragment extends Fragment {
+public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
     View root;
 
@@ -58,23 +64,26 @@ public class HeightFragment extends Fragment {
 
     MainActivity ma = null;
 
-    public HeightFragment(MainActivity ma) {
-        this.ma = ma;
-    }
+    public HeightFragment(MainActivity ma) {this.ma = ma;}
+    public TransformableNode node;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_height, container, false);
-
+        root = inflater.inflate(R.layout.fragment_height,null);
 
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
 
         mSaveOriginImage = (CheckBox)root.findViewById(R.id.saveOriginImage);
         mSavePortraitScr = (CheckBox)root.findViewById(R.id.savePortraitScreen);
 
-
         mBtn_capture.setOnClickListener(takeCapture);
+
+
+        ma.initModel2();
+
+
+
 
         return root;
     }
@@ -215,6 +224,11 @@ public class HeightFragment extends Fragment {
         } else {
             return false;
         }
+
+    }
+
+    @Override
+    public void onUpdate(FrameTime frameTime) {
 
     }
 }

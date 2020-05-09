@@ -93,6 +93,8 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
+            mMySensorEventListener.updateOrientationAngles();
+
             if (ma.modelRenderable == null)
                 return;
 
@@ -177,6 +179,9 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 0, 0, this);
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override

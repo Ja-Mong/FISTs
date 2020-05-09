@@ -80,10 +80,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public DiameterFragment diameterFragment;
     HeightFragment heightFragment;
 
-    boolean cameraPermission;
-    boolean writePermission;
-    boolean locationPermission;
-
     public TextView mInclinometer_tv;
     public TextView mDistance_tv;
     public TextView mDiameter_tv;
@@ -111,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public Anchor anchor = null;
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
-    public Session mSession;
+
 
     //AR controller
     public SeekBar radiusbar;
@@ -126,10 +122,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     int axis_X = 0;
     public ImageButton mAdd_anchor;
     public ImageButton mDelete_anchor;
-//    public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
 
 
-    private boolean mUserRequestedInstall = true;
+    //경사를 측정할 수 있는 Fragment가 필요함. 기존에 만들어 놓은 Inclinometer 부활 시키기..
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,35 +162,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         heightFragment = new HeightFragment(this);
 
 
-        //ARCore API 접근 개체 생성
-        try {
-            if (mSession == null) {
-                switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
-                    case INSTALLED:
-                        mSession = new Session(this);
-                        break;
-                    case INSTALL_REQUESTED:
-                        mUserRequestedInstall = false;
-                        break;
-                }
-            }
-        } catch (UnavailableDeviceNotCompatibleException e) {
-            e.printStackTrace();
-        } catch (UnavailableUserDeclinedInstallationException e) {
-            e.printStackTrace();
-        } catch (UnavailableArcoreNotInstalledException e) {
-            e.printStackTrace();
-        } catch (UnavailableSdkTooOldException e) {
-            e.printStackTrace();
-        } catch (UnavailableApkTooOldException e) {
-            e.printStackTrace();
-        }
-
-
-        //AR 지원 가능 여부 체크
-        if (!checkIsSupportedDeviceOrFinish(this)) {
-            Toast.makeText(this, "본 디바이스는 AR을 지원하지 않습니다.", Toast.LENGTH_LONG).show();
-        }
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
@@ -207,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                 radi = progress;
                 initModel();
+                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
                 diameterFragment.node.setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
 
@@ -215,6 +185,33 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 initModel();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+            }
+        });
+
+
+        //heightBar 추가
+        heightbar = (SeekBar) this.findViewById(R.id.heigth_controller1);
+        heightbar.setMax(100);
+        heightbar.setProgress(height);
+
+        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                height = progress;
+                initModel2();
+                heightFragment.node.setRenderable(modelRenderable);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                initModel2();
             }
 
             @Override
@@ -243,45 +240,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             }
         });
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            cameraPermission = true;
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            writePermission = true;
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermission = true;
-        }
-
-        if (!cameraPermission || writePermission || locationPermission) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
     }
 
-
-    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
-
-        String openGlVersionString =
-                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
-                        .getDeviceConfigurationInfo()
-                        .getGlEsVersion();
-        if (Double.parseDouble(openGlVersionString) < 3.0) {
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                    .show();
-            activity.finish();
-            return false;
-        }
-        return true;
-    }
 
 
     public void initModel() {
@@ -301,6 +261,23 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                         });
 
+    }
+
+    //Height_Anchor 모델 추가
+    public void initModel2() {
+        MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 0.5f))
+                .thenAccept(
+                        material -> {
+
+                            Vector3 vector3 = new Vector3(0.0f, 1.8f, 0.0f);
+                            modelRenderable = ShapeFactory.makeCylinder
+                                    ((float) radi/100, (float) height/100,
+                                            vector3, material);
+
+                            modelRenderable.setShadowCaster(false);
+                            modelRenderable.setShadowReceiver(false);
+                            Boolean b = (modelRenderable == null);
+                        });
     }
 
     public void clearAnchor() {
@@ -335,17 +312,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
-    public void onRequestPermissionsResults(int requsetCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requsetCode, permissions, grantResults);
-        if (requsetCode == 1 && grantResults.length > 0) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                cameraPermission = true;
-            if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
-                writePermission = true;
-            if (grantResults[2] == PackageManager.PERMISSION_GRANTED)
-                locationPermission = true;
-        }
-    }
+
 
 
     public void tv_Reset() {
