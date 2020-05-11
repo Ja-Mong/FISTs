@@ -83,10 +83,10 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
         mBtn_capture.setOnClickListener(takeCapture);
 
 
+        /*
         ma.initModel2();
 
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
 
             if (ma.modelRenderable2 == null)
                 return;
@@ -99,7 +99,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
             // renewal of anchor
 //            ma.clearAnchor();
 
-
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
             ma.anchorNode = anchorNode2;
@@ -111,7 +110,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
             node.select();
         });
 
-
+         */
 
         return root;
     }

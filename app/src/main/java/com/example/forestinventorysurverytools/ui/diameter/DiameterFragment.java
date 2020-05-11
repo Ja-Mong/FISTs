@@ -100,7 +100,6 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
 
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
             mMySensorEventListener.updateOrientationAngles();
 
             if (ma.modelRenderable == null)
@@ -112,8 +111,9 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
             ma.radi = 100;
+            ma.height=0;
             ma.initModel();
-
+            ma.initModel2();
             // renewal of anchor
 //            ma.clearAnchor();
 
@@ -124,21 +124,24 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
             SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
             String idstr = dateformat.format(System.currentTimeMillis());
-            Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+            Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
+                                new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
             tmp.setDiameter(100);
+            tmp.setHeight(0);
             tmp.getNode().setRenderable(ma.modelRenderable);
+            tmp.getH_Node().setRenderable(ma.modelRenderable2);
             tmp.getNode().setParent(anchorNode2);
+            tmp.getH_Node().setParent(anchorNode2);
             tmp.getNode().setOnTouchListener(touchNode);
-
-//            node = new TransformableNode(ma.arFragment.getTransformationSystem());
-//            node.setRenderable(ma.modelRenderable);
-//            node.setParent(anchorNode2);
+            tmp.getH_Node().setOnTouchListener(touchNode);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-//            node.select();
+
+
 
 
             if (ma.anchorNode != null) {
+
                 Frame frame = ma.arFragment.getArSceneView().getArFrame();
 
                 Pose objectPose = ma.anchor.getPose();
@@ -174,9 +177,10 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
             ai.add(tmp);
             id = ai.size() - 1;
-            ai.get(ai.size() - 1).getNode().select();
-
-
+            ai.get(id).getNode().select();
+            ma.tree_id = id;
+            ma.radiusbar.setProgress(100,true);
+            ma.heightbar.setProgress(0,true);
         });
         return root;
     }
@@ -198,6 +202,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
     TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
         @Override
         public boolean onTouch(HitTestResult hitTestResult, MotionEvent motionEvent) {
+
             if(hitTestResult.getNode()!=null) {
                 id = (ai.size() == 0) ? 0 : ai.size() - 1;
                 for (int i = 0; i < ai.size(); i++) {

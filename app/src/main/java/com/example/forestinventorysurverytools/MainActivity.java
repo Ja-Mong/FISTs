@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public SeekBar radiusbar;
     public int radi = 100;
     public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
-    public int height = 100;
+    public int height = 0;
     public ImageButton mTop;
     public ImageButton mBottom;
     int axis_Z = 0;
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //control radius
         radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
         radiusbar.setMin(30);
-        radiusbar.setMax(1000);
+        radiusbar.setMax(800);
         radiusbar.setProgress(radi);
 
         radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -187,8 +187,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                 radi = progress;
                 initModel();
-//                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
+                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
                 infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
+                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
                 mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)radi/10)+"cm" );
 
@@ -203,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             public void onStopTrackingTouch(SeekBar seekBar) {
                 infoArray.get(tree_id).setDiameter((float)radi);
                 infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
+                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }
         });
@@ -218,9 +220,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 height = progress;
+                radi = (int)infoArray.get(tree_id).getDiameter();
                 initModel2();
+                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                mHeight_tv.setText("수      고 : " + Float.toString((float)height)+"m" );
+                infoArray.get(tree_id).setHeight((float)height);
+                mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)height/100)+"m" );
             }
 
             @Override
@@ -230,6 +235,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
+                infoArray.get(tree_id).setHeight((float)height);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }
         });
@@ -283,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f, (float)axis_Z/100);
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f+(float)height/200, (float)axis_Z/100);
                             modelRenderable2 = ShapeFactory.makeCylinder
                                     ((float) radi/1000, (float) height/100,
                                             vector3, material);
@@ -428,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     if(infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
                         infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)-1)/100));
+                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)-1)/100));
                         arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
                     }
                 }
@@ -450,6 +458,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     if(infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
                         infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)+1)/100));
+                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)+1)/100));
                         arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
                     }
                 }
@@ -472,6 +481,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     if(infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
                         infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
+                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
                         arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
 
                     }
@@ -492,7 +502,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 for(int i=0; i<infoArray.size(); i++) {
                     if(infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
+                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
                         arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
                     }
                 }
@@ -528,6 +539,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 initModel();
                 int idx = tree_id;
                 infoArray.get(idx).getNode().setRenderable(null);
+                infoArray.get(idx).getH_Node().setRenderable(null);
                 infoArray.remove(idx);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }
