@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.PixelCopy;
@@ -42,6 +43,7 @@ import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
@@ -49,6 +51,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -69,7 +72,9 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
     public HeightFragment(MainActivity ma) {this.ma = ma;}
     public TransformableNode node;
     ModelRenderable modelRenderable;
-
+    //캡쳐때 임시저장용
+    ArrayList<Renderable> tmpRend = new ArrayList<>();
+    ArrayList<Renderable> h_tmpRend = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -145,10 +150,16 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                 mPath = dirPath + "/" + filename +"_"+ma.infoArray.get(ma.tree_id).getId()+ ".jpg";
 
 
+
                 if (mSaveOriginImage.isChecked()) {
                     for(int i=0; i<ma.infoArray.size(); i++)
                     {
+                        tmpRend.add(ma.infoArray.get(i).getNode().getRenderable());
+                        h_tmpRend.add(ma.infoArray.get(i).getH_Node().getRenderable());
                         ma.infoArray.get(i).getNode().setRenderable(null);
+                        ma.infoArray.get(i).getH_Node().setRenderable(null);
+
+
                     }
                     try {
                         view.getSession().update();
@@ -203,8 +214,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                         public void run() {
                             for(int i=0; i<ma.infoArray.size(); i++)
                             {
-                                ma.infoArray.get(i).getNode().setRenderable(ma.modelRenderable);
+                                
+                                ma.infoArray.get(i).getNode().setRenderable(tmpRend.get(i));
+                                ma.infoArray.get(i).getH_Node().setRenderable(h_tmpRend.get(i));
                             }
+                            tmpRend.clear();
+                            h_tmpRend.clear();
                             try {
                                 view.getSession().update();
                             } catch (CameraNotAvailableException e) {

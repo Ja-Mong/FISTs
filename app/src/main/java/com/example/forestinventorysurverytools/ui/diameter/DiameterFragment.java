@@ -219,6 +219,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 String meter = String.format("%.2f", ai.get(id).getDistance());
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(ai.get(id).getDiameter() / 10) + "cm");
+                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+ai.get(id).getHeight()/100)+"m" );
 
             }
             return false;
