@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         //heightBar 추가
         heightbar = (SeekBar) this.findViewById(R.id.heigth_controller1);
-        heightbar.setMax(100);
+        heightbar.setMax(400);
         heightbar.setProgress(height);
 
         heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -502,8 +502,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 for(int i=0; i<infoArray.size(); i++) {
                     if(infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
-                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
+                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
                         arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
                     }
                 }
