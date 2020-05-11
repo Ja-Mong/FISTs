@@ -36,10 +36,12 @@ import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
@@ -66,6 +68,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
     public HeightFragment(MainActivity ma) {this.ma = ma;}
     public TransformableNode node;
+    ModelRenderable modelRenderable;
 
 
     @Override
@@ -82,6 +85,31 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
         ma.initModel2();
 
+        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+
+
+            if (ma.modelRenderable2 == null)
+                return;
+
+            // Creating Anchor.
+            Anchor anchor2 = hitResult.createAnchor();
+            AnchorNode anchorNode2 = new AnchorNode(anchor2);
+            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
+
+            // renewal of anchor
+//            ma.clearAnchor();
+
+
+            // Create the transformable object and add it to the anchor.
+            ma.anchor = anchor2;
+            ma.anchorNode = anchorNode2;
+            node = new TransformableNode(ma.arFragment.getTransformationSystem());
+            node.setRenderable(ma.modelRenderable2);
+            node.setParent(anchorNode2);
+            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            node.select();
+        });
 
 
 
@@ -105,7 +133,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
             ArFragment af = ma.arFragment;
             ArSceneView view = af.getArSceneView();
 
-
+            // AR이미지 포함한 사진
             try {
                 SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
                 String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
@@ -115,17 +143,21 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                 if (!dir.exists()) {
                     dir.mkdir();
                 }
-                mPath = dirPath + "/" + filename + ".jpg";
-                // create bitmap screen capture
-                // 화면 이미지 만들기
-
-
+                mPath = dirPath + "/" + filename +"_"+ma.infoArray.get(ma.tree_id).getId()+ ".jpg";
 
 
                 if (mSaveOriginImage.isChecked()) {
+                    for(int i=0; i<ma.infoArray.size(); i++)
+                    {
+                        ma.infoArray.get(i).getNode().setRenderable(null);
+                    }
+                    try {
+                        view.getSession().update();
+                    } catch (CameraNotAvailableException e) {
+                        e.printStackTrace();
+                    }
 
 
-                    view.getSession().pause();
                     final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
                     final HandlerThread handlerThread = new HandlerThread("PixelCopier");
                     handlerThread.start();
@@ -141,13 +173,14 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                         handlerThread.quitSafely();
                     }, new Handler(handlerThread.getLooper()));
 
+                    //AR제외한 원본사진
                     Handler mHandler = new Handler();
                     mHandler.postDelayed(new Runnable()  {
                         public void run() {
                             SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
                             String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
                             String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
-                            String mPath = dirPath + "/" + filename + ".jpg";
+                            String mPath = dirPath + "/" + filename+"_"+ma.infoArray.get(ma.tree_id).getId() + "_ori.jpg";
 
                             final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
                             final HandlerThread handlerThread = new HandlerThread("PixelCopier");
@@ -164,9 +197,26 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                                 handlerThread.quitSafely();
                             }, new Handler(handlerThread.getLooper()));
                         }
-                    }, 200);
+                    }, 300);
 
-                    view.getSession().resume();
+
+                    mHandler.postDelayed(new Runnable()  {
+                        public void run() {
+                            for(int i=0; i<ma.infoArray.size(); i++)
+                            {
+                                ma.infoArray.get(i).getNode().setRenderable(ma.modelRenderable);
+                            }
+                            try {
+                                view.getSession().update();
+                            } catch (CameraNotAvailableException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }, 600);
+
+
+
                 } else {
 
                     final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
@@ -192,6 +242,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
         }
     };
 
+
+
     public void saveBitmapToDisk(Bitmap bitmap, String path) throws IOException {
 
         //  String path = Environment.getExternalStorageDirectory().toString() +  "/Pictures/Screenshots/";
@@ -199,7 +251,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
         Bitmap rotatedImage = bitmap;
 
 
-        if (ma.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (mSavePortraitScr.isChecked()) {
             Matrix rotationMatrix = new Matrix();
             rotationMatrix.postRotate(90);
             rotatedImage = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);

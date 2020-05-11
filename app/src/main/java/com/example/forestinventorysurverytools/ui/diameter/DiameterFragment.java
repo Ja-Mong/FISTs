@@ -18,6 +18,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -32,6 +33,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 //import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.Info;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
@@ -41,6 +43,7 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
@@ -52,6 +55,8 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -66,6 +71,8 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
     LocationManager mLocationManager;
     MySensorEventListener mMySensorEventListener;
 
+    ArrayList<Info> ai;
+
 
     double longitude;
     double latitude;
@@ -75,13 +82,14 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
     MainActivity ma = null;
 
-    public DiameterFragment(MainActivity ma) {this.ma = ma;}
-    public TransformableNode node;
+    public DiameterFragment(MainActivity ma) {this.ma = ma; ai=ma.infoArray;}
+    public int id;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, null);
+        id = 0;
 
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
@@ -101,7 +109,10 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             // Creating Anchor.
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
+
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
+            ma.radi = 100;
+            ma.initModel();
 
             // renewal of anchor
 //            ma.clearAnchor();
@@ -110,12 +121,21 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
             ma.anchorNode = anchorNode2;
-            node = new TransformableNode(ma.arFragment.getTransformationSystem());
-            node.setRenderable(ma.modelRenderable);
-            node.setParent(anchorNode2);
+
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
+            String idstr = dateformat.format(System.currentTimeMillis());
+            Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+            tmp.setDiameter(100);
+            tmp.getNode().setRenderable(ma.modelRenderable);
+            tmp.getNode().setParent(anchorNode2);
+            tmp.getNode().setOnTouchListener(touchNode);
+
+//            node = new TransformableNode(ma.arFragment.getTransformationSystem());
+//            node.setRenderable(ma.modelRenderable);
+//            node.setParent(anchorNode2);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-            node.select();
+//            node.select();
 
 
             if (ma.anchorNode != null) {
@@ -130,6 +150,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
                 ///Compute the straight-line distance.
                 float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                tmp.setDistance(distanceMeters);
                 String meter = String.format("%.2f", distanceMeters);
 
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
@@ -147,8 +168,16 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                             + mMySensorEventListener.matchDirection(compass));
                 }
             }
-        });
 
+            ma.mDiameter_tv.setText("흉 고 직 경 : " +
+                    Float.toString((float) ma.radi / 10) + "cm");
+
+            ai.add(tmp);
+            id = ai.size() - 1;
+            ai.get(ai.size() - 1).getNode().select();
+
+
+        });
         return root;
     }
 
@@ -164,6 +193,35 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
     public void onUpdate(FrameTime frameTime) {
 
     }
+
+
+    TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
+        @Override
+        public boolean onTouch(HitTestResult hitTestResult, MotionEvent motionEvent) {
+            if(hitTestResult.getNode()!=null) {
+                id = (ai.size() == 0) ? 0 : ai.size() - 1;
+                for (int i = 0; i < ai.size(); i++) {
+                    if (hitTestResult.getNode().equals(ai.get(i).getNode())) {
+                        id = i;
+                        break;
+                    }
+                }
+                showToast(Integer.toString(id + 1) + "번째 요소 선택("+ai.get(id).getId()+")");
+                ma.tree_id=id;
+                ai.get(id).getNode().select();
+
+
+                String meter = String.format("%.2f", ai.get(id).getDistance());
+                ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(ai.get(id).getDiameter() / 10) + "cm");
+
+            }
+            return false;
+        }
+
+
+    };
+
 
 
 
@@ -206,7 +264,6 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
 
     @Override
     public void onProviderDisabled(String provider) { }
-
 
 }
 

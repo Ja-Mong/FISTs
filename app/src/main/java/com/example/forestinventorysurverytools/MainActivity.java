@@ -8,10 +8,12 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.media.Image;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -101,19 +104,24 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
     public Vector<Float> compass_vec = new Vector<Float>(); // 측정한 모든 compass 값 저장
 
+    public ArrayList<Info> infoArray = new ArrayList<Info>();
+
 
     //AR관련
     public ArFragment arFragment;
     public Anchor anchor = null;
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
+    public ModelRenderable modelRenderable2;
+
 
 
     //AR controller
+    public  int tree_id;
     public SeekBar radiusbar;
-    int radi = 10;
+    public int radi = 100;
     public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
-    int height = 10;
+    public int height = 100;
     public ImageButton mTop;
     public ImageButton mBottom;
     int axis_Z = 0;
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,10 +159,11 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mAdd_anchor = (ImageButton) this.findViewById(R.id.Btn_add);
         mDelete_anchor = (ImageButton) this.findViewById(R.id.Btn_delete);
 
-        mTop.setOnClickListener(controll_BtnTop);
-        mBottom.setOnClickListener(controll_BtnBottom);
-        mLeft.setOnClickListener(controll_BtnLeft);
-        mRight.setOnClickListener(controll_BtnRight);
+        mTop.setOnTouchListener(controll_BtnTop);
+        mBottom.setOnTouchListener(controll_BtnBottom);
+        mLeft.setOnTouchListener(controll_BtnLeft);
+        mRight.setOnTouchListener(controll_BtnRight);
+
         mAdd_anchor.setOnClickListener(addNew_anchor);
         mDelete_anchor.setOnClickListener(delSelect_anchor);
 
@@ -167,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         //control radius
         radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
-        radiusbar.setMax(100);
+        radiusbar.setMin(30);
+        radiusbar.setMax(1000);
         radiusbar.setProgress(radi);
 
         radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -176,19 +187,22 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                 radi = progress;
                 initModel();
-                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
-                diameterFragment.node.setRenderable(modelRenderable);
+//                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
+                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)radi/10)+"cm" );
 
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                initModel();
+                tree_id = (infoArray.size()==0)? 0 : diameterFragment.id;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                infoArray.get(tree_id).setDiameter((float)radi);
+                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }
         });
@@ -205,8 +219,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                 height = progress;
                 initModel2();
-                heightFragment.node.setRenderable(modelRenderable);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                mHeight_tv.setText("수      고 : " + Float.toString((float)height)+"m" );
             }
 
             @Override
@@ -252,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                             Vector3 vector3 = new Vector3((float) axis_X/100, 0.6f, (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
-                                    ((float) radi / 100, 1.2f,
+                                    ((float) radi / 1000, 1.2f,
                                             vector3, material);
 
                             modelRenderable.setShadowCaster(false);
@@ -269,14 +283,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3(0.0f, 1.8f, 0.0f);
-                            modelRenderable = ShapeFactory.makeCylinder
-                                    ((float) radi/100, (float) height/100,
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f, (float)axis_Z/100);
+                            modelRenderable2 = ShapeFactory.makeCylinder
+                                    ((float) radi/1000, (float) height/100,
                                             vector3, material);
 
-                            modelRenderable.setShadowCaster(false);
-                            modelRenderable.setShadowReceiver(false);
-                            Boolean b = (modelRenderable == null);
+                            modelRenderable2.setShadowCaster(false);
+                            modelRenderable2.setShadowReceiver(false);
+                            Boolean b = (modelRenderable2 == null);
                         });
     }
 
@@ -405,35 +419,43 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //control the object
     //Top
-    ImageButton.OnClickListener controll_BtnTop = new ImageButton.OnClickListener() {
+    ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
         @Override
-        public void onClick(View controllTop) {
-
+        public boolean onTouch(View controllTop, MotionEvent event) {
             if (controllTop == mTop) {
                 initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_Z--;
-
+                for(int i=0; i<infoArray.size(); i++) {
+                    if(infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)-1)/100));
+                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                    }
+                }
             }
+            return false;
         }
+
     };
 
 
 
 
     //Bottom
-    ImageButton.OnClickListener controll_BtnRight = new ImageButton.OnClickListener() {
+    ImageButton.OnTouchListener controll_BtnBottom = new ImageButton.OnTouchListener() {
         @Override
-        public void onClick(View controllRight) {
-
-            if (controllRight == mRight) {
+        public boolean onTouch(View controllBottom, MotionEvent event) {
+            if (controllBottom == mBottom) {
                 initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_X++;
+                for(int i=0; i<infoArray.size(); i++) {
+                    if(infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)+1)/100));
+                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                    }
+                }
 
             }
+            return true;
         }
     };
 
@@ -441,34 +463,47 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     //Right
-    ImageButton.OnClickListener controll_BtnBottom = new ImageButton.OnClickListener() {
+    ImageButton.OnTouchListener controll_BtnRight = new ImageButton.OnTouchListener() {
         @Override
-        public void onClick(View controllBottom) {
-
-            if (controllBottom == mBottom) {
+        public boolean onTouch(View controllRight, MotionEvent event) {
+            if (controllRight == mRight) {
                 initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_Z++;
+                for(int i=0; i<infoArray.size(); i++) {
+                    if(infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
+                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+
+                    }
+                }
             }
+            return false;
         }
     };
 
 
 
     //Left
-    ImageButton.OnClickListener controll_BtnLeft = new ImageButton.OnClickListener() {
+    ImageButton.OnTouchListener controll_BtnLeft = new ImageButton.OnTouchListener() {
         @Override
-        public void onClick(View controllLeft) {
-
+        public boolean onTouch(View controllLeft, MotionEvent event) {
             if (controllLeft == mLeft) {
                 initModel();
-                diameterFragment.node.setRenderable(modelRenderable);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                axis_X--;
+                for(int i=0; i<infoArray.size(); i++) {
+                    if(infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
+                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+                    }
+                }
+
             }
+            return false;
         }
     };
+
+
+
 
     ImageButton.OnClickListener addNew_anchor = new ImageButton.OnClickListener() {
         @Override
@@ -487,9 +522,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         public void onClick(View delete_anchor) {
 
             if (delete_anchor == mDelete_anchor) {
+                // 이거... 제가 짜놓긴 했는데...
+                // 왜 정상작동하는지..... 추후 생각 해봐야할듯 싶습니다. 05.10 (선재)
+
                 initModel();
-
-
+                int idx = tree_id;
+                infoArray.get(idx).getNode().setRenderable(null);
+                infoArray.remove(idx);
+                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }
         }
     };
