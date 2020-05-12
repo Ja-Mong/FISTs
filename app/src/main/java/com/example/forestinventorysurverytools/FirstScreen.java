@@ -41,6 +41,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
 
     boolean cameraPermission;
     boolean writePermission;
+    boolean readPermission;
     boolean locationPermission;
 
     public Session mSession;
@@ -75,12 +76,17 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             writePermission = true;
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            readPermission = true;
+        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermission = true;
         }
 
-        if (!cameraPermission || writePermission || locationPermission) {
+        if (!cameraPermission || writePermission || readPermission || locationPermission) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
