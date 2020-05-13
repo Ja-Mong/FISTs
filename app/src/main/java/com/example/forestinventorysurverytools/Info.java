@@ -38,6 +38,7 @@ public class Info {
     public float getHeight(){return height;}
     public String getId(){return id;}
 
+
     /*
     public void changeID(int index){
         //삭제할 요소 보다 뒤쪽 인덱스이면 삭제할때마다 하나씩 줄여주기..

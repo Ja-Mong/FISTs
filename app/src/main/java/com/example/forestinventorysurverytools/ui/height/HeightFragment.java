@@ -142,7 +142,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                 SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
                 String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
 
-                String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
+                String dirPath = Environment.getExternalStorageDirectory().toString()+"/FIST";
                 File dir = new File(dirPath);
                 if (!dir.exists()) {
                     dir.mkdir();
@@ -189,7 +189,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                         public void run() {
                             SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
                             String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
-                            String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
+                            String dirPath = Environment.getExternalStorageDirectory().toString()+"/FIST";
                             String mPath = dirPath + "/" + filename+"_"+ma.infoArray.get(ma.tree_id).getId() + "_ori.jpg";
 
                             final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
@@ -214,7 +214,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
                         public void run() {
                             for(int i=0; i<ma.infoArray.size(); i++)
                             {
-                                
+
                                 ma.infoArray.get(i).getNode().setRenderable(tmpRend.get(i));
                                 ma.infoArray.get(i).getH_Node().setRenderable(h_tmpRend.get(i));
                             }

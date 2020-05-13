@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         //heightBar 추가
         heightbar = (SeekBar) this.findViewById(R.id.heigth_controller1);
-        heightbar.setMax(400);
+        heightbar.setMax(900);
         heightbar.setProgress(height);
 
         heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -260,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 return false;
             }
         });
-
     }
 
 
@@ -281,7 +280,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                             Boolean b = (modelRenderable == null);
 
                         });
-
     }
 
     //Height_Anchor 모델 추가
@@ -378,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     Log.d("tag", "File 생성시작");
 
                     JSONObject obj = new JSONObject();
+
                     obj.put("distance", mDistance_val);
                     obj.put("diameter", mDiameter_val);
                     obj.put("height", mHeight_val);
