@@ -80,9 +80,12 @@ import java.util.Vector;
 public class MainActivity extends AppCompatActivity implements Scene.OnUpdateListener {
 
 
+    // Fragment
     public DiameterFragment diameterFragment;
-    HeightFragment heightFragment;
+    public HeightFragment heightFragment;
 
+
+    // TextView
     public TextView mInclinometer_tv;
     public TextView mDistance_tv;
     public TextView mDiameter_tv;
@@ -98,16 +101,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public double mHeight_val;
 
 
-    //heightfragment에서 메인으로 이동
+    // 데이터 관리
     public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
     public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
     public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
     public Vector<Float> compass_vec = new Vector<Float>(); // 측정한 모든 compass 값 저장
+    public ArrayList<Info> infoArray = new ArrayList<Info>(); // 생성된 모든 Anchor 정보 저장
 
-    public ArrayList<Info> infoArray = new ArrayList<Info>();
 
-
-    //AR관련
+    //AR
     public ArFragment arFragment;
     public Anchor anchor = null;
     public AnchorNode anchorNode;
@@ -115,24 +117,13 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public ModelRenderable modelRenderable2;
 
 
-
     //AR controller
     public  int tree_id;
-    public SeekBar radiusbar;
     public int radi = 100;
-    public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
     public int height = 0;
-    public ImageButton mTop;
-    public ImageButton mBottom;
     int axis_Z = 0;
-    public ImageButton mRight;
-    public ImageButton mLeft;
     int axis_X = 0;
-    public ImageButton mAdd_anchor;
     public ImageButton mDelete_anchor;
-
-
-    //경사를 측정할 수 있는 Fragment가 필요함. 기존에 만들어 놓은 Inclinometer 부활 시키기..
 
 
 
@@ -144,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         setContentView(R.layout.activity_main);
 
 
-
+        //TextView
         mInclinometer_tv = (TextView) this.findViewById(R.id.tv_inclinometer);
         mDistance_tv = (TextView) this.findViewById(R.id.tv_distance);
         mDiameter_tv = (TextView) this.findViewById(R.id.tv_diameter);
@@ -152,99 +143,22 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
 
-        mTop = (ImageButton) this.findViewById(R.id.top);
-        mBottom = (ImageButton) this.findViewById(R.id.bottom);
-        mLeft = (ImageButton) this.findViewById(R.id.left);
-        mRight = (ImageButton) this.findViewById(R.id.right);
-        mAdd_anchor = (ImageButton) this.findViewById(R.id.Btn_add);
+
+        //ImageButton
         mDelete_anchor = (ImageButton) this.findViewById(R.id.Btn_delete);
-
-        mTop.setOnTouchListener(controll_BtnTop);
-        mBottom.setOnTouchListener(controll_BtnBottom);
-        mLeft.setOnTouchListener(controll_BtnLeft);
-        mRight.setOnTouchListener(controll_BtnRight);
-
-        mAdd_anchor.setOnClickListener(addNew_anchor);
         mDelete_anchor.setOnClickListener(delSelect_anchor);
 
 
+        //Fragment
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
 
 
+        //Navigation
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-        //control radius
-        radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
-        radiusbar.setMin(30);
-        radiusbar.setMax(800);
-        radiusbar.setProgress(radi);
-
-        radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                radi = progress;
-                initModel();
-                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
-                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
-                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)radi/10)+"cm" );
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                tree_id = (infoArray.size()==0)? 0 : diameterFragment.id;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                infoArray.get(tree_id).setDiameter((float)radi);
-                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
-                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-            }
-        });
-
-
-        //heightBar 추가
-        heightbar = (SeekBar) this.findViewById(R.id.heigth_controller1);
-        heightbar.setMax(900);
-        heightbar.setProgress(height);
-
-        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                height = progress;
-                radi = (int)infoArray.get(tree_id).getDiameter();
-                initModel2();
-                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                infoArray.get(tree_id).setHeight((float)height);
-                mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)height/100)+"m" );
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                initModel2();
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
-                infoArray.get(tree_id).setHeight((float)height);
-                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-            }
-        });
-
-
-        //arFragment정의
         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -263,14 +177,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
-
+    //AR model 1 = Diameter
     public void initModel() {
         MaterialFactory.makeTransparentWithColor(this,
                 new Color(1.0f, 0.0f, 0.0f, 0.5f))
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float) axis_X/100, 0.6f, (float) axis_Z/100);
+                            Vector3 vector3 = new Vector3((float) axis_X/100, 0.6f,
+                                    (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
                                     ((float) radi / 1000, 1.2f,
                                             vector3, material);
@@ -282,13 +197,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         });
     }
 
-    //Height_Anchor 모델 추가
+
+    //AR model 2 = Height
     public void initModel2() {
         MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 0.5f))
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f+(float)height/200, (float)axis_Z/100);
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f+(float)height/200,
+                                    (float)axis_Z/100);
                             modelRenderable2 = ShapeFactory.makeCylinder
                                     ((float) radi/1000, (float) height/100,
                                             vector3, material);
@@ -299,6 +216,18 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         });
     }
 
+
+    //AR update
+    @Override
+    public void onUpdate(FrameTime frameTime) {
+        com.google.ar.core.Camera camera = arFragment.getArSceneView().getArFrame().getCamera();
+        if (camera.getTrackingState() == TrackingState.TRACKING) {
+            arFragment.getPlaneDiscoveryController().hide();
+        }
+    }
+
+
+    //Delete Anchor when user create new Anchor onTouch the screen
     public void clearAnchor() {
         anchor = null;
         if (anchorNode != null) {
@@ -309,16 +238,16 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         }
     }
 
+
+    //Save Anchor to ArrayList
     Anchor tmpA;
     AnchorNode tmpAN;
     TransformableNode node;
-
     public void saveAnchor() {
         tmpA = anchor;
         tmpAN = anchorNode;
 
     }
-
     public void retrieveAnchor() {
         anchor = tmpA;
         anchorNode = tmpAN;
@@ -331,9 +260,19 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
+    //Check the sdcard mount
+    private boolean CheckWrite() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
-
+    //ImageButton
+    //Refresh
     public void tv_Reset() {
         // 초기화(리셋) 버튼 기능, 버튼 연결 보류
         mInclinometer_tv.setText("경        사 :");
@@ -348,13 +287,11 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mHeight_val = 0.0;
         height_vec.removeAllElements();
         angle_vec.removeAllElements();
-
-
     }
 
 
+    //Save data
     String dirPath;
-
     public void Save_data(View v) {
         //txt대신 서버 전송시 유리한 json 형식으로 핸드폰 내부 저장.
 
@@ -394,139 +331,11 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 }
             }
         } else {
-
-        }
-
-    }
-
-    private boolean CheckWrite() {  // sdcard mount check
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    @Override
-    public void onUpdate(FrameTime frameTime) {
-        com.google.ar.core.Camera camera = arFragment.getArSceneView().getArFrame().getCamera();
-        if (camera.getTrackingState() == TrackingState.TRACKING) {
-            arFragment.getPlaneDiscoveryController().hide();
         }
     }
 
-    public void showToast(String data) {
-        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
-    }
 
-
-
-    //control the object
-    //Top
-    ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllTop, MotionEvent event) {
-            if (controllTop == mTop) {
-                initModel();
-                for(int i=0; i<infoArray.size(); i++) {
-                    if(infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)-1)/100));
-                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)-1)/100));
-                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                    }
-                }
-            }
-            return false;
-        }
-
-    };
-
-
-
-
-    //Bottom
-    ImageButton.OnTouchListener controll_BtnBottom = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllBottom, MotionEvent event) {
-            if (controllBottom == mBottom) {
-                initModel();
-                for(int i=0; i<infoArray.size(); i++) {
-                    if(infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)+1)/100));
-                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y, ((tmpVec.z*100)+1)/100));
-                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                    }
-                }
-
-            }
-            return true;
-        }
-    };
-
-
-
-
-    //Right
-    ImageButton.OnTouchListener controll_BtnRight = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllRight, MotionEvent event) {
-            if (controllRight == mRight) {
-                initModel();
-                for(int i=0; i<infoArray.size(); i++) {
-                    if(infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
-                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100, tmpVec.y, tmpVec.z));
-                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-
-                    }
-                }
-            }
-            return false;
-        }
-    };
-
-
-
-    //Left
-    ImageButton.OnTouchListener controll_BtnLeft = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllLeft, MotionEvent event) {
-            if (controllLeft == mLeft) {
-                initModel();
-                for(int i=0; i<infoArray.size(); i++) {
-                    if(infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
-                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
-                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100, tmpVec.y, tmpVec.z));
-                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
-                    }
-                }
-
-            }
-            return false;
-        }
-    };
-
-
-
-
-    ImageButton.OnClickListener addNew_anchor = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View add_anchor) {
-
-            if (add_anchor == mAdd_anchor) {
-                initModel();
-
-
-            }
-        }
-    };
-
+    //Delete create current Anchor.
     ImageButton.OnClickListener delSelect_anchor = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View delete_anchor) {
@@ -544,4 +353,189 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             }
         }
     };
+
+
 }
+
+//    public SeekBar radiusbar;
+//    public SeekBar heightbar; //동작은 heightFragment에서 생성한 anchor
+//    public ImageButton mTop;
+//    public ImageButton mBottom;
+//    public ImageButton mRight;
+//    public ImageButton mLeft;
+
+
+//경사를 측정할 수 있는 Fragment가 필요함. 기존에 만들어 놓은 Inclinometer 부활 시키기..
+
+//        mTop = (ImageButton) this.findViewById(R.id.top);
+//        mBottom = (ImageButton) this.findViewById(R.id.bottom);
+//        mLeft = (ImageButton) this.findViewById(R.id.left);
+//        mRight = (ImageButton) this.findViewById(R.id.right);
+//        mTop.setOnTouchListener(controll_BtnTop);
+//        mBottom.setOnTouchListener(controll_BtnBottom);
+//        mLeft.setOnTouchListener(controll_BtnLeft);
+//        mRight.setOnTouchListener(controll_BtnRight);
+//        //control radius
+//        radiusbar = (SeekBar) this.findViewById(R.id.radi_controller1);
+//        radiusbar.setMin(30);
+//        radiusbar.setMax(800);
+//        radiusbar.setProgress(radi);
+//
+//        radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//                radi = progress;
+//                initModel();
+//                initModel2(); //heightBar 직경도 조절할 수 있도록 추가
+//                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
+//                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
+//                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//                mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)radi/10)+"cm" );
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                tree_id = (infoArray.size()==0)? 0 : diameterFragment.id;
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                infoArray.get(tree_id).setDiameter((float)radi);
+//                infoArray.get(tree_id).getNode().setRenderable(modelRenderable);
+//                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
+//                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//            }
+//        });
+
+
+//        //heightBar 추가
+//        heightbar = (SeekBar) this.findViewById(R.id.heigth_controller1);
+//        heightbar.setMax(900);
+//        heightbar.setProgress(height);
+//
+//        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//                height = progress;
+//                radi = (int)infoArray.get(tree_id).getDiameter();
+//                initModel2();
+//                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
+//                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//                infoArray.get(tree_id).setHeight((float)height);
+//                mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)height/100)+"m" );
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                initModel2();
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                infoArray.get(tree_id).getH_Node().setRenderable(modelRenderable2);
+//                infoArray.get(tree_id).setHeight((float)height);
+//                arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//            }
+//        });
+
+
+//arFragment정의
+//    //control the object
+//    //Top
+//    ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllTop, MotionEvent event) {
+//            if (controllTop == mTop) {
+//                initModel();
+//                for(int i=0; i<infoArray.size(); i++) {
+//                    if(infoArray.get(i).getNode().isSelected()) {
+//                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+//                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
+//                                ((tmpVec.z*100)-1)/100));
+//                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
+//                                ((tmpVec.z*100)-1)/100));
+//                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//                    }
+//                }
+//            }
+//            return false;
+//        }
+//
+//    };
+//
+//
+//
+//
+//    //Bottom
+//    ImageButton.OnTouchListener controll_BtnBottom = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllBottom, MotionEvent event) {
+//            if (controllBottom == mBottom) {
+//                initModel();
+//                for(int i=0; i<infoArray.size(); i++) {
+//                    if(infoArray.get(i).getNode().isSelected()) {
+//                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+//                        infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
+//                                ((tmpVec.z*100)+1)/100));
+//                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
+//                                ((tmpVec.z*100)+1)/100));
+//                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//                    }
+//                }
+//
+//            }
+//            return true;
+//        }
+//    };
+//
+//
+//
+//
+//    //Right
+//    ImageButton.OnTouchListener controll_BtnRight = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllRight, MotionEvent event) {
+//            if (controllRight == mRight) {
+//                initModel();
+//                for(int i=0; i<infoArray.size(); i++) {
+//                    if(infoArray.get(i).getNode().isSelected()) {
+//                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+//                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
+//                                tmpVec.y, tmpVec.z));
+//                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
+//                                tmpVec.y, tmpVec.z));
+//                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//
+//                    }
+//                }
+//            }
+//            return false;
+//        }
+//    };
+//
+//
+//
+//    //Left
+//    ImageButton.OnTouchListener controll_BtnLeft = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllLeft, MotionEvent event) {
+//            if (controllLeft == mLeft) {
+//                initModel();
+//                for(int i=0; i<infoArray.size(); i++) {
+//                    if(infoArray.get(i).getNode().isSelected()) {
+//                        Vector3 tmpVec = infoArray.get(i).getNode().getLocalPosition();
+//                        infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
+//                                tmpVec.y, tmpVec.z));
+//                        infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
+//                                tmpVec.y, tmpVec.z));
+//                        arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
+//                    }
+//                }
+//
+//            }
+//            return false;
+//        }
+//    };
