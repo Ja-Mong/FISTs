@@ -6,13 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".ui.height.HeightFragment">
 
+    <TextView
+        android:id="@+id/height_controller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/heigth_controller1"
+        android:layout_alignParentLeft="true"
+        android:background="#757575"
+        android:textColor="#FFFF"
+        android:text="수고 조절"
+        android:textStyle="bold"/>
+
+    <SeekBar
+        android:id="@+id/heigth_controller1"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="65dp"
+        android:background="#757575"
+        android:layout_alignParentRight="true"/>
+
+
 
     <ImageButton
         android:id="@+id/Btn_capture"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginBottom="65dp"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"

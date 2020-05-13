@@ -27,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -64,17 +66,24 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
     ImageButton mBtn_capture;
 
+    TextView height_controller;
+
     CheckBox mSavePortraitScr;
     CheckBox mSaveOriginImage;
+
 
     MainActivity ma = null;
 
     public HeightFragment(MainActivity ma) {this.ma = ma;}
-    public TransformableNode node;
-    ModelRenderable modelRenderable;
+
+
     //캡쳐때 임시저장용
     ArrayList<Renderable> tmpRend = new ArrayList<>();
     ArrayList<Renderable> h_tmpRend = new ArrayList<>();
+
+    public SeekBar heightbar;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +96,39 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
         mBtn_capture.setOnClickListener(takeCapture);
 
+
+        height_controller = (TextView) root.findViewById(R.id.height_controller);
+
+        heightbar = (SeekBar)root.findViewById(R.id.heigth_controller1);
+        heightbar.setMax(4000);
+        heightbar.setProgress(ma.height);
+
+        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                ma.height = progress;
+                ma.radi = (int)ma.infoArray.get(ma.tree_id).getDiameter();
+                ma.initModel2();
+                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
+                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)ma.height/100)+"m");
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                ma.initModel2();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
+                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+            }
+        });
 
         /*
         ma.initModel2();
