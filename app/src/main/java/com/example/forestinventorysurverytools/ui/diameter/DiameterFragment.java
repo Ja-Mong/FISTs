@@ -67,39 +67,42 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class DiameterFragment extends Fragment implements LocationListener, Scene.OnUpdateListener{
 
+
+    //View
     View root;
 
 
+    //Sensor
     SensorManager mSensorManager;
     LocationManager mLocationManager;
     MySensorEventListener mMySensorEventListener;
 
+
+    //Data
     ArrayList<Info> ai;
-
-
     double longitude;
     double latitude;
     double altitude;
     float compass;
-
-
-    MainActivity ma = null;
-//    HeightFragment hei;
-
-    public DiameterFragment(MainActivity ma) {this.ma = ma; ai=ma.infoArray;}
     public int id;
 
+    //Activity
+    MainActivity ma = null;
+    public DiameterFragment(MainActivity ma) {this.ma = ma; ai=ma.infoArray;}
+
+
+    //SeekBar
     public SeekBar radiusbar;
 
 
+    //ImageButton
     public ImageButton mTop;
     public ImageButton mBottom;
     public ImageButton mRight;
     public ImageButton mLeft;
-    //    public int radi;
-//    public int axis_X = 0;
-//    public int axis_Z = 0;
 
+
+    //TextView
     public TextView radius_controller;
 
 
@@ -111,27 +114,30 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         root = inflater.inflate(R.layout.fragment_diameter, null);
         id = 0;
 
+
+        //Sensor
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
-        radius_controller = (TextView) root.findViewById(R.id.radi_controller);
 
+        //ImageButton
         mTop = (ImageButton)root.findViewById(R.id.top);
         mBottom = (ImageButton)root.findViewById(R.id.bottom);
         mRight = (ImageButton)root.findViewById(R.id.right);
         mLeft = (ImageButton)root.findViewById(R.id.left);
-
         mTop.setOnTouchListener(controll_BtnTop);
         mBottom.setOnTouchListener(controll_BtnBottom);
         mRight.setOnTouchListener(controll_BtnRight);
         mLeft.setOnTouchListener(controll_BtnLeft);
 
+
+        //SeekBar
+        radius_controller = (TextView) root.findViewById(R.id.radi_controller);
         radiusbar = (SeekBar) root.findViewById(R.id.radi_controller1);
         radiusbar.setMin(30);
         radiusbar.setMax(800);
         radiusbar.setProgress(ma.radi);
-
         radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -159,32 +165,25 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         });
 
 
+        //AR
         ma.initModel();
-
-
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             mMySensorEventListener.updateOrientationAngles();
-
             if (ma.modelRenderable == null)
                 return;
 
             // Creating Anchor.
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
-
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
             ma.radi = 100;
             ma.height=0;
             ma.initModel();
             ma.initModel2();
-            // renewal of anchor
-//            ma.clearAnchor();
-
 
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
             ma.anchorNode = anchorNode2;
-
             SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
             String idstr = dateformat.format(System.currentTimeMillis());
             Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
@@ -200,16 +199,12 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
 
-
-
-
             if (ma.anchorNode != null) {
-
                 Frame frame = ma.arFragment.getArSceneView().getArFrame();
-
                 Pose objectPose = ma.anchor.getPose();
                 Pose cameraPose = frame.getCamera().getPose();
 
+                //Get the Anchor Pose
                 float dx = objectPose.tx() - cameraPose.tx();
                 float dy = objectPose.ty() - cameraPose.ty();
                 float dz = objectPose.tz() - cameraPose.tz();
@@ -218,15 +213,16 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
                 tmp.setDistance(distanceMeters);
                 String meter = String.format("%.2f", distanceMeters);
-
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
 
+                //Get the altitude
                 if (ma.altitude_vec.isEmpty()) {
                     ma.altitude_vec.add(altitude);
                     ma.mAltitude_tv.setText("고        도 :" +
                             Integer.toString((int) altitude) + "m");
                 }
 
+                //Get the compass
                 if (ma.compass_vec.isEmpty()) {
                     compass = Math.abs(mMySensorEventListener.getYaw());
                     compass = Math.round(compass);
@@ -235,6 +231,8 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 }
             }
 
+
+            //Get the Diameter
             ma.mDiameter_tv.setText("흉 고 직 경 : " +
                     Float.toString((float) ma.radi / 10) + "cm");
 
@@ -243,11 +241,9 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             ai.get(id).getNode().select();
             ma.tree_id = id;
             radiusbar.setProgress(100,true);
-//            hei.heightbar.setProgress(0,true);
         });
         return root;
     }
-
 
 
     // Toast
@@ -255,17 +251,13 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
-
+    //AR
     @Override
-    public void onUpdate(FrameTime frameTime) {
-
-    }
-
+    public void onUpdate(FrameTime frameTime) { }
 
     TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
         @Override
         public boolean onTouch(HitTestResult hitTestResult, MotionEvent motionEvent) {
-
             if(hitTestResult.getNode()!=null) {
                 id = (ai.size() == 0) ? 0 : ai.size() - 1;
                 for (int i = 0; i < ai.size(); i++) {
@@ -278,7 +270,6 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 ma.tree_id=id;
                 ai.get(id).getNode().select();
 
-
                 String meter = String.format("%.2f", ai.get(id).getDistance());
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(ai.get(id).getDiameter() / 10) + "cm");
@@ -287,14 +278,10 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             }
             return false;
         }
-
-
     };
 
 
-
-
-    //Location and Altitude
+    //Sensor
     @Override
     public void onResume() {
         super.onResume();
@@ -310,31 +297,27 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
     }
-
     @Override
     public void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mMySensorEventListener);
         mLocationManager.removeUpdates(this);
     }
-
     @Override
     public void onLocationChanged(Location location) {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
         altitude = location.getAltitude();
     }
-
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) { }
-
     @Override
     public void onProviderEnabled(String provider) { }
-
     @Override
     public void onProviderDisabled(String provider) { }
 
 
+    //Image Button
     //control the object
     //Top
     ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {

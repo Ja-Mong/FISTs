@@ -116,6 +116,7 @@
         android:scaleType="fitCenter"
         android:background="@drawable/circle_background"
         android:src="@drawable/reset"
+        android:onClick="tv_Reset"
         android:layout_marginLeft="10dp"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="65dp"
