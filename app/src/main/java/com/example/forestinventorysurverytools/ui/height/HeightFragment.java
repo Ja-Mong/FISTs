@@ -117,7 +117,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
 
         //SeekBar
         heightbar = (SeekBar)root.findViewById(R.id.heigth_controller1);
-        heightbar.setMax(2900);
+
+        heightbar.setMax(2900); // 2900 -> 30.2m
         heightbar.setProgress(ma.height);
         heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
