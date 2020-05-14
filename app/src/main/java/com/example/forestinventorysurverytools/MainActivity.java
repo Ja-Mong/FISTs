@@ -34,6 +34,7 @@ import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     // 데이터 관리
-    public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
-    public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    //public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+    //public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
     public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
     public Vector<Float> compass_vec = new Vector<Float>(); // 측정한 모든 compass 값 저장
     public ArrayList<Info> infoArray = new ArrayList<Info>(); // 생성된 모든 Anchor 정보 저장
@@ -245,30 +246,51 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //ImageButton
     //Refresh
-    public void tv_Reset() {
-        // 초기화(리셋) 버튼 기능, 버튼 연결 보류
-        mInclinometer_tv.setText("경        사 :");
-        mDistance_tv.setText("거        리 :");
-        mDiameter_tv.setText("흉고직경 :");
-        mHeight_tv.setText("수        고 :");
-        mCompass_tv.setText("방        위 :");
-        mAltitude_tv.setText("고        도 :");
-        mInclinometer_val = 0.0;
-        mDistance_val = 0.0;
-        mDiameter_val = 0.0;
-        mHeight_val = 0.0;
-        height_vec.removeAllElements();
-        angle_vec.removeAllElements();
+    public void tv_Reset(View v) {
+        // 초기화(리셋) 버튼 기능,
+        //type 1: 측정한 모든 걸 지울 경우 05.14 (은지)
+        // 고도 값을 지울지 말지 고민.. 흉고에서 처음 tap 할때 추가되는데
+        // reset하고 새로 노드를 추가하니 고도는 새로 setting이 안되는 듯 함
+        if(infoArray.size()!=0){
+            initModel();
+            initModel2();
+            for(int i=0; i<infoArray.size(); i++){
+                infoArray.get(i).getNode().setRenderable(null);
+                infoArray.get(i).getH_Node().setRenderable(null);
+            }
+            infoArray.clear();
+            mInclinometer_tv.setText("경        사 :");
+            mDistance_tv.setText("거        리 :");
+            mDiameter_tv.setText("흉고직경 :");
+            mHeight_tv.setText("수        고 :");
+            mCompass_tv.setText("방        위 :");
+            mAltitude_tv.setText("고        도 :");
+            mInclinometer_val = 0.0;
+            mDistance_val = 0.0;
+            mDiameter_val = 0.0;
+            mHeight_val = 0.0;
+            altitude_vec.removeAllElements();
+            compass_vec.removeAllElements();
+        }else{
+            Log.d("tag","infoArray 비어있음");
+            Toast.makeText(this, "지울 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+        }
+        //type 2:현재 측정한 노드만 초기화
+        // 시크바로 바로 수정할 수 있고 delete 버튼이 따로 있어서
+        // 과연 필요할지?? 05.14 (은지)
+        /*if(tree_id){
+
+        }else{
+
+        }*/
     }
 
 
     //Save data
     String dirPath;
     public void Save_data(View v) {
-        //txt대신 서버 전송시 유리한 json 형식으로 핸드폰 내부 저장.
-
-        // 추후 조건식 (mDistance_val != 0.0 ) &&(mDiameter_val != 0.0 ) &&(mHeight_val != 0.0)
-        if (true) {
+        // array 에 맞춰 수정 05.14 (은지)
+        if (infoArray.size() != 0) {
             SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
             String filename = "fist_" + dateformat.format(System.currentTimeMillis());
 
@@ -283,16 +305,17 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 File savefile = new File(dirPath + "/" + filename + ".json");
                 try {
                     Log.d("tag", "File 생성시작");
-
-                    JSONObject obj = new JSONObject();
-
-                    obj.put("distance", mDistance_val);
-                    obj.put("diameter", mDiameter_val);
-                    obj.put("height", mHeight_val);
-                    obj.put("inclinometer", mInclinometer_val);
-
+                    JSONArray jArray = new JSONArray();
+                    for(int i=0; i<infoArray.size(); i++){
+                        JSONObject obj = new JSONObject();
+                        obj.put("id",infoArray.get(i).getId());
+                        obj.put("distance",infoArray.get(i).getDistance() );
+                        obj.put("diameter",infoArray.get(i).getDiameter() );
+                        obj.put("height", infoArray.get(i).getHeight());
+                        jArray.put(obj);
+                    }
                     FileWriter fw = new FileWriter(savefile);
-                    fw.write(obj.toString());
+                    fw.write(jArray.toString());
                     fw.flush();
                     fw.close();
 
@@ -303,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 }
             }
         } else {
+            Log.d("tag", "infoArray 비어있음 ");
+            Toast.makeText(this, "저장할 정보가 없습니다. 값을 측정해주세요", Toast.LENGTH_LONG).show();
         }
     }
 
