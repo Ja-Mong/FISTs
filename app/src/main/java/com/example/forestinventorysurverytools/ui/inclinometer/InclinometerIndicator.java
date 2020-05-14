@@ -3,6 +3,7 @@ package com.example.forestinventorysurverytools.ui.inclinometer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -14,6 +15,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import static android.graphics.Color.BLACK;
+import static android.graphics.Color.BLUE;
 import static android.graphics.Color.RED;
 import static android.graphics.Color.TRANSPARENT;
 import static android.graphics.Color.WHITE;
@@ -21,128 +23,152 @@ import static android.graphics.Color.parseColor;
 
 public class InclinometerIndicator extends View {
 
+
+    //Roading
     public static final boolean LOG_FPS = false;
 
+
+    //Orientation
     public static final int ROLL_DEGREES = 45*2;
-    public static final int BACKGROUND_COLOR = parseColor("#CDEF0A");
 
+
+    //Paint
+    public static final int BACKGROUND_COLOR = parseColor("#FFFFFF");
     PorterDuffXfermode mPorterDuffXfermode;
-
+    Paint mCenterPointPaint;
     Paint mBitmapPaint;
     Paint mRollLadderPaint;
-
     Paint mBackGround;
     Paint mHorizon;
     Paint mBottomRollLadderPaint;
-
     Bitmap mSrcBitmap;
     Bitmap mDstBitmap;
     Canvas mSrcCanvas;
 
+
+    //Value
     int mWidth;
     int mHeight;
-
     float mPitch = 0;
     float mRoll = 0;
 
 
+    //Inclinometer Draw
     public InclinometerIndicator(Context context) {
         this(context, null);
     }
-
     public InclinometerIndicator(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
+
+        //Paint
+        //Shape
         mPorterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
         mBitmapPaint = new Paint();
         mBitmapPaint.setFilterBitmap(false);
 
+
+        //Center Point
+        mCenterPointPaint = new Paint();
+        mCenterPointPaint.setAntiAlias(true);
+        mCenterPointPaint.setColor(BLUE);
+        mCenterPointPaint.setStrokeWidth(10);
+
+
+        //Top paint
         mRollLadderPaint = new Paint();
         mRollLadderPaint.setAntiAlias(true);
-        mRollLadderPaint.setColor(WHITE);
-        mRollLadderPaint.setStrokeWidth(10);
+        mRollLadderPaint.setColor(BLACK);
+        mRollLadderPaint.setStrokeWidth(3);
 
+
+        //Background paint
         mBackGround = new Paint();
         mBackGround.setAntiAlias(true);
         mBackGround.setColor(TRANSPARENT);
 
+
+        //Horizontal paint
         mHorizon = new Paint();
         mHorizon.setAntiAlias(true);
-        mHorizon.setColor(BLACK);
-        mHorizon.setStrokeWidth(5);
+        mHorizon.setColor(RED);
+        mHorizon.setStrokeWidth(3);
 
+
+        //Bottom paint
         mBottomRollLadderPaint = new Paint();
         mBottomRollLadderPaint.setAntiAlias(true);
-        mBottomRollLadderPaint.setColor(RED);
-        mBottomRollLadderPaint.setStrokeWidth(10);
+        mBottomRollLadderPaint.setColor(BLACK);
+        mBottomRollLadderPaint.setStrokeWidth(3);
     }
 
+
+    //Orientation
     public float getmPitch() {
         return mPitch;
     }
     public float getmRoll() {
         return mRoll;
     }
-
     public void setInclinometer(float pitch, float roll) {
         mPitch = pitch;
         mRoll = roll;
         invalidate();
     }
 
+
+    //Window
     @Override
     protected void onSizeChanged(int width, int height, int i, int i2) {
         super.onSizeChanged(width, height, i, i2);
         mWidth = width;
         mHeight = height;
     }
+
+
+    //Draw
     public Bitmap getmSrcBitmap() {
         if (mSrcBitmap == null) {
             mSrcBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             mSrcCanvas = new Canvas(mSrcBitmap);
         }
         Canvas canvas = mSrcCanvas;
-//        mSrcCanvas.drawRect(mWidth, mHeight, mWidth, mHeight, mBackGround);
 
-        //Image location
         float centerX = mWidth/2;
         float centerY = mHeight/2;
 
         //Background
         canvas.drawColor(BACKGROUND_COLOR);
-//        canvas.drawColor(Color.TRANSPARENT);
         canvas.save();
         canvas.rotate(mRoll, centerX, centerY);
         canvas.translate(0, (mPitch/ROLL_DEGREES) * mHeight);
 
         //Background shape
         canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mBackGround);
-//        canvas.drawRect(100, 100, 200, 200, mBackGround);
 
         //Horizon and TopLadder
-//        float ladderStepY = mHeight/12;
-        float topLadderStepX = mWidth/12;
-        float topLadderStepY = mWidth/12;
-        canvas.drawLine(-mWidth, centerY, mWidth * 2,
+        float topLadderStepX = mWidth/2;
+        float topLadderStepY = mWidth/2;
+        canvas.drawLine(-mWidth, centerY, mWidth*2,
                 centerY, mHorizon);
-        for (int i=1; i <=5; i++) {
+        for (int i=1; i <=100; i++) {
             float y = centerY - topLadderStepY * i;
-            canvas.drawLine(centerX - topLadderStepX * i,
-                    y, centerX + topLadderStepX * i, y, mRollLadderPaint);
+            canvas.drawLine(centerX, y,
+                    centerX + topLadderStepX * i, y, mRollLadderPaint);
         }
-//
+
 //        Bottom Ladder
-        float bottomLadderStepX = mWidth/12;
-        float bottomLadderStepY = mWidth/12;
-        for (int i = 1; i <= 5; i++) {
+        float bottomLadderStepX = mWidth/2;
+        float bottomLadderStepY = mWidth/2;
+        for (int i = 1; i <= 100; i++) {
             float y = centerY + bottomLadderStepY * i;
-            canvas.drawLine(centerX - bottomLadderStepX * i,
-                    y, centerX + bottomLadderStepX * i, y, mBottomRollLadderPaint);
+            canvas.drawLine(centerX, y,
+                    centerX + bottomLadderStepX * i, y, mBottomRollLadderPaint);
         }
         canvas.restore();
 
         //Center Point
-//        canvas.drawPoint(centerX, centerY, mPointColorPaint);
+        canvas.drawPoint(centerX, centerY, mCenterPointPaint);
 
         return mSrcBitmap;
     }
@@ -151,7 +177,7 @@ public class InclinometerIndicator extends View {
             mDstBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(mDstBitmap);
             c.drawColor(BACKGROUND_COLOR);
-//            c.drawRect(200,200,400,400,mBackGround);
+            c.drawRect(200,200,400,400,mBackGround);
 
             Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
             p.setColor(RED);

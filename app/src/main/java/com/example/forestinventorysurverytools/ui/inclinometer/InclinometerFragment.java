@@ -28,32 +28,42 @@ import androidx.fragment.app.Fragment;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
+import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Scene;
 
-public class InclinometerFragment extends Fragment implements InclinometerOrientation.Listener {
+public class InclinometerFragment extends Fragment implements Scene.OnUpdateListener, InclinometerOrientation.Listener {
 
+
+    //View
     View root;
 
+
+    //Sensor
     SensorManager mSensorManager;
     MySensorEventListener mMySensorEventListener;
 
-//    CameraAPI mInclinometerCameraAPI;
-//    TextureView mCameraPreview_Inclino;
-//    Handler mCameraHandler;
-//    HandlerThread mCameraThread;
 
+    //Draw the inclinometer view
     WindowManager mWindowManager;
     InclinometerOrientation mInclinometerOrientation;
     InclinometerIndicator mInclinometerIndicator;
 
+
+    //ImageButton
     ImageButton mBtn_inclinometer;
 
+
+    //Value
     float angle;
 
-    MainActivity ma = null;
 
-    public InclinometerFragment(MainActivity ma) {
-        this.ma = ma;
-    }
+    //Activity
+    MainActivity ma = null;
+    public InclinometerFragment(MainActivity ma) {this.ma = ma;}
+
+
+
+
 
 
     @Nullable
@@ -61,23 +71,36 @@ public class InclinometerFragment extends Fragment implements InclinometerOrient
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_inclinometer, container, false);
 
+
+        //Sensor
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mMySensorEventListener = new MySensorEventListener(mSensorManager);
 
+
+        //Draw
         mWindowManager = getActivity().getWindow().getWindowManager();
         mInclinometerOrientation = new InclinometerOrientation(ma);
         mInclinometerIndicator = (InclinometerIndicator) root.findViewById(R.id.inclinometer);
 
+
+        //ImageButton
         mBtn_inclinometer = (ImageButton) root.findViewById(R.id.Btn_inclinometer);
         mBtn_inclinometer.setOnClickListener(measureSlope);
+
+
         return root;
     }
+
+
 
     // Toast
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
+
+    //ImageButton
+    //get the slope value
     ImageButton.OnClickListener measureSlope = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View inclino) {
@@ -92,7 +115,7 @@ public class InclinometerFragment extends Fragment implements InclinometerOrient
     };
 
 
-
+    //Sensor
     @Override
     public void onResume() {
         super.onResume();
@@ -104,8 +127,6 @@ public class InclinometerFragment extends Fragment implements InclinometerOrient
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -113,20 +134,24 @@ public class InclinometerFragment extends Fragment implements InclinometerOrient
     }
 
 
+    //Move the window
     @Override
     public void onStart() {
         super.onStart();
         mInclinometerOrientation.startListening(this);
     }
-
     @Override
     public void onStop() {
         super.onStop();
         mInclinometerOrientation.stopListening();
     }
-
     @Override
     public void onOrientationChanged(float pitch, float roll) {
         mInclinometerIndicator.setInclinometer(pitch, roll);
     }
+
+
+    //AR
+    @Override
+    public void onUpdate(FrameTime frameTime) { }
 }
