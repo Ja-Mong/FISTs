@@ -1,5 +1,7 @@
 package com.example.forestinventorysurverytools.ui.diameter;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 //import com.example.forestinventorysurverytools.CameraAPI;
@@ -41,7 +45,7 @@ import java.util.ArrayList;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
-public class DiameterFragment extends Fragment implements LocationListener, Scene.OnUpdateListener{
+public class DiameterFragment extends Fragment implements Scene.OnUpdateListener, LocationListener{
 
 
     //View
@@ -89,6 +93,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, null);
         id = 0;
+
 
 
         //Sensor
@@ -163,7 +168,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
             String idstr = dateformat.format(System.currentTimeMillis());
             Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
-                                new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+                    new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
             tmp.setDiameter(100);
             tmp.setHeight(0);
             tmp.getNode().setRenderable(ma.modelRenderable);
@@ -267,11 +272,11 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                0, 0, this);
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
     }
     @Override
     public void onPause() {
@@ -279,18 +284,6 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
         mSensorManager.unregisterListener(mMySensorEventListener);
         mLocationManager.removeUpdates(this);
     }
-    @Override
-    public void onLocationChanged(Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-        altitude = location.getAltitude();
-    }
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) { }
-    @Override
-    public void onProviderEnabled(String provider) { }
-    @Override
-    public void onProviderDisabled(String provider) { }
 
 
     //Image Button
@@ -347,7 +340,7 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
                     if (ma.infoArray.get(i).getNode().isSelected()) {
                         Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
                         ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
-                                        tmpVec.y, tmpVec.z));
+                                tmpVec.y, tmpVec.z));
                         ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
                                 tmpVec.y, tmpVec.z));
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
@@ -378,5 +371,27 @@ public class DiameterFragment extends Fragment implements LocationListener, Scen
             return false;
         }
     };
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double altitude = location.getAltitude();
+
+        ma.mAltitude_tv.setText("고        도 :"+Integer.toString((int)altitude)+"m");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }
 
