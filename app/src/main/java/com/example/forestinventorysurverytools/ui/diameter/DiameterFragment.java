@@ -206,8 +206,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 //Get the compass
                 if (ma.compass_vec.isEmpty()) {
                     compass = Math.abs(mMySensorEventListener.getYaw());
-                    compass = Math.round(compass);
-                    ma.mCompass_tv.setText("방        위 : " + compass + "°"
+                    compass = (float) Math.toDegrees(compass);
+                    ma.mCompass_tv.setText("방        위 : " + Integer.toString((int)compass) + "°"
                             + mMySensorEventListener.matchDirection(compass));
                 }
             }
@@ -272,9 +272,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(mMySensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
+
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
     }
