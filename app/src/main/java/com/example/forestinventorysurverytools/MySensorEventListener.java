@@ -62,8 +62,21 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         mSensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
     }
 
+    //y축
+    public float getRoll() {
+        float roll = mOrientationAngles[2];
+        return roll;
+    }
 
 
+    //x축
+    public float getPitch() {
+        float pitch = mOrientationAngles[1];
+        return pitch;
+    }
+
+
+    //z축
     public float getYaw() {
         float yaw = -mOrientationAngles[0];
         return yaw;
