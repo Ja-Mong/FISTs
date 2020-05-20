@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public  int tree_id;
     public int radi = 100;
     public int height = 0;
-    int axis_Z = 0;
-    int axis_X = 0;
+    public int axis_Z = 0;
+    public int axis_X = 0;
     public ImageButton mDelete_anchor;
 
 

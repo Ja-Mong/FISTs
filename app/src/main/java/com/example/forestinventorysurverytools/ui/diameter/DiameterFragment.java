@@ -35,8 +35,10 @@ import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.HitTestResult;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.text.SimpleDateFormat;
@@ -177,9 +179,30 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.getH_Node().setParent(anchorNode2);
             tmp.getNode().setOnTouchListener(touchNode);
             tmp.getH_Node().setOnTouchListener(touchNode);
+
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
 
+            //AR TextView
+            ViewRenderable.builder()
+                    .setView(getContext(), R.layout.test)  //Integer.parseInt(Double.toString(ma.mDiameter_val)))
+                    .build()
+                    .thenAccept(viewRenderable -> {
+                        Node text = new Node();
+                        text.setParent(ma.arFragment.getArSceneView().getScene());
+                        text.setParent(tmp.getNode());
+                        text.setRenderable(viewRenderable);
+
+                        text.setLocalPosition(new Vector3(ma.axis_X/100, 0.4f,
+                                (float) ma.axis_Z/100));
+
+                        ma.modelRenderable.setShadowCaster(false);
+                        ma.modelRenderable.setShadowReceiver(false);
+                    });
+            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
+            tmp.getNode().select();
+
+            //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             if (ma.anchorNode != null) {
                 Frame frame = ma.arFragment.getArSceneView().getArFrame();
                 Pose objectPose = ma.anchor.getPose();
@@ -272,7 +295,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mSensorManager.registerListener(mMySensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
-
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
     }
