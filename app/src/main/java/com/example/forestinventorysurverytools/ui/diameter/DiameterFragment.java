@@ -232,6 +232,36 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                     compass = (float) Math.toDegrees(compass);
                     ma.mCompass_tv.setText("방        위 : " + Integer.toString((int)compass) + "°"
                             + mMySensorEventListener.matchDirection(compass));
+
+                    if (compass == 0) {
+                        ma.mCompass_tv.setText("방위:"  + 90 +"°" + mMySensorEventListener.matchDirection(compass));
+                    }
+                    if (compass >= 1 && compass <= 89) { //
+                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                    }
+                    if (compass == 90) {
+                        ma.mCompass_tv.setText("방위:"  + 180 + "°");
+                    }
+                    if (compass >= 91 && compass <= 179) {
+                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                    }
+                    if (compass == 180) {
+                        ma.mCompass_tv.setText("방위:"  + 270 + "°");
+                    }
+                    if (compass >= 181 && compass <= 269) {
+                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                    }
+                    if (compass == 270) {
+                        ma.mCompass_tv.setText("방위:"  + 0 + "°");
+                    }
+                    if (compass >= 271 && compass <= 359) {
+                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass-270)+"°"+mMySensorEventListener.matchDirection(compass));
+                    }
+                    if (compass == 360) {
+                        ma.mCompass_tv.setText("방위:"  + 90 + "°");
+                    }
+
+
                 }
             }
 
