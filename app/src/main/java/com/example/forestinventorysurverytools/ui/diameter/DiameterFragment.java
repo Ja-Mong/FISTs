@@ -96,7 +96,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         root = inflater.inflate(R.layout.fragment_diameter, null);
         id = 0;
 
-
+        //AR ViewRenderable
+        TextView ar_textview = new TextView(getContext());
 
         //Sensor
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
@@ -115,6 +116,13 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mLeft.setOnTouchListener(controll_BtnLeft);
 
 
+        //Create the data form
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
+        String idstr = dateformat.format(System.currentTimeMillis());
+        Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
+                new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+
+
         //SeekBar
         radius_controller = (TextView) root.findViewById(R.id.radi_controller);
         radiusbar = (SeekBar) root.findViewById(R.id.radi_controller1);
@@ -131,6 +139,25 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
+                ar_textview.setText((float)ma.radi/10+"cm");
+
+
+                //AR TextView
+                ViewRenderable.builder()
+                        .setView(getActivity(), ar_textview) //렉이 많이 걸림..
+                        .build()
+                        .thenAccept(viewRenderable -> {
+                            Node text = new Node();
+                            text.setRenderable(viewRenderable);
+                            text.setParent(tmp.getNode());
+                            text.setLocalPosition(new Vector3(ma.axis_X/100, 0.6f,
+                                    (float) ma.axis_Z/100));
+
+                            ma.modelRenderable.setShadowCaster(false);
+                            ma.modelRenderable.setShadowReceiver(false);
+
+                        });
+                tmp.getNode().select();
             }
 
             @Override
@@ -167,10 +194,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
             ma.anchorNode = anchorNode2;
-            SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
-            String idstr = dateformat.format(System.currentTimeMillis());
-            Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
-                    new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
             tmp.setDiameter(100);
             tmp.setHeight(0);
             tmp.getNode().setRenderable(ma.modelRenderable);
