@@ -7,16 +7,17 @@ import com.google.ar.sceneform.ux.TransformableNode;
 public class Info {
     TransformableNode node;
     TransformableNode h_node;
+    TransformableNode t_node;
     String id;                 // 노드 생성된 월,일,시,분,초 형식
     float distance;
     float diameter;
     float height;
     Location loc; // GPS 좌표 추후 넣기...
 
-    public Info(){}
-    public Info(TransformableNode n, TransformableNode hn,String id){
+    public Info(TransformableNode n, TransformableNode hn, TransformableNode tn, String id){
         this.node = n;
         this.h_node = hn;
+        this.t_node = tn;
         this.id = id;
         distance = 0.0f;
         diameter = 0.0f;
@@ -26,6 +27,7 @@ public class Info {
     //setter함수
     public void setNode(TransformableNode node){this.node=node;}
     public void setH_Node(TransformableNode h_node){this.h_node=h_node;}
+    public void setT_Node(TransformableNode t_node){this.t_node=t_node;}
     public void setDistance(float f){distance=f;}
     public void setDiameter(float f){diameter=f;}
     public void setHeight(float f){height=f;}
@@ -33,6 +35,7 @@ public class Info {
     //getter함수
     public TransformableNode getNode(){return node;}
     public TransformableNode getH_Node(){return h_node;}
+    public TransformableNode getT_Node(){return t_node;}
     public float getDistance(){return distance;}
     public float getDiameter(){return diameter;}
     public float getHeight(){return height;}

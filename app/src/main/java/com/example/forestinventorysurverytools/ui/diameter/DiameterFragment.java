@@ -41,6 +41,8 @@ import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -120,7 +122,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
         String idstr = dateformat.format(System.currentTimeMillis());
         Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
-                new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+                new TransformableNode(ma.arFragment.getTransformationSystem()),
+                        new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
 
 
         //SeekBar
@@ -137,6 +140,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel2();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
                 ar_textview.setText((float)ma.radi/10+"cm");
@@ -170,6 +174,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.infoArray.get(ma.tree_id).setDiameter((float)ma.radi);
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             }
         });
@@ -198,32 +203,17 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.setHeight(0);
             tmp.getNode().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
+//            tmp.getT_Node().setRenderable(ma.modelRenderable3);
             tmp.getNode().setParent(anchorNode2);
             tmp.getH_Node().setParent(anchorNode2);
+//            tmp.getT_Node().setParent(anchorNode2);
             tmp.getNode().setOnTouchListener(touchNode);
             tmp.getH_Node().setOnTouchListener(touchNode);
+//            tmp.getT_Node().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
 
-            //AR TextView
-            ViewRenderable.builder()
-                    .setView(getContext(), R.layout.test)  //Integer.parseInt(Double.toString(ma.mDiameter_val)))
-                    .build()
-                    .thenAccept(viewRenderable -> {
-                        Node text = new Node();
-                        text.setParent(ma.arFragment.getArSceneView().getScene());
-                        text.setParent(tmp.getNode());
-                        text.setRenderable(viewRenderable);
-
-                        text.setLocalPosition(new Vector3(ma.axis_X/100, 0.4f,
-                                (float) ma.axis_Z/100));
-
-                        ma.modelRenderable.setShadowCaster(false);
-                        ma.modelRenderable.setShadowReceiver(false);
-                    });
-            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-            tmp.getNode().select();
 
             //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             if (ma.anchorNode != null) {
@@ -257,31 +247,31 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                             + mMySensorEventListener.matchDirection(compass));
 
                     if (compass == 0) {
-                        ma.mCompass_tv.setText("방위:"  + 90 +"°" + mMySensorEventListener.matchDirection(compass));
+                        ma.mCompass_tv.setText("방        위 : "  + 90 +"°" + mMySensorEventListener.matchDirection(compass));
                     }
                     if (compass >= 1 && compass <= 89) { //
-                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                        ma.mCompass_tv.setText("방        위 : "  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
                     }
                     if (compass == 90) {
-                        ma.mCompass_tv.setText("방위:"  + 180 + "°");
+                        ma.mCompass_tv.setText("방        위 : "  + 180 + "°");
                     }
                     if (compass >= 91 && compass <= 179) {
-                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                        ma.mCompass_tv.setText("방        위 : "  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
                     }
                     if (compass == 180) {
-                        ma.mCompass_tv.setText("방위:"  + 270 + "°");
+                        ma.mCompass_tv.setText("방        위 : "  + 270 + "°");
                     }
                     if (compass >= 181 && compass <= 269) {
-                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
+                        ma.mCompass_tv.setText("방        위 : "  +Integer.toString((int)compass+90)+"°"+mMySensorEventListener.matchDirection(compass));
                     }
                     if (compass == 270) {
-                        ma.mCompass_tv.setText("방위:"  + 0 + "°");
+                        ma.mCompass_tv.setText("방        위 : "  + 0 + "°");
                     }
                     if (compass >= 271 && compass <= 359) {
-                        ma.mCompass_tv.setText("방위:"  +Integer.toString((int)compass-270)+"°"+mMySensorEventListener.matchDirection(compass));
+                        ma.mCompass_tv.setText("방        위 : "  +Integer.toString((int)compass-270)+"°"+mMySensorEventListener.matchDirection(compass));
                     }
                     if (compass == 360) {
-                        ma.mCompass_tv.setText("방위:"  + 90 + "°");
+                        ma.mCompass_tv.setText("방        위 : "  + 90 + "°");
                     }
 
 
