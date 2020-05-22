@@ -2,12 +2,14 @@ package com.example.forestinventorysurverytools;
 
 import android.location.Location;
 
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 public class Info {
     TransformableNode node;
     TransformableNode h_node;
     TransformableNode t_node;
+    Node text;
     String id;                 // 노드 생성된 월,일,시,분,초 형식
     float distance;
     float diameter;
@@ -22,6 +24,7 @@ public class Info {
         distance = 0.0f;
         diameter = 0.0f;
         height = 0.0f;
+        text=new Node();
     }
 
     //setter함수

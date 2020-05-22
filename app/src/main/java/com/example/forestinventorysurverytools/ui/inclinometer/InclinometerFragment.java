@@ -81,7 +81,7 @@ public class InclinometerFragment extends Fragment implements Scene.OnUpdateList
         mWindowManager = getActivity().getWindow().getWindowManager();
         mInclinometerOrientation = new InclinometerOrientation(ma);
         mInclinometerIndicator = (InclinometerIndicator) root.findViewById(R.id.inclinometer);
-
+        mInclinometerIndicator.ma= this.ma;
 
         //ImageButton
         mBtn_inclinometer = (ImageButton) root.findViewById(R.id.Btn_inclinometer);

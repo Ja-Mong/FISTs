@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public ModelRenderable modelRenderable;
     public ModelRenderable modelRenderable2;
     public ModelRenderable modelRenderable3;
-
+    public Node textNode;
 
     //AR controller
     public  int tree_id;
@@ -193,6 +193,30 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
+    public void RenderText(int r){
+        //AR ViewRenderable
+
+        TextView ar_textview = new TextView(this);
+        ar_textview.setText((tree_id+1)+"번 나무\n"+(float)r/10+"cm");
+        ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
+        ViewRenderable.builder()
+                .setView(this, ar_textview) //렉이 많이 걸림..
+                .build()
+                .thenAccept(viewRenderable -> {
+                    viewRenderable.getView().clearFocus();
+                    if(infoArray.size()>0) {
+                        Node text = infoArray.get(tree_id).text;
+                        text.setRenderable(null);
+                        text.setRenderable(viewRenderable);
+                        text.setParent(infoArray.get(tree_id).getNode());
+                        text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 1.2f,
+                                infoArray.get(tree_id).getNode().getLocalPosition().z));
+
+                        viewRenderable.setShadowCaster(false);
+                        viewRenderable.setShadowReceiver(false);
+                    }
+                });
+    }
     //AR update
     @Override
     public void onUpdate(FrameTime frameTime) {
@@ -346,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                 initModel();
                 int idx = tree_id;
+                infoArray.get(idx).text.setRenderable(null);
                 infoArray.get(idx).getNode().setRenderable(null);
                 infoArray.get(idx).getH_Node().setRenderable(null);
                 infoArray.remove(idx);

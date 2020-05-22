@@ -9,10 +9,19 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.AttributeSet;
+import android.view.PixelCopy;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
+import com.example.forestinventorysurverytools.MainActivity;
+import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.ux.ArFragment;
+
+import java.io.IOException;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.BLUE;
@@ -33,7 +42,7 @@ public class InclinometerIndicator extends View {
 
 
     //Paint
-    public static final int BACKGROUND_COLOR = parseColor("#FFFFFF");
+    public static final int BACKGROUND_COLOR = parseColor("#1A003F00");
     PorterDuffXfermode mPorterDuffXfermode;
     Paint mCenterPointPaint;
     Paint mBitmapPaint;
@@ -45,6 +54,7 @@ public class InclinometerIndicator extends View {
     Bitmap mDstBitmap;
     Canvas mSrcCanvas;
 
+    MainActivity ma;
 
     //Value
     int mWidth;
@@ -113,6 +123,7 @@ public class InclinometerIndicator extends View {
     public void setInclinometer(float pitch, float roll) {
         mPitch = pitch;
         mRoll = roll;
+
         invalidate();
     }
 
@@ -128,6 +139,7 @@ public class InclinometerIndicator extends View {
 
     //Draw
     public Bitmap getmSrcBitmap() {
+
         if (mSrcBitmap == null) {
             mSrcBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
             mSrcCanvas = new Canvas(mSrcBitmap);
@@ -142,9 +154,10 @@ public class InclinometerIndicator extends View {
         canvas.save();
         canvas.rotate(mRoll, centerX, centerY);
         canvas.translate(0, (mPitch/ROLL_DEGREES) * mHeight);
-
         //Background shape
         canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mBackGround);
+
+
 
         //Horizon and TopLadder
         float topLadderStepX = mWidth/2;
@@ -192,14 +205,54 @@ public class InclinometerIndicator extends View {
         if (LOG_FPS) {
             countFPS();
         }
+
+
         Bitmap src = getmSrcBitmap();
         Bitmap dst = getmDstBitmap();
 
         int sc = saveLayer(canvas);
-        canvas.drawBitmap(dst, 0, 0, mBitmapPaint);
+        //canvas.drawBitmap(dst, 0, 0, mBitmapPaint);
 //        mBitmapPaint.setXfermode(mPorterDuffXfermode);
-        canvas.drawBitmap(src, 0, 0, mBitmapPaint);
+        //canvas.drawBitmap(src, 0, 0, mBitmapPaint);
 //        mBitmapPaint.setXfermode(null);
+
+
+
+        /**************************************************************/
+        canvas.drawColor(BACKGROUND_COLOR);
+        float centerX = mWidth/2;
+        float centerY = mHeight/2;
+        canvas.rotate(mRoll, centerX, centerY);
+        canvas.translate(0, (mPitch/ROLL_DEGREES) * mHeight);
+        //Background shape
+        canvas.drawRect(-mWidth, centerY, mWidth * 2, mHeight * 2, mBackGround);
+
+
+
+        //Horizon and TopLadder
+        float topLadderStepX = mWidth/10;
+        float topLadderStepY = mWidth/10;
+        canvas.drawLine(-mWidth, centerY, mWidth*2,
+                centerY, mHorizon);
+        for (int i=1; i <=100; i++) {
+            float y = centerY - topLadderStepY * i;
+            canvas.drawLine(centerX - topLadderStepX * i, y,
+                    centerX + topLadderStepX * i, y, mRollLadderPaint);
+        }
+
+//        Bottom Ladder
+        float bottomLadderStepX = mWidth/10;
+        float bottomLadderStepY = mWidth/10;
+        for (int i = 1; i <= 100; i++) {
+            float y = centerY + bottomLadderStepY * i;
+            canvas.drawLine(centerX- topLadderStepX * i, y,
+                    centerX + bottomLadderStepX * i, y, mBottomRollLadderPaint);
+        }
+
+
+
+
+        /**************************************************************/
 
         canvas.restoreToCount(sc);
     }
