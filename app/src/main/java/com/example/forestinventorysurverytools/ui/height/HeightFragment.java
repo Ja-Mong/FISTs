@@ -101,7 +101,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
         //Sensor
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mMySensorEventListener = new MySensorEventListener(mSensorManager);
+        mMySensorEventListener = new MySensorEventListener(ma, mSensorManager);
 
 
         //Draw

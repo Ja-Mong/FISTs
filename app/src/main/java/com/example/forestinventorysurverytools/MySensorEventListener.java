@@ -22,10 +22,13 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
     final float[] mRotationMatrix = new float[9];
 
 
+    //Activity
+    MainActivity ma = null;
 
-    public MySensorEventListener(SensorManager mSensorManager) {
+    public MySensorEventListener(MainActivity ma, SensorManager mSensorManager) {
         super();
         this.mSensorManager = mSensorManager;
+        this.ma = ma;
     }
 
 
@@ -86,15 +89,19 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
 
     //Compass
     public String matchDirection(float compass) {
-        if(compass >= 248 && compass < 293) { return "N"; }
-        if(compass >= 293 && compass < 338) { return "NE"; }
-        if(compass >= 338 && compass < 361) { return "E"; }
-        if(compass >= 0 && compass < 23) { return "E"; }
-        if(compass >= 23 && compass < 68) { return "SE"; }
-        if(compass >= 68 && compass < 113) { return "S"; }
-        if(compass >= 113 && compass < 158) { return "SW"; }
-        if(compass >= 158 && compass < 203) { return "W"; }
-        if(compass >= 203 && compass < 248) { return "NW"; }
+        if (compass == 0) {ma.mCompass_tv.setText("방        위 : "  + 90 +"°" + "N");}
+        if (compass >= 1 && compass <= 89) {ma.mCompass_tv.setText("방        위 : "
+                +Integer.toString((int)compass+90)+"°" + "NE");}
+        if (compass == 90) {ma.mCompass_tv.setText("방        위 : "  + 180 + "°" + "E");}
+        if (compass >= 91 && compass <= 179) {ma.mCompass_tv.setText("방        위 : "
+                +Integer.toString((int)compass+90)+"°"+"SE"); }
+        if (compass == 180) {ma.mCompass_tv.setText("방        위 : "  + 270 + "°"+"S");}
+        if (compass >= 181 && compass <= 269) {ma.mCompass_tv.setText("방        위 : "
+                +Integer.toString((int)compass+90)+"°"+"SW");}
+        if (compass == 270) {ma.mCompass_tv.setText("방        위 : "  + 0 + "°"+"W");}
+        if (compass >= 271 && compass <= 359) {ma.mCompass_tv.setText("방        위 : "
+                +Integer.toString((int)compass-270)+"°"+"NW");}
+        if (compass == 360) {ma.mCompass_tv.setText("방        위 : "  + 90 + "°"+"N");}
         return null;
     }
 }

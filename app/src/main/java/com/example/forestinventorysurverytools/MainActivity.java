@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
-    //AR model 2 = Height
+    //AR model 2 = userHeight
     public void initModel2() {
         MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 0.5f))
                 .thenAccept(
