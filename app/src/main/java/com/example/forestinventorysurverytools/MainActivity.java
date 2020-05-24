@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +20,7 @@ import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
-import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
+//import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.TrackingState;
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     // Fragment
-    public InclinometerFragment inclinometerFragment;
     public DiameterFragment diameterFragment;
     public HeightFragment heightFragment;
 
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public TextView mHeight_tv;
     public TextView mCompass_tv;
     public TextView mAltitude_tv;
+    public EditText mInputHeight;
 
 
     // 거리, 흉고직경, 높이 실제 값 저장 변수
@@ -73,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     // 데이터 관리
-    //public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
-    //public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
+    public Vector<Double> height_vec = new Vector<Double>(); // 측정하는 모든 angle 값 저장
+    public Vector<Float> angle_vec = new Vector<Float>(); // 측정하는 모든 angle 값 저장
     public Vector<Double> altitude_vec = new Vector<Double>(); // 측정하는 모든 altitude 값 저장
     public Vector<Float> compass_vec = new Vector<Float>(); // 측정한 모든 compass 값 저장
     public ArrayList<Info> infoArray = new ArrayList<Info>(); // 생성된 모든 Anchor 정보 저장
@@ -86,8 +87,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
     public ModelRenderable modelRenderable2;
-    public ModelRenderable modelRenderable3;
-    public Node textNode;
+
 
     //AR controller
     public  int tree_id;
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mHeight_tv = (TextView) this.findViewById(R.id.tv_height);
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
+        mInputHeight = (EditText)this.findViewById(R.id.input_height);
 
 
         //ImageButton
@@ -122,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
         //Fragment
-        inclinometerFragment = new InclinometerFragment(this);
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
 
@@ -131,15 +131,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.navigation_inclinometer:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, inclinometerFragment).commit();
-                        return true;
                     case R.id.navigation_diameter:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
                         return true;
@@ -160,10 +157,10 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float) axis_X/100, 0.6f,
+                            Vector3 vector3 = new Vector3((float) axis_X/100, 1.2f,
                                     (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
-                                    ((float) radi / 1000, 1.2f,
+                                    ((float) radi / 1000, 0.5f,
                                             vector3, material);
 
                             modelRenderable.setShadowCaster(false);

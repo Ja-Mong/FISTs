@@ -84,6 +84,9 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public ImageButton mBottom;
     public ImageButton mRight;
     public ImageButton mLeft;
+    public ImageButton mRightDown;
+    public ImageButton mLeftDown;
+
 
 
     //TextView
@@ -111,10 +114,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mBottom = (ImageButton)root.findViewById(R.id.bottom);
         mRight = (ImageButton)root.findViewById(R.id.right);
         mLeft = (ImageButton)root.findViewById(R.id.left);
+        mRightDown = (ImageButton)root.findViewById(R.id.rightDown);
+        mLeftDown = (ImageButton)root.findViewById(R.id.leftDown);
+
         mTop.setOnTouchListener(controll_BtnTop);
         mBottom.setOnTouchListener(controll_BtnBottom);
         mRight.setOnTouchListener(controll_BtnRight);
         mLeft.setOnTouchListener(controll_BtnLeft);
+        mRightDown.setOnTouchListener(controll_BtnRigntDown);
+        mLeftDown.setOnTouchListener(controll_BtnLeftDown);
 
 
 
@@ -406,6 +414,48 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         @Override
         public boolean onTouch(View controllLeft, MotionEvent event) {
             if (controllLeft == mLeft) {
+                ma.initModel();
+                for (int i=0; i<ma.infoArray.size(); i++) {
+                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
+                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
+                                tmpVec.y, tmpVec.z));
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
+                                tmpVec.y, tmpVec.z));
+                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                    }
+                }
+            }
+            return false;
+        }
+    };
+
+    //RightDown
+    ImageButton.OnTouchListener controll_BtnRigntDown = new ImageButton.OnTouchListener() {
+        @Override
+        public boolean onTouch(View controllRightDown, MotionEvent event) {
+            if (controllRightDown == mRightDown) {
+                ma.initModel();
+                for (int i=0; i<ma.infoArray.size(); i++) {
+                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
+                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x,
+                                ((tmpVec.y*100)-1)/100, tmpVec.z));
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x,
+                                ((tmpVec.y*100)-1)/100, tmpVec.z));
+                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                    }
+                }
+            }
+            return false;
+        }
+    };
+
+    //LeftDown
+    ImageButton.OnTouchListener controll_BtnLeftDown = new ImageButton.OnTouchListener() {
+        @Override
+        public boolean onTouch(View controllLeftDown, MotionEvent event) {
+            if (controllLeftDown == mLeftDown) {
                 ma.initModel();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {

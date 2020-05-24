@@ -1,7 +1,10 @@
 package com.example.forestinventorysurverytools.ui.height;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.PixelCopy;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -20,8 +24,11 @@ import androidx.fragment.app.Fragment;
 //import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.MainActivity;
 //import com.example.forestinventorysurverytools.MySensorEventListener;
+import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
+//import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerIndicator;
+//import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
@@ -36,19 +43,36 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
-public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
+public class HeightFragment extends Fragment implements Scene.OnUpdateListener, HeightOrientation.Listener {
 
 
     //View
     View root;
 
 
+    //Sensor
+    SensorManager mSensorManager;
+    MySensorEventListener mMySensorEventListener;
+
+
     //ImageButton
+    ImageButton mBtn_getSlope;
+    ImageButton mBtn_measure;
+    ImageButton mBtn_getHeight1;
+    ImageButton mBtn_getHeight2;
+    ImageButton mBtn_getHeight3;
+    ImageButton mBtn_getHeight4;
     ImageButton mBtn_capture;
 
 
     //TextView
     TextView height_controller;
+
+
+    //Draw the inclinometer view
+    WindowManager mWindowManager;
+    HeightOrientation mHeightOrientation;
+    HeightIndicator mHeightIndicator;
 
 
     //CheckBox
@@ -66,71 +90,148 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
     ArrayList<Renderable> h_tmpRend = new ArrayList<>();
 
 
-    //SeekBar
-    public SeekBar heightbar;
 
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_height,null);
+        root = inflater.inflate(R.layout.fragment_height, null);
+
+
+        //Sensor
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mMySensorEventListener = new MySensorEventListener(mSensorManager);
+
+
+        //Draw
+        mWindowManager = getActivity().getWindow().getWindowManager();
+        mHeightOrientation = new HeightOrientation(ma);
+        mHeightIndicator = (HeightIndicator) root.findViewById(R.id.inclinometer);
+        mHeightIndicator.ma = this.ma;
 
 
         //ImageButton
+        mBtn_getSlope = (ImageButton)root.findViewById(R.id.Btn_getSlope);
+        mBtn_measure = (ImageButton)root.findViewById(R.id.Btn_measure);
+        mBtn_getHeight1 = (ImageButton)root.findViewById(R.id.Btn_platHeight);
+        mBtn_getHeight2 = (ImageButton)root.findViewById(R.id.Btn_upHeight);
+        mBtn_getHeight3 = (ImageButton)root.findViewById(R.id.Btn_down1Height);
+        mBtn_getHeight4 = (ImageButton)root.findViewById(R.id.Btn_down2Height);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
+
+        mBtn_getSlope.setOnClickListener(getSlopeValues);
+        mBtn_measure.setOnClickListener(getHeightAngle);
+        mBtn_getHeight1.setOnClickListener(getHeightValues1);
+        mBtn_getHeight2.setOnClickListener(getHeightValues2);
+        mBtn_getHeight3.setOnClickListener(getHeightValues3);
+        mBtn_getHeight4.setOnClickListener(getHeightValues4);
         mBtn_capture.setOnClickListener(takeCapture);
 
 
-        //TextView
-        height_controller = (TextView) root.findViewById(R.id.height_controller);
-
-
         //CheckBox
-        mSaveOriginImage = (CheckBox)root.findViewById(R.id.saveOriginImage);
-        mSavePortraitScr = (CheckBox)root.findViewById(R.id.savePortraitScreen);
+        mSaveOriginImage = (CheckBox) root.findViewById(R.id.saveOriginImage);
+        mSavePortraitScr = (CheckBox) root.findViewById(R.id.savePortraitScreen);
 
-
-        //SeekBar
-        heightbar = (SeekBar)root.findViewById(R.id.heigth_controller1);
-
-        heightbar.setMax(2900); // 2900 -> 30.2m
-        heightbar.setProgress(ma.height);
-        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                ma.height = progress;
-                ma.radi = (int)ma.infoArray.get(ma.tree_id).getDiameter();
-                ma.initModel2();
-                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
-                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)ma.height/100)+"m");
-
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                ma.initModel2();
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
-                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            }
-        });
         return root;
     }
 
 
-    // Toast
+    //Toast
     public void showToast(String data) {
         Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
 
+    //SensorListener
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
+
+        mSensorManager.registerListener(mMySensorEventListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mMySensorEventListener);
+    }
+
+
+    //Move the window
+    @Override
+    public void onStart() {
+        super.onStart();
+        mHeightOrientation.startListening(this);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        mHeightOrientation.stopListening();
+    }
+    @Override
+    public void onOrientationChanged(float pitch, float roll) {
+        mHeightIndicator.setInclinometer(pitch, roll);
+    }
+
+
     //ImageButton
+    //Height
+    final ImageButton.OnClickListener getHeightAngle = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View rollAngle1) {
+            mMySensorEventListener.updateOrientationAngles();
+
+        }
+    };
+
+    //Slope
+    final ImageButton.OnClickListener getSlopeValues = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View rollAngle2) {
+            mMySensorEventListener.updateOrientationAngles();
+
+        }
+    };
+
+
+    //Calculate Height depends on 4 case
+    //Plat
+    final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View height1) {
+
+        }
+    };
+
+    //UpSlope
+    final ImageButton.OnClickListener getHeightValues2 = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View height2) {
+
+        }
+    };
+
+    //DownSlope1
+    final ImageButton.OnClickListener getHeightValues3 = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View height3) {
+
+        }
+    };
+
+    //DownSlope2
+    final ImageButton.OnClickListener getHeightValues4 = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View height4) {
+
+        }
+    };
+
     //Capture
     final ImageButton.OnClickListener takeCapture = new ImageButton.OnClickListener() {
         @Override
@@ -250,6 +351,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
         }
     };
 
+
     //Image generate
     public void saveBitmapToDisk(Bitmap bitmap, String path) throws IOException {
 
@@ -284,6 +386,39 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener {
     public void onUpdate(FrameTime frameTime) {
     }
 }
+
+//        heightbar.setMax(2900); // 2900 -> 30.2m
+//        heightbar.setProgress(ma.height);
+//        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//                ma.height = progress;
+//                ma.radi = (int)ma.infoArray.get(ma.tree_id).getDiameter();
+//                ma.initModel2();
+//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
+//                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)ma.height/100)+"m");
+//
+//            }
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                ma.initModel2();
+//            }
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
+//                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//            }
+//        });
+//        return root;
+//    }
+
+
+// Toast
+
 
         /*
         ma.initModel2();

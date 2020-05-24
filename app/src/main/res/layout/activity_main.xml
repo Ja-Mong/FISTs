@@ -40,6 +40,20 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu" />
 
+    <EditText
+        android:id="@+id/input_height"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:hint="눈높이를 입력하세요(cm)."
+        android:textColorHint="#FFFF"
+        android:textColor="#FFFF"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:background="#757575"
+        android:layout_above="@id/tv_inclinometer"
+        android:layout_marginBottom="5dp"
+        />
     <TextView
         android:id="@+id/tv_inclinometer"
         android:layout_width="150dp"
@@ -128,7 +142,7 @@
         android:layout_height="35dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_above="@id/tv_inclinometer"
+        android:layout_above="@id/input_height"
         android:layout_toRightOf="@id/Btn_add"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"
@@ -139,8 +153,8 @@
         android:id="@+id/Btn_add"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_alignLeft="@+id/tv_inclinometer"
-        android:layout_above="@id/tv_inclinometer"
+        android:layout_alignLeft="@+id/input_height"
+        android:layout_above="@id/input_height"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:adjustViewBounds="true"
