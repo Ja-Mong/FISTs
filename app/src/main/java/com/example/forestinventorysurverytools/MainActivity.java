@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public int axis_X = 0;
     public ImageButton mDelete_anchor;
 
-
+//    FirstScreen fs;
+//    public MainActivity(FirstScreen fs) {this.fs = fs;}
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -173,15 +174,13 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //AR model 2 = userHeight
     public void initModel2() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 0.5f))
+        MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 1.2f+(float)height/200,
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 10f,
                                     (float)axis_Z/100);
-                            modelRenderable2 = ShapeFactory.makeCylinder
-                                    ((float) radi/1000, (float) height/100,
-                                            vector3, material);
+                            modelRenderable2 = ShapeFactory.makeSphere(10f, vector3, material);
 
                             modelRenderable2.setShadowCaster(false);
                             modelRenderable2.setShadowReceiver(false);

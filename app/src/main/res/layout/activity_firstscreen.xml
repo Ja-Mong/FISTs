@@ -91,4 +91,25 @@
         android:text="사용 전 반드시 사용설명서를 숙지하여 주세요."
         android:textSize="18dp" />
 
+    <EditText
+        android:id="@+id/userID"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/guide_btn"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="50dp"
+        android:hint="사용자 이름"
+        android:textAlignment="center"
+        android:background="#B6B3B3"/>
+    <EditText
+        android:id="@+id/userHeight"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/userID"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:hint="사용자 눈높이(키 - 10cm)"
+        android:textAlignment="center"
+        android:background="#B6B3B3"/>
+
 </RelativeLayout>

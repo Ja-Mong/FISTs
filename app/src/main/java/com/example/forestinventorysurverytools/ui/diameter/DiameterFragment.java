@@ -172,6 +172,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
         //AR
         ma.initModel();
+        ma.initModel2();
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             mMySensorEventListener.updateOrientationAngles();
             if (ma.modelRenderable == null)

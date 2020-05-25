@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,38 +32,63 @@ import java.util.Objects;
 
 public class FirstScreen extends AppCompatActivity implements View.OnClickListener {
 
+    //TextView
     TextView mTitle;
     TextView mSub_title;
     TextView mContent;
+    EditText mInputUserID;
+    EditText mInputUserHeight;
 
+
+    //Values
+//    public float userHeight = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
+
+
+    //ImageView
     ImageView mKfs_mark;
     ImageView mKnu_mark;
     ImageView mNotice;
 
+
+    //Permission
     boolean cameraPermission;
     boolean writePermission;
     boolean readPermission;
     boolean locationPermission;
 
+
+    //Check the support to AR
     public Session mSession;
     private boolean mUserRequestedInstall = true;
-//    ImageView mBackGround;
 
+
+    //Button
     Button mGuide_btn;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firstscreen);
 
+        //TextView
         mTitle = (TextView) findViewById(R.id.title);
         mSub_title = (TextView)findViewById(R.id.sub_title);
         mContent = (TextView)findViewById(R.id.content);
+        mInputUserID = (EditText)findViewById(R.id.userID);
+        mInputUserHeight = (EditText)findViewById(R.id.userHeight);
 
+
+        //ImageView
         mKfs_mark = (ImageView)findViewById(R.id.kfs_mark);
         mKnu_mark = (ImageView)findViewById(R.id.knu_mark);
         mNotice = (ImageView)findViewById(R.id.notice);
 
+
+        //Button
         mGuide_btn = (Button)findViewById(R.id.guide_btn);
         mGuide_btn.setOnClickListener(this);
 
