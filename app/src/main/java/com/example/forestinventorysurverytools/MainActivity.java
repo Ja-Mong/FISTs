@@ -3,8 +3,10 @@ package com.example.forestinventorysurverytools;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public AnchorNode anchorNode;
     public ModelRenderable modelRenderable;
     public ModelRenderable modelRenderable2;
+    public ModelRenderable modelRenderable3;
 
 
     //AR controller
@@ -97,8 +100,13 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public int axis_X = 0;
     public ImageButton mDelete_anchor;
 
-//    FirstScreen fs;
-//    public MainActivity(FirstScreen fs) {this.fs = fs;}
+
+    //Values
+    public String userDefaultHeight = "160";
+    public float distanceMeters;
+    public float dx;
+    public float dy;
+    public float dz;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -116,6 +124,30 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
         mInputHeight = (EditText)this.findViewById(R.id.input_height);
+
+
+        //EditText default values
+        mInputHeight.setText(userDefaultHeight);
+        mInputHeight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mInputHeight.getText().toString().equals(userDefaultHeight)) {
+                    mInputHeight.setText("");
+                }
+                return false;
+            }
+        });
+
+        mInputHeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mInputHeight.getText().toString())) {
+                    mInputHeight.setText(userDefaultHeight);
+                } else if (hasFocus && mInputHeight.getText().toString().equals(userDefaultHeight)) {
+                    mInputHeight.setText("");
+                }
+            }
+        });
 
 
         //ImageButton
@@ -154,14 +186,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     //AR model 1 = Diameter
     public void initModel() {
         MaterialFactory.makeTransparentWithColor(this,
-                new Color(1.0f, 0.0f, 0.0f, 0.5f))
+                new Color(1.0f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
 
                             Vector3 vector3 = new Vector3((float) axis_X/100, 1.2f,
                                     (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
-                                    ((float) radi / 1000, 0.5f,
+                                    ((float) radi / 1000, 0.05f,
                                             vector3, material);
 
                             modelRenderable.setShadowCaster(false);
@@ -177,14 +209,33 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
                 .thenAccept(
                         material -> {
+                            if (!mInputHeight.getText().toString().isEmpty()) {
+                                float userheight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
+                                Vector3 vector3 = new Vector3((float) axis_X / 100, userheight,
+                                        (float) axis_Z / 100);
+                                modelRenderable2 = ShapeFactory.makeSphere(0.05f, vector3, material);
 
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 10f,
+                                modelRenderable2.setShadowCaster(false);
+                                modelRenderable2.setShadowReceiver(false);
+                                Boolean b = (modelRenderable2 == null);
+                            }
+                        });
+    }
+
+
+    //AR model 3 = markBottom
+    public void initModel3() {
+        MaterialFactory.makeTransparentWithColor(this, new Color(1.0f, 1.27f, 0.0f, 1.0f))
+                .thenAccept(
+                        material -> {
+
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 0.1f,
                                     (float)axis_Z/100);
-                            modelRenderable2 = ShapeFactory.makeSphere(10f, vector3, material);
+                            modelRenderable3 = ShapeFactory.makeSphere(0.05f, vector3, material);
 
-                            modelRenderable2.setShadowCaster(false);
-                            modelRenderable2.setShadowReceiver(false);
-                            Boolean b = (modelRenderable2 == null);
+                            modelRenderable3.setShadowReceiver(false);
+                            modelRenderable3.setShadowReceiver(false);
+                            Boolean b = (modelRenderable3 == null);
                         });
     }
 
@@ -196,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         ar_textview.setText((tree_id+1)+"번 나무\n"+(float)r/10+"cm");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
-                .setView(this, ar_textview) //렉이 많이 걸림..
+                .setView(this, ar_textview)
                 .build()
                 .thenAccept(viewRenderable -> {
                     viewRenderable.getView().clearFocus();
@@ -277,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         if(infoArray.size()!=0){
             initModel();
             initModel2();
+            initModel3();
             for(int i=0; i<infoArray.size(); i++){
                 infoArray.get(i).getNode().setRenderable(null);
                 infoArray.get(i).getH_Node().setRenderable(null);
@@ -369,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 infoArray.get(idx).text.setRenderable(null);
                 infoArray.get(idx).getNode().setRenderable(null);
                 infoArray.get(idx).getH_Node().setRenderable(null);
+                infoArray.get(idx).getT_Node().setRenderable(null);
                 infoArray.remove(idx);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }

@@ -89,19 +89,15 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
 
     //Compass
     public String matchDirection(float compass) {
-        if (compass == 0) {ma.mCompass_tv.setText("방        위 : "  + 90 +"°" + "N");}
-        if (compass >= 1 && compass <= 89) {ma.mCompass_tv.setText("방        위 : "
-                +Integer.toString((int)compass+90)+"°" + "NE");}
-        if (compass == 90) {ma.mCompass_tv.setText("방        위 : "  + 180 + "°" + "E");}
-        if (compass >= 91 && compass <= 179) {ma.mCompass_tv.setText("방        위 : "
-                +Integer.toString((int)compass+90)+"°"+"SE"); }
-        if (compass == 180) {ma.mCompass_tv.setText("방        위 : "  + 270 + "°"+"S");}
-        if (compass >= 181 && compass <= 269) {ma.mCompass_tv.setText("방        위 : "
-                +Integer.toString((int)compass+90)+"°"+"SW");}
-        if (compass == 270) {ma.mCompass_tv.setText("방        위 : "  + 0 + "°"+"W");}
-        if (compass >= 271 && compass <= 359) {ma.mCompass_tv.setText("방        위 : "
-                +Integer.toString((int)compass-270)+"°"+"NW");}
-        if (compass == 360) {ma.mCompass_tv.setText("방        위 : "  + 90 + "°"+"N");}
+        if (compass == 0) {ma.mCompass_tv.setText(90 +"°"); return "N";}
+        if (compass >= 1 && compass <= 89) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "NE";}
+        if (compass == 90) {ma.mCompass_tv.setText(180 + "°" ); return "E";}
+        if (compass >= 91 && compass <= 179) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "SE"; }
+        if (compass == 180) {ma.mCompass_tv.setText(270 + "°"); return "S";}
+        if (compass >= 181 && compass <= 269) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "SW";}
+        if (compass == 270) {ma.mCompass_tv.setText(0 + "°"); return "W";}
+        if (compass >= 271 && compass <= 359) {ma.mCompass_tv.setText(Integer.toString((int)compass-270)+"°"); return "NW";}
+        if (compass == 360) {ma.mCompass_tv.setText(90 + "°"); return "N";}
         return null;
     }
 }

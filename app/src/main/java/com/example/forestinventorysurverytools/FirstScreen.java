@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,12 +38,13 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
     TextView mTitle;
     TextView mSub_title;
     TextView mContent;
-    EditText mInputUserID;
-    EditText mInputUserHeight;
+    public EditText mInputUserID;
+    public EditText mInputUserHeight;
 
 
     //Values
-//    public float userHeight = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
+    public String userDefaultID = "홍길동";
+    public String userDefaultHeight = "160";
 
 
     //ImageView
@@ -66,9 +69,6 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
     Button mGuide_btn;
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,37 +76,81 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
 
         //TextView
         mTitle = (TextView) findViewById(R.id.title);
-        mSub_title = (TextView)findViewById(R.id.sub_title);
-        mContent = (TextView)findViewById(R.id.content);
-        mInputUserID = (EditText)findViewById(R.id.userID);
-        mInputUserHeight = (EditText)findViewById(R.id.userHeight);
+        mSub_title = (TextView) findViewById(R.id.sub_title);
+        mContent = (TextView) findViewById(R.id.content);
+        mInputUserID = (EditText) findViewById(R.id.userID);
+        mInputUserHeight = (EditText) findViewById(R.id.userHeight);
+
+        //EditText default values
+        mInputUserID.setText(userDefaultID);
+        mInputUserID.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mInputUserID.getText().toString().equals(userDefaultID)) {
+                    mInputUserID.setText("");
+                }
+                return false;
+            }
+        });
+
+        mInputUserID.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mInputUserID.getText().toString())) {
+                    mInputUserID.setText(userDefaultID);
+                } else if (hasFocus && mInputUserID.getText().toString().equals(userDefaultID)) {
+                    mInputUserID.setText("");
+                }
+            }
+        });
+
+        mInputUserHeight.setText(userDefaultHeight);
+        mInputUserHeight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
+                    mInputUserHeight.setText("");
+                }
+                return false;
+            }
+        });
+
+        mInputUserHeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mInputUserHeight.getText().toString())) {
+                    mInputUserHeight.setText(userDefaultHeight);
+                } else if (hasFocus && mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
+                    mInputUserHeight.setText("");
+                }
+            }
+        });
 
 
         //ImageView
-        mKfs_mark = (ImageView)findViewById(R.id.kfs_mark);
-        mKnu_mark = (ImageView)findViewById(R.id.knu_mark);
-        mNotice = (ImageView)findViewById(R.id.notice);
+        mKfs_mark = (ImageView) findViewById(R.id.kfs_mark);
+        mKnu_mark = (ImageView) findViewById(R.id.knu_mark);
+        mNotice = (ImageView) findViewById(R.id.notice);
 
 
         //Button
-        mGuide_btn = (Button)findViewById(R.id.guide_btn);
+        mGuide_btn = (Button) findViewById(R.id.guide_btn);
         mGuide_btn.setOnClickListener(this);
 
+
+        //Permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             cameraPermission = true;
         }
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             writePermission = true;
         }
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             readPermission = true;
         }
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermission = true;
@@ -120,6 +164,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                     Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
+
         //ARCore API 접근 개체 생성
         try {
             if (mSession == null) {
@@ -132,20 +177,15 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                         break;
                 }
             }
-        } catch (
-                UnavailableDeviceNotCompatibleException e) {
+        } catch (UnavailableDeviceNotCompatibleException e) {
             e.printStackTrace();
-        } catch (
-                UnavailableUserDeclinedInstallationException e) {
+        } catch (UnavailableUserDeclinedInstallationException e) {
             e.printStackTrace();
-        } catch (
-                UnavailableArcoreNotInstalledException e) {
+        } catch (UnavailableArcoreNotInstalledException e) {
             e.printStackTrace();
-        } catch (
-                UnavailableSdkTooOldException e) {
+        } catch (UnavailableSdkTooOldException e) {
             e.printStackTrace();
-        } catch (
-                UnavailableApkTooOldException e) {
+        } catch (UnavailableApkTooOldException e) {
             e.printStackTrace();
         }
 
@@ -191,5 +231,15 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             return false;
         }
         return true;
+    }
+
+
+    //Input user height
+    public void userHeight() {
+        if (!mInputUserHeight.getText().toString().isEmpty()) {
+            float userheight = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
+        } else if (!mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
+            float userheight2 = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
+        }
     }
 }

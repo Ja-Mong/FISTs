@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 //import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.FirstScreen;
 import com.example.forestinventorysurverytools.Info;
 import com.example.forestinventorysurverytools.MainActivity;
 import com.example.forestinventorysurverytools.MySensorEventListener;
@@ -70,6 +71,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     float compass;
     public int id;
 
+
     //Activity
     MainActivity ma = null;
     public DiameterFragment(MainActivity ma) {this.ma = ma; ai=ma.infoArray;}
@@ -86,7 +88,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public ImageButton mLeft;
     public ImageButton mRightDown;
     public ImageButton mLeftDown;
-
 
 
     //TextView
@@ -137,10 +138,9 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 ma.radi = progress;
                 ma.initModel();
-                ma.initModel2();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
+                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
 
@@ -159,7 +159,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.infoArray.get(ma.tree_id).setDiameter((float)ma.radi);
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
+                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
 
                 //AR TextView
                 ma.RenderText(seekBar.getProgress());
@@ -173,6 +173,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         //AR
         ma.initModel();
         ma.initModel2();
+        ma.initModel3();
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             mMySensorEventListener.updateOrientationAngles();
             if (ma.modelRenderable == null)
@@ -186,6 +187,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             ma.height=0;
             ma.initModel();
             ma.initModel2();
+            ma.initModel3();
 
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
@@ -199,12 +201,12 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.setHeight(0);
             tmp.getNode().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
-//            tmp.getT_Node().setRenderable(ma.modelRenderable3);
+            tmp.getT_Node().setRenderable(ma.modelRenderable3);
             tmp.getNode().setParent(anchorNode2);
             tmp.getH_Node().setParent(anchorNode2);
-//            tmp.getT_Node().setParent(anchorNode2);
+            tmp.getT_Node().setParent(anchorNode2);
             tmp.getNode().setOnTouchListener(touchNode);
-            tmp.getH_Node().setOnTouchListener(touchNode);
+//            tmp.getH_Node().setOnTouchListener(touchNode);
 //            tmp.getT_Node().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
@@ -218,15 +220,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 Pose cameraPose = frame.getCamera().getPose();
 
                 //Get the Anchor Pose
-                float dx = objectPose.tx() - cameraPose.tx();
-                float dy = objectPose.ty() - cameraPose.ty();
-                float dz = objectPose.tz() - cameraPose.tz();
+                ma.dx = objectPose.tx() - cameraPose.tx();
+                ma.dy = objectPose.ty() - cameraPose.ty();
+                ma.dz = objectPose.tz() - cameraPose.tz();
 
                 ///Compute the straight-line distance.
-                float distanceMeters = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-                tmp.setDistance(distanceMeters);
-                String meter = String.format("%.2f", distanceMeters);
-                ma.mDistance_tv.setText("거        리 : " + meter + "m");
+//                ma.distanceMeters = (float) Math.sqrt(ma.dx * dx + dy * dy + dz * dz);
+//                tmp.setDistance(ma.distanceMeters);
+//                String meter = String.format("%.2f", ma.distanceMeters);
+//                ma.mDistance_tv.setText("거        리 : " + meter + "m");
 
                 //Get the altitude
                 if (ma.altitude_vec.isEmpty()) {

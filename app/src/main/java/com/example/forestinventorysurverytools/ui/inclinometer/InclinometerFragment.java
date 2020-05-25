@@ -99,8 +99,8 @@
 //    }
 //
 //
-//    //ImageButton
-//    //get the slope value
+    //ImageButton
+    //get the slope value
 //    ImageButton.OnClickListener measureSlope = new ImageButton.OnClickListener() {
 //        @Override
 //        public void onClick(View inclino) {

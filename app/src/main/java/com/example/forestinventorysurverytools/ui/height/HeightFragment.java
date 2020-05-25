@@ -20,8 +20,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 //import com.example.forestinventorysurverytools.CameraAPI;
+import com.example.forestinventorysurverytools.FirstScreen;
 import com.example.forestinventorysurverytools.MainActivity;
 //import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.MySensorEventListener;
@@ -178,6 +180,11 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         mHeightIndicator.setInclinometer(pitch, roll);
     }
 
+    float roll1;
+    float getRoll1;
+    float roll2;
+    float getRoll2;
+    int click_count = 0;
 
     //ImageButton
     //Height
@@ -185,18 +192,52 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         @Override
         public void onClick(View rollAngle1) {
             mMySensorEventListener.updateOrientationAngles();
+            if (!ma.mInputHeight.getText().toString().isEmpty()) {
+                if (ma.angle_vec.isEmpty()) {
 
+                    //Compute the straight-line distance.
+                    ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                    String meter = String.format("%.2f", ma.distanceMeters);
+                    ma.mDistance_tv.setText("거        리 : " + meter + "m");
+
+                    //Get the roll1 angle
+                    roll1 = Math.abs(mMySensorEventListener.getRoll());
+                    ma.angle_vec.add(roll1);
+                    showToast(Integer.toString(ma.angle_vec.size()));
+                    getRoll1 = 90 - ma.angle_vec.elementAt(0);
+
+                    //Get the Slope
+                    int slopeValue = (int) Math.abs(90-Math.toDegrees(roll1));
+                    int slopeAngle = (int) Math.toRadians(slopeValue*100);
+                    ma.mInclinometer_val = slopeAngle;
+                    ma.mInclinometer_tv.setText("경        사 :" + String.format(String.valueOf(ma.mInclinometer_val)) + "%");
+
+                    //Get the roll2 angle
+                } else {
+                    roll2 = Math.abs(mMySensorEventListener.getRoll());
+                    getRoll2 = roll2 - 90;
+                    ma.angle_vec.add(getRoll2);
+                    getRoll2 = ma.angle_vec.elementAt(0);
+                    showToast(Integer.toString(ma.angle_vec.size()));
+                }
+            }
         }
     };
+
 
     //Slope
     final ImageButton.OnClickListener getSlopeValues = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View rollAngle2) {
             mMySensorEventListener.updateOrientationAngles();
-
+            if (rollAngle2.getId() == R.id.Btn_getSlope) {
+                roll1 = Math.abs(mMySensorEventListener.getRoll());
+                int slopeValue = (int) Math.abs(90-Math.toDegrees(roll1));
+                int slopeAngle = (int) Math.toRadians(slopeValue*100);
+                ma.mInclinometer_val = slopeAngle;
+                ma.mInclinometer_tv.setText("경        사 :" + String.format(String.valueOf(ma.mInclinometer_val)) + "%");
         }
-    };
+    }
 
 
     //Calculate Height depends on 4 case

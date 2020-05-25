@@ -99,6 +99,8 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="50dp"
         android:hint="사용자 이름"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:background="#B6B3B3"/>
     <EditText
@@ -109,6 +111,8 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="5dp"
         android:hint="사용자 눈높이(키 - 10cm)"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:background="#B6B3B3"/>
 
