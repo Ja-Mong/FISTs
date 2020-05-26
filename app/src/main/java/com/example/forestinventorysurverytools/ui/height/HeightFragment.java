@@ -58,17 +58,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
 
     //ImageButton
-    ImageButton mBtn_getSlope;
     ImageButton mBtn_measure;
     ImageButton mBtn_getHeight1;
     ImageButton mBtn_getHeight2;
     ImageButton mBtn_getHeight3;
     ImageButton mBtn_getHeight4;
     ImageButton mBtn_capture;
-
-
-    //TextView
-    TextView height_controller;
 
 
     //Draw the inclinometer view
@@ -84,7 +79,10 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
     //Activity
     MainActivity ma = null;
-    public HeightFragment(MainActivity ma) {this.ma = ma;}
+
+    public HeightFragment(MainActivity ma) {
+        this.ma = ma;
+    }
 
 
     //Capture Data
@@ -92,8 +90,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     ArrayList<Renderable> h_tmpRend = new ArrayList<>();
 
 
-
-
+    //Values
+    float roll1;
+    float getRoll1;
+    float roll2;
+    float getRoll2;
+    int click_count = 0;
 
 
     @Override
@@ -114,15 +116,13 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
 
         //ImageButton
-        mBtn_getSlope = (ImageButton)root.findViewById(R.id.Btn_getSlope);
-        mBtn_measure = (ImageButton)root.findViewById(R.id.Btn_measure);
-        mBtn_getHeight1 = (ImageButton)root.findViewById(R.id.Btn_platHeight);
-        mBtn_getHeight2 = (ImageButton)root.findViewById(R.id.Btn_upHeight);
-        mBtn_getHeight3 = (ImageButton)root.findViewById(R.id.Btn_down1Height);
-        mBtn_getHeight4 = (ImageButton)root.findViewById(R.id.Btn_down2Height);
+        mBtn_measure = (ImageButton) root.findViewById(R.id.Btn_measure);
+        mBtn_getHeight1 = (ImageButton) root.findViewById(R.id.Btn_platHeight);
+        mBtn_getHeight2 = (ImageButton) root.findViewById(R.id.Btn_upHeight);
+        mBtn_getHeight3 = (ImageButton) root.findViewById(R.id.Btn_down1Height);
+        mBtn_getHeight4 = (ImageButton) root.findViewById(R.id.Btn_down2Height);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
 
-        mBtn_getSlope.setOnClickListener(getSlopeValues);
         mBtn_measure.setOnClickListener(getHeightAngle);
         mBtn_getHeight1.setOnClickListener(getHeightValues1);
         mBtn_getHeight2.setOnClickListener(getHeightValues2);
@@ -157,6 +157,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_FASTEST);
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -170,21 +171,18 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         super.onStart();
         mHeightOrientation.startListening(this);
     }
+
     @Override
     public void onStop() {
         super.onStop();
         mHeightOrientation.stopListening();
     }
+
     @Override
     public void onOrientationChanged(float pitch, float roll) {
         mHeightIndicator.setInclinometer(pitch, roll);
     }
 
-    float roll1;
-    float getRoll1;
-    float roll2;
-    float getRoll2;
-    int click_count = 0;
 
     //ImageButton
     //Height
@@ -193,272 +191,245 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         public void onClick(View rollAngle1) {
             mMySensorEventListener.updateOrientationAngles();
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                if (ma.angle_vec.isEmpty()) {
+                if (click_count % 2 == 0) {
 
                     //Compute the straight-line distance.
                     ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                    String meter = String.format("%.2f", ma.distanceMeters);
+                    String meter = String.format("%.1f", ma.distanceMeters);
                     ma.mDistance_tv.setText("거        리 : " + meter + "m");
 
                     //Get the roll1 angle
                     roll1 = Math.abs(mMySensorEventListener.getRoll());
-                    ma.angle_vec.add(roll1);
-                    showToast(Integer.toString(ma.angle_vec.size()));
-                    getRoll1 = 90 - ma.angle_vec.elementAt(0);
+                    showToast("초두부를 클릭하여주세요.");
+                    getRoll1 = 90 - roll1;
 
                     //Get the Slope
-                    int slopeValue = (int) Math.abs(90-Math.toDegrees(roll1));
-                    int slopeAngle = (int) Math.toRadians(slopeValue*100);
+                    int slopeValue = (int) Math.abs(90 - Math.toDegrees(roll1));
+                    int slopeAngle = (int) Math.toRadians(slopeValue * 100);
                     ma.mInclinometer_val = slopeAngle;
                     ma.mInclinometer_tv.setText("경        사 :" + String.format(String.valueOf(ma.mInclinometer_val)) + "%");
+                    click_count++;
 
                     //Get the roll2 angle
-                } else {
+                } else if (click_count % 2 == 1) { //??
                     roll2 = Math.abs(mMySensorEventListener.getRoll());
                     getRoll2 = roll2 - 90;
-                    ma.angle_vec.add(getRoll2);
-                    getRoll2 = ma.angle_vec.elementAt(0);
-                    showToast(Integer.toString(ma.angle_vec.size()));
+                    showToast("상황에 맞는 계산 버튼을 클릭해주세요.");
+                    click_count++;
                 }
             }
         }
     };
 
 
-    //Slope
-    final ImageButton.OnClickListener getSlopeValues = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View rollAngle2) {
-            mMySensorEventListener.updateOrientationAngles();
-            if (rollAngle2.getId() == R.id.Btn_getSlope) {
-                roll1 = Math.abs(mMySensorEventListener.getRoll());
-                int slopeValue = (int) Math.abs(90-Math.toDegrees(roll1));
-                int slopeAngle = (int) Math.toRadians(slopeValue*100);
-                ma.mInclinometer_val = slopeAngle;
-                ma.mInclinometer_tv.setText("경        사 :" + String.format(String.valueOf(ma.mInclinometer_val)) + "%");
-        }
-    }
-
-
-    //Calculate Height depends on 4 case
-    //Plat
-    final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View height1) {
-
-        }
-    };
-
-    //UpSlope
-    final ImageButton.OnClickListener getHeightValues2 = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View height2) {
-
-        }
-    };
-
-    //DownSlope1
-    final ImageButton.OnClickListener getHeightValues3 = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View height3) {
-
-        }
-    };
-
-    //DownSlope2
-    final ImageButton.OnClickListener getHeightValues4 = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View height4) {
-
-        }
-    };
-
-    //Capture
-    final ImageButton.OnClickListener takeCapture = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View capture) {
-            String mPath;
-            ArFragment af = ma.arFragment;
-            ArSceneView view = af.getArSceneView();
-
-            // AR이미지 포함한 사진
-            try {
-                SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-                String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
-
-                String dirPath = Environment.getExternalStorageDirectory().toString()+"/FIST";
-                File dir = new File(dirPath);
-                if (!dir.exists()) {
-                    dir.mkdir();
+        //Calculate Height depends on 4 case
+        //Plat
+        final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View height1) {
+                if (height1.getId() == R.id.Btn_platHeight) {
+                    float h = (float) Math.abs((Math.tan(getRoll2) * ma.distanceMeters)); //+ (Float.parseFloat(ma.mInputHeight) / 100f));
+                    ma.mHeight_val = h;
+                    ma.mHeight_tv.setText("수        고 :" + String.format("%.1", String.valueOf(ma.mHeight_val)) + "m");
                 }
-                mPath = dirPath + "/" + filename +"_"+ma.infoArray.get(ma.tree_id).getId()+ ".jpg";
+            }
+        };
 
-                if (mSaveOriginImage.isChecked()) {
-                    for(int i=0; i<ma.infoArray.size(); i++)
-                    {
-                        tmpRend.add(ma.infoArray.get(i).getNode().getRenderable());
-                        h_tmpRend.add(ma.infoArray.get(i).getH_Node().getRenderable());
-                        ma.infoArray.get(i).getNode().setRenderable(null);
-                        ma.infoArray.get(i).getH_Node().setRenderable(null);
+        //UpSlope
+        final ImageButton.OnClickListener getHeightValues2 = new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View height2) {
+                if (height2.getId() == R.id.Btn_upHeight) {
+                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
+                    float y = (float) Math.abs((Math.tan(getRoll1) * length)); //- (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
+                    float h = (float) Math.abs((Math.tan(getRoll2) * length) - y);
+                    ma.mHeight_val = h;
+                    ma.mHeight_tv.setText("수        고 :" + String.format("%.1", String.valueOf(ma.mHeight_val)) + "m");
+                }
+            }
+        };
+
+        //DownSlope1
+        final ImageButton.OnClickListener getHeightValues3 = new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View height3) {
+                if (height3.getId() == R.id.Btn_down1Height) {
+                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
+                    float y = (float) Math.abs(Math.tan(getRoll1) * length);
+                    float h = (float) Math.abs((Math.tan(getRoll2) * length) + y); // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
+                    ma.mHeight_val = h;
+                    ma.mHeight_tv.setText("수        고 :" + String.format("%.1", String.valueOf(ma.mHeight_val)) + "m");
+                }
+            }
+        };
+
+        //DownSlope2
+        final ImageButton.OnClickListener getHeightValues4 = new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View height4) {
+                if (height4.getId() == R.id.Btn_down2Height) {
+                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
+                    float y = (float) Math.abs((Math.tan(getRoll1) * length));
+                    float q = (float) Math.abs(Math.tan(getRoll2) * length);
+                    float h = Math.abs(y - q); //+(Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
+                    ma.mHeight_val = h;
+                    ma.mHeight_tv.setText("수        고 :" + String.format("%.1", String.valueOf(ma.mHeight_val)) + "m");
+                }
+            }
+        };
+
+        //Capture
+        final ImageButton.OnClickListener takeCapture = new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View capture) {
+                String mPath;
+                ArFragment af = ma.arFragment;
+                ArSceneView view = af.getArSceneView();
+
+                // AR이미지 포함한 사진
+                try {
+                    SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+                    String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
+
+                    String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
+                    File dir = new File(dirPath);
+                    if (!dir.exists()) {
+                        dir.mkdir();
                     }
-                    try {
-                        view.getSession().update();
-                    } catch (CameraNotAvailableException e) {
-                        e.printStackTrace();
-                    }
+                    mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.tree_id).getId() + ".jpg";
 
-                    final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                    final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                    handlerThread.start();
-
-                    PixelCopy.request(view, mybitmap, (copyResult) -> {
-                        if (copyResult == PixelCopy.SUCCESS) {
-                            try {
-                                saveBitmapToDisk(mybitmap, mPath);
-                            } catch (IOException e) {
-                                return;
-                            }
+                    if (mSaveOriginImage.isChecked()) {
+                        for (int i = 0; i < ma.infoArray.size(); i++) {
+                            tmpRend.add(ma.infoArray.get(i).getNode().getRenderable());
+                            h_tmpRend.add(ma.infoArray.get(i).getH_Node().getRenderable());
+                            ma.infoArray.get(i).getNode().setRenderable(null);
+                            ma.infoArray.get(i).getH_Node().setRenderable(null);
                         }
-                        handlerThread.quitSafely();
-                    }, new Handler(handlerThread.getLooper()));
+                        try {
+                            view.getSession().update();
+                        } catch (CameraNotAvailableException e) {
+                            e.printStackTrace();
+                        }
 
-                    //AR제외한 원본사진
-                    Handler mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable()  {
-                        public void run() {
-                            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-                            String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
-                            String dirPath = Environment.getExternalStorageDirectory().toString()+"/FIST";
-                            String mPath = dirPath + "/" + filename+"_"+ma.infoArray.get(ma.tree_id).getId() + "_ori.jpg";
+                        final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+                        handlerThread.start();
 
-                            final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                            final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                            handlerThread.start();
-
-                            PixelCopy.request(view, mybitmap, (copyResult) -> {
-                                if (copyResult == PixelCopy.SUCCESS) {
-                                    try {
-                                        saveBitmapToDisk(mybitmap, mPath);
-                                    } catch (IOException e) {
-                                        return;
-                                    }
+                        PixelCopy.request(view, mybitmap, (copyResult) -> {
+                            if (copyResult == PixelCopy.SUCCESS) {
+                                try {
+                                    saveBitmapToDisk(mybitmap, mPath);
+                                } catch (IOException e) {
+                                    return;
                                 }
-                                handlerThread.quitSafely();
-                            }, new Handler(handlerThread.getLooper()));
-                        }
-                    }, 300);
-
-                    mHandler.postDelayed(new Runnable()  {
-                        public void run() {
-                            for(int i=0; i<ma.infoArray.size(); i++)
-                            {
-
-                                ma.infoArray.get(i).getNode().setRenderable(tmpRend.get(i));
-                                ma.infoArray.get(i).getH_Node().setRenderable(h_tmpRend.get(i));
                             }
-                            tmpRend.clear();
-                            h_tmpRend.clear();
-                            try {
-                                view.getSession().update();
-                            } catch (CameraNotAvailableException e) {
-                                e.printStackTrace();
+                            handlerThread.quitSafely();
+                        }, new Handler(handlerThread.getLooper()));
+
+                        //AR 제외한 원본사진
+                        Handler mHandler = new Handler();
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {
+                                SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+                                String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
+                                String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
+                                String mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.tree_id).getId() + "_ori.jpg";
+
+                                final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                                final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+                                handlerThread.start();
+
+                                PixelCopy.request(view, mybitmap, (copyResult) -> {
+                                    if (copyResult == PixelCopy.SUCCESS) {
+                                        try {
+                                            saveBitmapToDisk(mybitmap, mPath);
+                                        } catch (IOException e) {
+                                            return;
+                                        }
+                                    }
+                                    handlerThread.quitSafely();
+                                }, new Handler(handlerThread.getLooper()));
                             }
+                        }, 300);
 
-                        }
-                    }, 600);
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {
+                                for (int i = 0; i < ma.infoArray.size(); i++) {
 
-                } else {
+                                    ma.infoArray.get(i).getNode().setRenderable(tmpRend.get(i));
+                                    ma.infoArray.get(i).getH_Node().setRenderable(h_tmpRend.get(i));
+                                }
+                                tmpRend.clear();
+                                h_tmpRend.clear();
+                                try {
+                                    view.getSession().update();
+                                } catch (CameraNotAvailableException e) {
+                                    e.printStackTrace();
+                                }
 
-                    final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                    final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                    handlerThread.start();
-
-                    PixelCopy.request(view, mybitmap, (copyResult) -> {
-                        if (copyResult == PixelCopy.SUCCESS) {
-                            try {
-                                saveBitmapToDisk(mybitmap, mPath);
-                            } catch (IOException e) {
-                                return;
                             }
-                        }
-                        handlerThread.quitSafely();
-                    }, new Handler(handlerThread.getLooper()));
+                        }, 600);
+
+                    } else {
+
+                        final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+                        handlerThread.start();
+
+                        PixelCopy.request(view, mybitmap, (copyResult) -> {
+                            if (copyResult == PixelCopy.SUCCESS) {
+                                try {
+                                    saveBitmapToDisk(mybitmap, mPath);
+                                } catch (IOException e) {
+                                    return;
+                                }
+                            }
+                            handlerThread.quitSafely();
+                        }, new Handler(handlerThread.getLooper()));
+                    }
+                    Toast.makeText(ma, mPath, Toast.LENGTH_LONG).show();
+                } catch (Throwable e) {
+
+                    // Several error may come out with file handling or OOM
+                    e.printStackTrace();
                 }
-                Toast.makeText(ma, mPath, Toast.LENGTH_LONG).show();
-            } catch(Throwable e){
-                // Several error may come out with file handling or OOM
-                e.printStackTrace();
+            }
+        };
+
+
+        //Image generate
+        public void saveBitmapToDisk(Bitmap bitmap, String path) throws IOException {
+
+            Bitmap rotatedImage = bitmap;
+
+            if (mSavePortraitScr.isChecked()) {
+                Matrix rotationMatrix = new Matrix();
+                rotationMatrix.postRotate(90);
+                rotatedImage = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
+            }
+
+            File mediaFile = new File(path);
+            FileOutputStream fileOutputStream = new FileOutputStream(mediaFile);
+            rotatedImage.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+
+        private boolean CheckWrite() {  // sdcard mount check
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                return true;
+            } else {
+                return false;
             }
         }
-    };
 
-
-    //Image generate
-    public void saveBitmapToDisk(Bitmap bitmap, String path) throws IOException {
-
-        Bitmap rotatedImage = bitmap;
-
-        if (mSavePortraitScr.isChecked()) {
-            Matrix rotationMatrix = new Matrix();
-            rotationMatrix.postRotate(90);
-            rotatedImage = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotationMatrix, true);
-        }
-
-        File mediaFile = new File(path);
-        FileOutputStream fileOutputStream = new FileOutputStream(mediaFile);
-        rotatedImage.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-
-        fileOutputStream.flush();
-        fileOutputStream.close();
-    }
-
-    private boolean CheckWrite() {  // sdcard mount check
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    //AR update
     @Override
     public void onUpdate(FrameTime frameTime) {
+
     }
 }
-
-//        heightbar.setMax(2900); // 2900 -> 30.2m
-//        heightbar.setProgress(ma.height);
-//        heightbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//
-//                ma.height = progress;
-//                ma.radi = (int)ma.infoArray.get(ma.tree_id).getDiameter();
-//                ma.initModel2();
-//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-//                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
-//                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+(float)ma.height/100)+"m");
-//
-//            }
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//                ma.initModel2();
-//            }
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.infoArray.get(ma.tree_id).setHeight((float)ma.height);
-//                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-//            }
-//        });
-//        return root;
-//    }
-
-
-// Toast
 
 
         /*

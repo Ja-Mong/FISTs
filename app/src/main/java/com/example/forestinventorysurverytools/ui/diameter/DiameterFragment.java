@@ -224,12 +224,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.dy = objectPose.ty() - cameraPose.ty();
                 ma.dz = objectPose.tz() - cameraPose.tz();
 
-                ///Compute the straight-line distance.
-//                ma.distanceMeters = (float) Math.sqrt(ma.dx * dx + dy * dy + dz * dz);
-//                tmp.setDistance(ma.distanceMeters);
-//                String meter = String.format("%.2f", ma.distanceMeters);
-//                ma.mDistance_tv.setText("거        리 : " + meter + "m");
-
                 //Get the altitude
                 if (ma.altitude_vec.isEmpty()) {
                     ma.altitude_vec.add(altitude);
@@ -288,7 +282,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 String meter = String.format("%.2f", ai.get(id).getDistance());
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(ai.get(id).getDiameter() / 10) + "cm");
-                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+ai.get(id).getHeight()/100)+"m" );
+                ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+ai.get(id).getHeight()/100)+"m" ); //수정필요
 
             }
             return false;
