@@ -3,12 +3,15 @@ package com.example.forestinventorysurverytools;
 import android.location.Location;
 
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 public class Info {
     TransformableNode node;
     TransformableNode h_node;
     TransformableNode t_node;
+//    TransformableNode r_node;
     Node text;
     String id;                 // 노드 생성된 월,일,시,분,초 형식
     float distance;
@@ -31,14 +34,19 @@ public class Info {
     public void setNode(TransformableNode node){this.node=node;}
     public void setH_Node(TransformableNode h_node){this.h_node=h_node;}
     public void setT_Node(TransformableNode t_node){this.t_node=t_node;}
+//    public void setR_Node(TransformableNode r_node){this.r_node=r_node;}
     public void setDistance(float f){distance=f;}
     public void setDiameter(float f){diameter=f;}
     public void setHeight(float f){height=f;}
 
     //getter함수
-    public TransformableNode getNode(){return node;}
+    public TransformableNode getNode(){
+        node.setLocalPosition(new Vector3(0.0f, 1.2f, 0.0f));
+        return node;
+    }
     public TransformableNode getH_Node(){return h_node;}
     public TransformableNode getT_Node(){return t_node;}
+//    public TransformableNode getR_Node(){return r_node;}
     public float getDistance(){return distance;}
     public float getDiameter(){return diameter;}
     public float getHeight(){return height;}

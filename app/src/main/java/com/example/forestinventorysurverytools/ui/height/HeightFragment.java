@@ -222,7 +222,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     };
 
 
-        //Calculate Height depends on 4 case
+        //Calculate Height depends on 4 case //정확성 테스트 필요 => 논문
         //Plat
         final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
             @Override

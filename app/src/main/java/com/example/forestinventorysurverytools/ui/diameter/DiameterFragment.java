@@ -1,6 +1,7 @@
 package com.example.forestinventorysurverytools.ui.diameter;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -38,6 +39,7 @@ import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -86,8 +88,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public ImageButton mBottom;
     public ImageButton mRight;
     public ImageButton mLeft;
-    public ImageButton mRightDown;
-    public ImageButton mLeftDown;
+    public ImageButton mRightRoation;
+    public ImageButton mLeftRoation;
 
 
     //TextView
@@ -115,15 +117,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mBottom = (ImageButton)root.findViewById(R.id.bottom);
         mRight = (ImageButton)root.findViewById(R.id.right);
         mLeft = (ImageButton)root.findViewById(R.id.left);
-        mRightDown = (ImageButton)root.findViewById(R.id.rightDown);
-        mLeftDown = (ImageButton)root.findViewById(R.id.leftDown);
+        mRightRoation = (ImageButton)root.findViewById(R.id.rightDown);
+        mLeftRoation = (ImageButton)root.findViewById(R.id.leftDown);
 
         mTop.setOnTouchListener(controll_BtnTop);
         mBottom.setOnTouchListener(controll_BtnBottom);
         mRight.setOnTouchListener(controll_BtnRight);
         mLeft.setOnTouchListener(controll_BtnLeft);
-        mRightDown.setOnTouchListener(controll_BtnRigntDown);
-        mLeftDown.setOnTouchListener(controll_BtnLeftDown);
+        mRightRoation.setOnTouchListener(controll_BtnRigntRoation);
+        mLeftRoation.setOnTouchListener(controll_BtnLeftRoation);
 
 
 
@@ -183,6 +185,22 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             Anchor anchor2 = hitResult.createAnchor();
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
+
+            Node node = new Node();
+
+            node.setLocalPosition(new Vector3(0.0f, 1.2f, 0f));
+
+            node.setParent(anchorNode2);
+            node.setRenderable(ma.modelRenderable);
+
+            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+                Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f),
+                        frameTime.getStartSeconds()*2);
+                Quaternion rotation2 = Quaternion.axisAngle(new Vector3(1.0f, 0f, 0.0f),
+                        frameTime.getStartSeconds()*90);
+                node.setLocalRotation(Quaternion.multiply(rotation1,rotation2));
+            });
+
             ma.radi = 100;
             ma.height=0;
             ma.initModel();
@@ -197,17 +215,17 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
                     new TransformableNode(ma.arFragment.getTransformationSystem()),
                     new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
+
             tmp.setDiameter(100);
             tmp.setHeight(0);
-            tmp.getNode().setRenderable(ma.modelRenderable);
+//            tmp.getNode().setRenderable(ma.modelRenderable);
+//            tmp.getR_Node().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
             tmp.getT_Node().setRenderable(ma.modelRenderable3);
-            tmp.getNode().setParent(anchorNode2);
+//            tmp.getNode().setParent(anchorNode2);
             tmp.getH_Node().setParent(anchorNode2);
             tmp.getT_Node().setParent(anchorNode2);
-            tmp.getNode().setOnTouchListener(touchNode);
-//            tmp.getH_Node().setOnTouchListener(touchNode);
-//            tmp.getT_Node().setOnTouchListener(touchNode);
+//            tmp.getNode().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
@@ -262,7 +280,9 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
     //AR
     @Override
-    public void onUpdate(FrameTime frameTime) { }
+    public void onUpdate(FrameTime frameTime) {
+
+    }
 
     TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
         @Override
@@ -397,20 +417,29 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         }
     };
 
-    //RightDown
-    ImageButton.OnTouchListener controll_BtnRigntDown = new ImageButton.OnTouchListener() {
+    //Right Rotation
+    ImageButton.OnTouchListener controll_BtnRigntRoation = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View controllRightDown, MotionEvent event) {
-            if (controllRightDown == mRightDown) {
+            if (controllRightDown == mRightRoation) {
                 ma.initModel();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x,
-                                ((tmpVec.y*100)-1)/100, tmpVec.z));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x,
-                                ((tmpVec.y*100)-1)/100, tmpVec.z));
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+
+                        int finalI = i;
+                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+                            Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f),
+                                    frameTime.getStartSeconds()*1f);
+                            float angle = finalI * 10;
+                            angle = 20 - angle;
+
+                            Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 1f, 0.0f),
+                                    frameTime.getStartSeconds()*20);
+
+                            ma.infoArray.get(finalI).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
+
+                        });
+
                     }
                 }
             }
@@ -418,19 +447,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         }
     };
 
-    //LeftDown
-    ImageButton.OnTouchListener controll_BtnLeftDown = new ImageButton.OnTouchListener() {
+    //Left Rotation
+    ImageButton.OnTouchListener controll_BtnLeftRoation = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View controllLeftDown, MotionEvent event) {
-            if (controllLeftDown == mLeftDown) {
+            if (controllLeftDown == mLeftRoation) {
                 ma.initModel();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
-                                tmpVec.y, tmpVec.z));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
-                                tmpVec.y, tmpVec.z));
+
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
