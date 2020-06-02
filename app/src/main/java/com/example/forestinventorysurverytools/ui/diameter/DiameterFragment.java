@@ -81,7 +81,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
     //SeekBar
     public SeekBar radiusbar;
-
+    public SeekBar lr_rot;
+    public SeekBar fb_rot;
 
     //ImageButton
     public ImageButton mTop;
@@ -146,10 +147,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 //                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
-
-
-
-
             }
 
             @Override
@@ -172,6 +169,14 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             }
         });
 
+        lr_rot = (SeekBar)root.findViewById(R.id.LR_Rotation);
+        lr_rot.setMin(-90); lr_rot.setMax(90); lr_rot.setProgress(0);
+        lr_rot.setOnSeekBarChangeListener(LRROT);
+
+
+        fb_rot = (SeekBar)root.findViewById(R.id.FB_Rotation);
+        fb_rot.setMin(-90); fb_rot.setMax(90); fb_rot.setProgress(0);
+        fb_rot.setOnSeekBarChangeListener(FBROT);
 
         //AR
         ma.initModel();
@@ -432,7 +437,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllRightDown, MotionEvent event) {
             if (controllRightDown == mRightRoation) {
                 ma.initModel();
-                if(ma.infoArray.get(id).getNode().isSelected()){
+                if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
                     Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
                     Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 1);
 
@@ -452,7 +457,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllLeftDown, MotionEvent event) {
             if (controllLeftDown == mLeftRoation) {
                 ma.initModel();
-                if(ma.infoArray.get(id).getNode().isSelected()){
+                if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
                     Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
                     Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), -1);
 
@@ -467,6 +472,73 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         }
     };
 
+    /***********************************************/
+
+    /*
+
+         seekbar를 조이스틱 스위치 방식처럼 구현.
+         
+
+     */
+
+
+    SeekBar.OnSeekBarChangeListener LRROT = new SeekBar.OnSeekBarChangeListener() {
+        int cur_rot;
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            int degree = (progress-cur_rot >0)? 1:-1;
+            ma.initModel();
+            if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
+                Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
+                Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), degree);
+
+                ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
+
+                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                ma.infoArray.get(id).getNode().select();
+            }
+            cur_rot=progress;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            cur_rot = seekBar.getProgress();
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            seekBar.setProgress(0);
+        }
+    };
+    SeekBar.OnSeekBarChangeListener FBROT = new SeekBar.OnSeekBarChangeListener() {
+        int cur_rot;
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            int degree = (progress-cur_rot >0)? 1:-1;
+            ma.initModel();
+            if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
+                Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
+                Quaternion rotation2 = Quaternion.axisAngle(new Vector3(1.0f, 0f, 0.0f),degree);
+
+                ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
+
+                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                ma.infoArray.get(id).getNode().select();
+            }
+            cur_rot=progress;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            cur_rot = seekBar.getProgress();
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            seekBar.setProgress(0);
+        }
+    };
     @Override
     public void onLocationChanged(Location location) {
         double altitude = location.getAltitude();
