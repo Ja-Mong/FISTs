@@ -207,10 +207,18 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.getNode().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
             tmp.getT_Node().setRenderable(ma.modelRenderable3);
-            tmp.getNode().setParent(anchorNode2);
-            tmp.getH_Node().setParent(anchorNode2);
+
+            /***************************************************/
+            // T_Node를 Parent라고 놓고 (근간이라고 놓고)
+            // 그에 해당하는 Child로 Node와 H_Node를 둠.
+            // => 추후 이동할때 T_Node만 움직여도 나머지 노드들은 Parent따라서 움직임.
+            /***************************************************/
             tmp.getT_Node().setParent(anchorNode2);
+            tmp.getNode().setParent(tmp.getT_Node());
+            tmp.getH_Node().setParent(tmp.getT_Node());
+
             tmp.getNode().setOnTouchListener(touchNode);
+            tmp.getT_Node().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
@@ -273,14 +281,22 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             if(hitTestResult.getNode()!=null) {
                 id = (ai.size() == 0) ? 0 : ai.size() - 1;
                 for (int i = 0; i < ai.size(); i++) {
-                    if (hitTestResult.getNode().equals(ai.get(i).getNode())) {
+                    if (hitTestResult.getNode().equals(ai.get(i).getNode()) ||
+                            hitTestResult.getNode().equals(ai.get(i).getT_Node())) {
                         id = i;
-                        break;
+                        if(hitTestResult.getNode().equals(ai.get(i).getNode())) {
+                            ai.get(id).getNode().select();
+                        }
+                        else {
+                            ai.get(id).getT_Node().select();
+                        }break;
                     }
                 }
+
                 showToast(Integer.toString(id + 1) + "번째 요소 선택("+ai.get(id).getId()+")");
+
                 ma.tree_id=id;
-                ai.get(id).getNode().select();
+
 
                 String meter = String.format("%.2f", ai.get(id).getDistance());
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
@@ -316,6 +332,9 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     //Image Button
     //control the object
     //Top
+
+
+
     ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View controllTop, MotionEvent event) {
@@ -323,24 +342,14 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel();
                 ma.initModel2();
                 ma.initModel3();
-                for (int i=0; i<ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                    if (ma.infoArray.get(id).getNode().isSelected() || ma.infoArray.get(id).getT_Node().isSelected()) {
 
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
-                                ((tmpVec.z * 100)/-1) / 100));
-
-                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec2.x, tmpVec2.y,
-                                ((tmpVec2.z * 100)/-1)/100));
-
-                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
-                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(tmpVec3.x, tmpVec3.y,
-                                ((tmpVec3.z * 100)/-1)/100));
-
+                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+                                ((tmpVec3.z * 100)-1)/100));
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
-                }
+
             }
             return false;
         }
@@ -354,25 +363,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel();
                 ma.initModel2();
                 ma.initModel3();
-                for (int i=0; i<ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                    if (ma.infoArray.get(id).getNode().isSelected() ||ma.infoArray.get(id).getT_Node().isSelected()) {
 
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
-                                ((tmpVec.z * 100)/+1)/100));
-
-                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec2.x, tmpVec2.y,
-                                ((tmpVec2.z * 100)/+1)/100));
-
-                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
-                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(tmpVec3.x, tmpVec3.y,
-                                ((tmpVec3.z * 100)/+1)/100));
+                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+                                ((tmpVec3.z * 100)+1)/100));
 
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
-            }
+
             return false;
         }
     };
@@ -385,24 +385,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel();
                 ma.initModel2();
                 ma.initModel3();
-                for (int i=0; i<ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
 
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
-                                tmpVec.y, tmpVec.z));
 
-                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec2.x*100)+1)/100,
-                                tmpVec2.y, tmpVec2.z));
-
-                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
-                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(((tmpVec3.x*100)+1)/100,
+                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)+1)/100,
                                 tmpVec3.y, tmpVec3.z));
 
 
                     }
-                }
+
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             }
             return false;
@@ -418,29 +410,22 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel();
                 ma.initModel2();
                 ma.initModel3();
-                for (int i=0; i<ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
 
-                        Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
-                        ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
-                                tmpVec.y, tmpVec.z));
 
-                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec2.x*100)-1)/100,
-                                tmpVec2.y, tmpVec2.z));
-
-                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
-                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(((tmpVec3.x*100)-1)/100,
+                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)-1)/100,
                                 tmpVec3.y, tmpVec3.z));
 
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
-            }
+
             return false;
         }
     };
 
+    /******************  회전부   *********************/
     //Right Rotation
     ImageButton.OnTouchListener controll_BtnRigntRoation = new ImageButton.OnTouchListener() {
         @Override

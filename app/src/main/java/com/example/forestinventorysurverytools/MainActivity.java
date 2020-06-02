@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 size = new Vector3(0.2f, 0.1f, 0.1f);
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 0f,
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 0.1f,
                                     (float)axis_Z/100);
                             modelRenderable3 = ShapeFactory.makeCube(size, vector3, material);
 
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         Node text = infoArray.get(tree_id).text;
                         text.setRenderable(null);
                         text.setRenderable(viewRenderable);
-                        text.setParent(infoArray.get(tree_id).getNode());
+                        text.setParent(infoArray.get(tree_id).getH_Node());
                         text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 0.0f,
                                 infoArray.get(tree_id).getNode().getLocalPosition().z));
 
