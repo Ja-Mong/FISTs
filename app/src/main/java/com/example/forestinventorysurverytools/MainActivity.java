@@ -231,9 +231,10 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
+                            Vector3 size = new Vector3(0.2f, 0.1f, 0.1f);
                             Vector3 vector3 = new Vector3((float)axis_X/100, 0f,
                                     (float)axis_Z/100);
-                            modelRenderable3 = ShapeFactory.makeSphere(0.05f, vector3, material);
+                            modelRenderable3 = ShapeFactory.makeCube(size, vector3, material);
 
                             modelRenderable3.setShadowReceiver(false);
                             modelRenderable3.setShadowReceiver(false);
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         text.setRenderable(null);
                         text.setRenderable(viewRenderable);
                         text.setParent(infoArray.get(tree_id).getNode());
-                        text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 1.2f,
+                        text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 0.0f,
                                 infoArray.get(tree_id).getNode().getLocalPosition().z));
 
                         viewRenderable.setShadowCaster(false);

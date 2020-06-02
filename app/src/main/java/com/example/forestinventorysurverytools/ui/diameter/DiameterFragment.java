@@ -129,6 +129,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
 
 
+
         //SeekBar
         radius_controller = (TextView) root.findViewById(R.id.radi_controller);
         radiusbar = (SeekBar) root.findViewById(R.id.radi_controller1);
@@ -141,8 +142,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.radi = progress;
                 ma.initModel();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
-                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
+//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
 
@@ -160,8 +161,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             public void onStopTrackingTouch(SeekBar seekBar) {
                 ma.infoArray.get(ma.tree_id).setDiameter((float)ma.radi);
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
-                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
+//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
+//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
 
                 //AR TextView
                 ma.RenderText(seekBar.getProgress());
@@ -186,21 +187,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             AnchorNode anchorNode2 = new AnchorNode(anchor2);
             anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
 
-            Node node = new Node();
-
-            node.setLocalPosition(new Vector3(0.0f, 1.2f, 0f));
-
-            node.setParent(anchorNode2);
-            node.setRenderable(ma.modelRenderable);
-
-            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-                Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f),
-                        frameTime.getStartSeconds()*2);
-                Quaternion rotation2 = Quaternion.axisAngle(new Vector3(1.0f, 0f, 0.0f),
-                        frameTime.getStartSeconds()*90);
-                node.setLocalRotation(Quaternion.multiply(rotation1,rotation2));
-            });
-
             ma.radi = 100;
             ma.height=0;
             ma.initModel();
@@ -218,18 +204,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             tmp.setDiameter(100);
             tmp.setHeight(0);
-//            tmp.getNode().setRenderable(ma.modelRenderable);
-//            tmp.getR_Node().setRenderable(ma.modelRenderable);
+            tmp.getNode().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
             tmp.getT_Node().setRenderable(ma.modelRenderable3);
-//            tmp.getNode().setParent(anchorNode2);
+            tmp.getNode().setParent(anchorNode2);
             tmp.getH_Node().setParent(anchorNode2);
             tmp.getT_Node().setParent(anchorNode2);
-//            tmp.getNode().setOnTouchListener(touchNode);
+            tmp.getNode().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-
 
             //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             if (ma.anchorNode != null) {
@@ -281,7 +265,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     //AR
     @Override
     public void onUpdate(FrameTime frameTime) {
-
     }
 
     TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
@@ -330,7 +313,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mLocationManager.removeUpdates(this);
     }
 
-
     //Image Button
     //control the object
     //Top
@@ -339,13 +321,23 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllTop, MotionEvent event) {
             if (controllTop == mTop) {
                 ma.initModel();
+                ma.initModel2();
+                ma.initModel3();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
+
                         Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
                         ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
-                                ((tmpVec.z * 100)/-1)/100));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
-                                ((tmpVec.z * 100)/-1)/100));
+                                ((tmpVec.z * 100)/-1) / 100));
+
+                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec2.x, tmpVec2.y,
+                                ((tmpVec2.z * 100)/-1)/100));
+
+                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
+                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+                                ((tmpVec3.z * 100)/-1)/100));
+
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
@@ -360,13 +352,23 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllBottom, MotionEvent event) {
             if (controllBottom == mBottom) {
                 ma.initModel();
+                ma.initModel2();
+                ma.initModel3();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
+
                         Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
                         ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
                                 ((tmpVec.z * 100)/+1)/100));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec.x, tmpVec.y,
-                                ((tmpVec.z * 100)/+1)/100));
+
+                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(tmpVec2.x, tmpVec2.y,
+                                ((tmpVec2.z * 100)/+1)/100));
+
+                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
+                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+                                ((tmpVec3.z * 100)/+1)/100));
+
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
@@ -381,19 +383,31 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllRight, MotionEvent event) {
             if (controllRight == mRight) {
                 ma.initModel();
+                ma.initModel2();
+                ma.initModel3();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
+
                         Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
                         ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
                                 tmpVec.y, tmpVec.z));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)+1)/100,
-                                tmpVec.y, tmpVec.z));
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+
+                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec2.x*100)+1)/100,
+                                tmpVec2.y, tmpVec2.z));
+
+                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
+                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(((tmpVec3.x*100)+1)/100,
+                                tmpVec3.y, tmpVec3.z));
+
+
                     }
                 }
+                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             }
             return false;
         }
+
     };
 
     //Left
@@ -402,13 +416,23 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllLeft, MotionEvent event) {
             if (controllLeft == mLeft) {
                 ma.initModel();
+                ma.initModel2();
+                ma.initModel3();
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
+
                         Vector3 tmpVec = ma.infoArray.get(i).getNode().getLocalPosition();
                         ma.infoArray.get(i).getNode().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
                                 tmpVec.y, tmpVec.z));
-                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec.x*100)-1)/100,
-                                tmpVec.y, tmpVec.z));
+
+                        Vector3 tmpVec2 = ma.infoArray.get(i).getH_Node().getLocalPosition();
+                        ma.infoArray.get(i).getH_Node().setLocalPosition(new Vector3(((tmpVec2.x*100)-1)/100,
+                                tmpVec2.y, tmpVec2.z));
+
+                        Vector3 tmpVec3 = ma.infoArray.get(i).getT_Node().getLocalPosition();
+                        ma.infoArray.get(i).getT_Node().setLocalPosition(new Vector3(((tmpVec3.x*100)-1)/100,
+                                tmpVec3.y, tmpVec3.z));
+
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                     }
                 }
@@ -423,23 +447,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllRightDown, MotionEvent event) {
             if (controllRightDown == mRightRoation) {
                 ma.initModel();
-                for (int i=0; i<ma.infoArray.size(); i++) {
+                for (int i = 0; i < ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
 
-                        int finalI = i;
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-                            Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f),
-                                    frameTime.getStartSeconds()*1f);
-                            float angle = finalI * 10;
-                            angle = 20 - angle;
 
-                            Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 1f, 0.0f),
-                                    frameTime.getStartSeconds()*20);
+                        Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f), 0.5f);
+                        Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 0.5f);
 
-                            ma.infoArray.get(finalI).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
+                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
 
-                        });
-
+                        ma.infoArray.get(i).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
                     }
                 }
             }
@@ -456,7 +473,10 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 for (int i=0; i<ma.infoArray.size(); i++) {
                     if (ma.infoArray.get(i).getNode().isSelected()) {
 
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                        Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f), 0.5f);
+                        Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 0.5f);
+
+//                        ma.infoArray.get(i).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
                     }
                 }
             }
