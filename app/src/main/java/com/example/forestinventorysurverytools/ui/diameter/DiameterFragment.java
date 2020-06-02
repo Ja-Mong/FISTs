@@ -447,17 +447,14 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllRightDown, MotionEvent event) {
             if (controllRightDown == mRightRoation) {
                 ma.initModel();
-                for (int i = 0; i < ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                if(ma.infoArray.get(id).getNode().isSelected()){
+                    Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
+                    Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 1);
 
+                    ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
 
-                        Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f), 0.5f);
-                        Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 0.5f);
-
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-
-                        ma.infoArray.get(i).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
-                    }
+                    ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                    ma.infoArray.get(id).getNode().select();
                 }
             }
             return false;
@@ -470,14 +467,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         public boolean onTouch(View controllLeftDown, MotionEvent event) {
             if (controllLeftDown == mLeftRoation) {
                 ma.initModel();
-                for (int i=0; i<ma.infoArray.size(); i++) {
-                    if (ma.infoArray.get(i).getNode().isSelected()) {
+                if(ma.infoArray.get(id).getNode().isSelected()){
+                    Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
+                    Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), -1);
 
-                        Quaternion rotation1 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 0.0f), 0.5f);
-                        Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 0.5f);
+                    ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
 
-//                        ma.infoArray.get(i).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
-                    }
+
+                    ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                    ma.infoArray.get(id).getNode().select();
                 }
             }
             return false;
