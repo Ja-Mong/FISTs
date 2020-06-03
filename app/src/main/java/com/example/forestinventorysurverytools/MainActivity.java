@@ -23,6 +23,7 @@ import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerFragment;
+import com.example.forestinventorysurverytools.ui.userheight.UserheightFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.TrackingState;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     // Fragment
+    public UserheightFragment userheightFragment;
     public DiameterFragment diameterFragment;
     public HeightFragment heightFragment;
 
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public double mDistance_val;
     public double mDiameter_val;
     public double mHeight_val;
+
+    public float main_userHeight=1.2f;
 
 
     // 데이터 관리
@@ -160,18 +164,21 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //Fragment
         diameterFragment = new DiameterFragment(this);
         heightFragment = new HeightFragment(this);
-
+        userheightFragment = new UserheightFragment(this);
 
         //Navigation
         FragmentManager fm = getSupportFragmentManager();
         arFragment = (ArFragment) fm.findFragmentById(R.id.camera_preview_fr);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, userheightFragment).commit();
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.navigation_userheight:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, userheightFragment).commit();
+                        return true;
                     case R.id.navigation_diameter:
                         getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, diameterFragment).commit();
                         return true;
@@ -212,8 +219,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
                             if (!mInputHeight.getText().toString().isEmpty()) {
-                                float userheight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
-                                Vector3 vector3 = new Vector3((float) axis_X / 100, userheight,
+                                main_userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
+                                Vector3 vector3 = new Vector3((float) axis_X / 100, main_userHeight,
                                         (float) axis_Z / 100);
                                 modelRenderable2 = ShapeFactory.makeSphere(0.05f, vector3, material);
 

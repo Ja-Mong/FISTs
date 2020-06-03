@@ -477,7 +477,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     /*
 
          seekbar를 조이스틱 스위치 방식처럼 구현.
-         
+
 
      */
 

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.userheight.UserheightFragment">
+
+    <com.example.forestinventorysurverytools.ui.height.HeightIndicator
+        android:id="@+id/inclinometerInUserHeight"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="5dp"
+        android:background="#00FFFFFF"/>
+
+    <ImageButton
+        android:id="@+id/userHeightUp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/userHeightDown"
+        android:src="@drawable/top"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+    <ImageButton
+        android:id="@+id/userHeightDown"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/check"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/bottom"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
+    <ImageButton
+        android:id="@+id/check"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="110dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/ok"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/userheight_info"/>
+</RelativeLayout>
