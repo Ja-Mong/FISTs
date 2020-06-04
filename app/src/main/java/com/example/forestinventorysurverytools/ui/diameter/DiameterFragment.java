@@ -118,15 +118,11 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mBottom = (ImageButton)root.findViewById(R.id.bottom);
         mRight = (ImageButton)root.findViewById(R.id.right);
         mLeft = (ImageButton)root.findViewById(R.id.left);
-        mRightRoation = (ImageButton)root.findViewById(R.id.rightDown);
-        mLeftRoation = (ImageButton)root.findViewById(R.id.leftDown);
 
         mTop.setOnTouchListener(controll_BtnTop);
         mBottom.setOnTouchListener(controll_BtnBottom);
         mRight.setOnTouchListener(controll_BtnRight);
         mLeft.setOnTouchListener(controll_BtnLeft);
-        mRightRoation.setOnTouchListener(controll_BtnRigntRoation);
-        mLeftRoation.setOnTouchListener(controll_BtnLeftRoation);
 
 
 
@@ -146,7 +142,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 //                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
 //                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((float)ma.radi/10)+"cm" );
+                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(((float)ma.radi/10)*2)+"cm" );
             }
 
             @Override
@@ -258,7 +254,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             //Get the Diameter
             ma.mDiameter_tv.setText("흉 고 직 경 : " +
-                    Float.toString((float) ma.radi / 10) + "cm");
+                    Float.toString(((float) ma.radi / 10)*2) + "cm");
 
             ai.add(tmp);
             id = ai.size() - 1;
@@ -305,7 +301,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
                 String meter = String.format("%.2f", ai.get(id).getDistance());
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(ai.get(id).getDiameter() / 10) + "cm");
+                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString((ai.get(id).getDiameter() / 10)*2) + "cm");
                 ma.mHeight_tv.setText("수      고 : " + Float.toString(1.2f+ai.get(id).getHeight()/100)+"m" ); //수정필요
 
             }
@@ -431,48 +427,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     };
 
     /******************  회전부   *********************/
-    //Right Rotation
-    ImageButton.OnTouchListener controll_BtnRigntRoation = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllRightDown, MotionEvent event) {
-            if (controllRightDown == mRightRoation) {
-                ma.initModel();
-                if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
-                    Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
-                    Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), 1);
-
-                    ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
-
-                    ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                    ma.infoArray.get(id).getNode().select();
-                }
-            }
-            return false;
-        }
-    };
-
-    //Left Rotation
-    ImageButton.OnTouchListener controll_BtnLeftRoation = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllLeftDown, MotionEvent event) {
-            if (controllLeftDown == mLeftRoation) {
-                ma.initModel();
-                if(ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()){
-                    Quaternion rotation1 = ma.infoArray.get(id).getNode().getLocalRotation();
-                    Quaternion rotation2 = Quaternion.axisAngle(new Vector3(0.0f, 0f, 1.0f), -1);
-
-                    ma.infoArray.get(id).getNode().setLocalRotation(Quaternion.multiply(rotation1, rotation2));
-
-
-                    ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                    ma.infoArray.get(id).getNode().select();
-                }
-            }
-            return false;
-        }
-    };
-
-    /***********************************************/
 
     /*
 

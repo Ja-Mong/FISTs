@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
-    android:id="@+id/main_screen">
+    android:id="@+id/main_screen"
+    android:background="@drawable/background">
 
     <LinearLayout
         android:id="@+id/maintitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="115dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="50dp"
         android:orientation="horizontal">
 
         <TextView
@@ -21,7 +21,7 @@
             android:layout_marginTop="40dp"
             android:text="FISTs"
             android:textColor="#FF9800"
-            android:textSize="80dp"
+            android:textSize="70dp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -47,8 +47,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forest Inventory Survey Tools"
-        android:textColor="#0F0F0F"
-        android:textSize="38dp"
+        android:textColor="#171717"
+        android:textSize="37dp"
         android:textStyle="bold"
         android:textAlignment="center"
         android:padding="10dp"
@@ -57,25 +57,28 @@
 
     <TextView
         android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="본 애플리케이션은 산림청(한국임업진흥원)의 지원을 받아 개발한 산림조사용 측정앱입니다."
+        android:layout_width="350dp"
+        android:layout_height="80dp"
+        android:text="산림청의 지원을 받아 경북대학교에서 개발한 산림측정조사 앱 입니다."
         android:textSize="20dp"
         android:textStyle="normal"
+        android:maxLines="2"
         android:textAlignment="center"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sub_title"
         android:gravity="center"
         android:padding="15dp"
-        android:textColor="#313030"/>
+        android:textColor="#313030"
+        android:background="#A5FFFFFF"/>
 
     <ImageView
         android:id="@+id/notice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/importance_mark"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/exclamation_mark"
         android:layout_below="@id/content"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"/>
 
     <Button
@@ -85,35 +88,52 @@
         android:layout_below="@id/notice"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:background="#51FFFFFF"
+        android:background="#A5FFFFFF"
         android:onClick="onClick"
         android:padding="10dp"
         android:text="사용 전 반드시 사용설명서를 숙지하여 주세요."
         android:textSize="18dp" />
 
     <EditText
-        android:id="@+id/userID"
-        android:layout_width="200dp"
+        android:id="@+id/date"
+        android:layout_width="130dp"
         android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_centerInParent="true"
         android:layout_below="@id/guide_btn"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="50dp"
-        android:hint="사용자 이름"
+        android:hint="조사날짜"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:inputType="number"
         android:textAlignment="center"
-        android:background="#B6B3B3"/>
+        android:background="#A5FFFFFF"/>
+
     <EditText
-        android:id="@+id/userHeight"
-        android:layout_width="200dp"
+        android:id="@+id/place"
+        android:layout_width="130dp"
         android:layout_height="50dp"
-        android:layout_below="@id/userID"
-        android:layout_centerInParent="true"
         android:layout_marginTop="5dp"
-        android:hint="사용자 눈높이(키 - 10cm)"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/date"
+        android:hint="조사지"
+        android:maxLines="2"
         android:textSize="15sp"
         android:textStyle="bold"
         android:textAlignment="center"
-        android:background="#B6B3B3"/>
+        android:background="#A5FFFFFF"/>
+
+    <EditText
+        android:id="@+id/userID"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/place"
+        android:layout_marginTop="5dp"
+        android:hint="조사자"
+        android:maxLines="1"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:background="#A5FFFFFF" />
 
 </RelativeLayout>

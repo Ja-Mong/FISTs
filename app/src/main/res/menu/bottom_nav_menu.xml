@@ -3,7 +3,7 @@
     <item
         android:id="@+id/navigation_userheight"
         android:icon="@drawable/userheight"
-        android:title="측정높이" />
+        android:title="사용자 눈높이" />
     <item
         android:id="@+id/navigation_diameter"
         android:icon="@drawable/radi"

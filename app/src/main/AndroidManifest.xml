@@ -36,7 +36,7 @@
 
 
         <activity
-            android:name=".UserGuide"
+            android:name=".ui.userguide.UserGuide"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

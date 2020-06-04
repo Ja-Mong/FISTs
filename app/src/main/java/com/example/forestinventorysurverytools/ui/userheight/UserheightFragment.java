@@ -76,7 +76,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
         check.setOnTouchListener(new ImageButton.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Toast.makeText(ma,"측정높이는 "+Float.toString(userHeigth*100)+"cm 입니다.",Toast.LENGTH_LONG).show();
+//                Toast.makeText(ma,"측정높이는 "+Float.toString(userHeigth*100)+"cm 입니다.",Toast.LENGTH_LONG).show();
                 tfn.setRenderable(null);
                 isCreated=!isCreated;
                 ma.main_userHeight=userHeigth;
@@ -103,7 +103,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
 
             if(!isCreated) {
                 isCreated=!isCreated;
-                Toast.makeText(ma, "위, 아래키로 빨간선까지 카메라 높이를 맞추세요.", Toast.LENGTH_LONG).show();
+                Toast.makeText(ma, "위, 아래 버튼을 활용하여 AR 객체를 빨간선에 맞추세요.", Toast.LENGTH_SHORT).show();
                 // Creating Anchor.
                 Anchor anchor2 = hitResult.createAnchor();
                 AnchorNode anchorNode2 = new AnchorNode(anchor2);
@@ -130,14 +130,14 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
         return root;
     }
 
-    ImageButton.OnTouchListener moveUp = new ImageButton.OnTouchListener(){
+    ImageButton.OnTouchListener moveUp = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             userHeigth+=0.005f;
             initModel_userHeight();
             tfn.setRenderable(modelRenderable_userHeight);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100));
+            ma.mInputHeight.setText(Float.toString(userHeigth*100)+"cm");
             return false;
         }
     };
@@ -148,18 +148,18 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
             initModel_userHeight();
             tfn.setRenderable(modelRenderable_userHeight);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100));
+            ma.mInputHeight.setText(Float.toString(userHeigth*100)+"cm");
             return false;
         }
     };
 
-    //AR model 3 = markBottom
+    //AR model 4 = userHeightModel
     public void initModel_userHeight() {
         MaterialFactory.makeTransparentWithColor(ma, new Color(0.8f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
                             modelRenderable_userHeight = ShapeFactory.makeCube(new Vector3(0.3f,0.01f,0.01f),
-                                    new Vector3(0.0f, userHeigth, 0.0f),material);
+                                    new Vector3(0, userHeigth, 0),material);
                             modelRenderable_userHeight.setShadowReceiver(false);
                             modelRenderable_userHeight.setShadowReceiver(false);
                             Boolean b = (modelRenderable_userHeight == null);

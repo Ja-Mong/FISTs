@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.forestinventorysurverytools.ui.userguide.UserGuide;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Session;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
@@ -27,8 +31,6 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.Scene;
 
 import java.util.Objects;
 
@@ -39,12 +41,14 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
     TextView mSub_title;
     TextView mContent;
     public EditText mInputUserID;
-    public EditText mInputUserHeight;
+    public EditText mDate;
+    public EditText mPlace;
 
 
     //Values
     public String userDefaultID = "홍길동";
-    public String userDefaultHeight = "160";
+    public String defaultDate = "20201108";
+    public String defaultPlace = "속리산";
 
 
     //ImageView
@@ -79,9 +83,71 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         mSub_title = (TextView) findViewById(R.id.sub_title);
         mContent = (TextView) findViewById(R.id.content);
         mInputUserID = (EditText) findViewById(R.id.userID);
-        mInputUserHeight = (EditText) findViewById(R.id.userHeight);
+        mDate = (EditText) findViewById(R.id.date);
+        mPlace = (EditText) findViewById(R.id.place);
 
         //EditText default values
+        //date
+        mDate.setText(defaultDate);
+        mDate.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mDate.getText().toString().equals(defaultDate)) {
+                    mDate.setText("");
+                }
+                return false;
+            }
+        });
+
+        mDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mDate.getText().toString())) {
+                    mDate.setText(defaultDate);
+                } else if (hasFocus && mDate.getText().toString().equals(defaultDate)) {
+                    mDate.setText("");
+                }
+            }
+        });
+
+
+        //place
+        mPlace.setText(defaultPlace);
+        mPlace.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mPlace.getText().toString().equals(defaultPlace)) {
+                    mPlace.setText("");
+                }
+                return false;
+            }
+        });
+
+        mPlace.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mPlace.getText().toString())) {
+                    mPlace.setText(defaultPlace);
+                } else if (hasFocus && mPlace.getText().toString().equals(defaultPlace)) {
+                    mPlace.setText("");
+                }
+            }
+        });
+
+        mPlace.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    mInputUserID.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+        //userID
         mInputUserID.setText(userDefaultID);
         mInputUserID.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -104,25 +170,17 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             }
         });
 
-        mInputUserHeight.setText(userDefaultHeight);
-        mInputUserHeight.setOnTouchListener(new View.OnTouchListener() {
+        mInputUserID.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        mInputUserID.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
-                    mInputUserHeight.setText("");
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                    InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(mInputUserID.getWindowToken(),0);
+                    return true;
                 }
                 return false;
-            }
-        });
-
-        mInputUserHeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && TextUtils.isEmpty(mInputUserHeight.getText().toString())) {
-                    mInputUserHeight.setText(userDefaultHeight);
-                } else if (hasFocus && mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
-                    mInputUserHeight.setText("");
-                }
             }
         });
 
@@ -231,15 +289,5 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             return false;
         }
         return true;
-    }
-
-
-    //Input user height
-    public void userHeight() {
-        if (!mInputUserHeight.getText().toString().isEmpty()) {
-            float userheight = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
-        } else if (!mInputUserHeight.getText().toString().equals(userDefaultHeight)) {
-            float userheight2 = Float.valueOf(mInputUserHeight.getText().toString()) / 100f;
-        }
     }
 }

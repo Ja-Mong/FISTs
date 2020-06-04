@@ -25,23 +25,14 @@
         android:id="@+id/Btn_measure"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/inclinometer"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="65dp"
         android:layout_marginLeft="15dp"
         android:src="@drawable/measurement"
         android:scaleType="fitCenter"
         android:background="@drawable/circle_background"/>
-<!--    <ImageButton-->
-<!--        android:id="@+id/Btn_getSlope"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginBottom="65dp"-->
-<!--        android:src="@drawable/slope"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:background="@drawable/circle_background"/>-->
+
     <ImageButton
         android:id="@+id/Btn_down2Height"
         android:layout_width="40dp"
@@ -75,7 +66,6 @@
         android:src="@drawable/upslope"
         android:scaleType="fitCenter"
         android:background="@drawable/circle_background"/>
-
     <ImageButton
         android:id="@+id/Btn_platHeight"
         android:layout_width="40dp"
@@ -99,7 +89,6 @@
         android:background="@drawable/circle_background"
         android:scaleType="centerInside"
         android:src="@drawable/camera" />
-
 
     <CheckBox
         android:id="@+id/savePortraitScreen"

@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     //Values
-    public String userDefaultHeight = "160";
     public float distanceMeters;
     public float dx;
     public float dy;
@@ -130,30 +129,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         mCompass_tv = (TextView) this.findViewById(R.id.tv_compass);
         mAltitude_tv = (TextView) this.findViewById(R.id.tv_alititude);
         mInputHeight = (EditText)this.findViewById(R.id.input_height);
-
-
-        //EditText default values
-        mInputHeight.setText(userDefaultHeight);
-        mInputHeight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mInputHeight.getText().toString().equals(userDefaultHeight)) {
-                    mInputHeight.setText("");
-                }
-                return false;
-            }
-        });
-
-        mInputHeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && TextUtils.isEmpty(mInputHeight.getText().toString())) {
-                    mInputHeight.setText(userDefaultHeight);
-                } else if (hasFocus && mInputHeight.getText().toString().equals(userDefaultHeight)) {
-                    mInputHeight.setText("");
-                }
-            }
-        });
 
 
         //ImageButton
@@ -222,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                                 main_userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
                                 Vector3 vector3 = new Vector3((float) axis_X / 100, main_userHeight,
                                         (float) axis_Z / 100);
-                                modelRenderable2 = ShapeFactory.makeSphere(0.05f, vector3, material);
+                                modelRenderable2 = ShapeFactory.makeSphere(0.03f, vector3, material);
 
                                 modelRenderable2.setShadowCaster(false);
                                 modelRenderable2.setShadowReceiver(false);
@@ -238,10 +213,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 size = new Vector3(0.2f, 0.1f, 0.1f);
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 0.1f,
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 0f,
                                     (float)axis_Z/100);
-                            modelRenderable3 = ShapeFactory.makeCube(size, vector3, material);
+                            modelRenderable3 = ShapeFactory.makeSphere(0.03f, vector3, material);
 
                             modelRenderable3.setShadowReceiver(false);
                             modelRenderable3.setShadowReceiver(false);
@@ -265,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         Node text = infoArray.get(tree_id).text;
                         text.setRenderable(null);
                         text.setRenderable(viewRenderable);
-                        text.setParent(infoArray.get(tree_id).getH_Node());
+                        text.setParent(infoArray.get(tree_id).getNode());
                         text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 0.0f,
                                 infoArray.get(tree_id).getNode().getLocalPosition().z));
 
