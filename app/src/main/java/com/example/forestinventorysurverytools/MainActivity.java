@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                                 main_userHeight = Float.valueOf(mInputHeight.getText().toString()) / 100f;
                                 Vector3 vector3 = new Vector3((float) axis_X / 100, main_userHeight,
                                         (float) axis_Z / 100);
-                                modelRenderable2 = ShapeFactory.makeSphere(0.03f, vector3, material);
+                                modelRenderable2 = ShapeFactory.makeSphere(0.05f, vector3, material);
 
                                 modelRenderable2.setShadowCaster(false);
                                 modelRenderable2.setShadowReceiver(false);
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                                     (float)axis_Z/100);
                             modelRenderable3 = ShapeFactory.makeSphere(0.03f, vector3, material);
 
-                            modelRenderable3.setShadowReceiver(false);
+                            modelRenderable3.setShadowCaster(false);
                             modelRenderable3.setShadowReceiver(false);
                             Boolean b = (modelRenderable3 == null);
                         });

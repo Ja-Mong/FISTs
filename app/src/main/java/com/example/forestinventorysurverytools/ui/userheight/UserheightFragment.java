@@ -76,7 +76,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
         check.setOnTouchListener(new ImageButton.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                Toast.makeText(ma,"측정높이는 "+Float.toString(userHeigth*100)+"cm 입니다.",Toast.LENGTH_LONG).show();
+//                Toast.makeText(ma,"측정높이는 "+Float.toString(userHeigth*100)+"cm 입니다.",Toast.LENGTH_SHORT).show();
                 tfn.setRenderable(null);
                 isCreated=!isCreated;
                 ma.main_userHeight=userHeigth;
@@ -137,7 +137,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
             initModel_userHeight();
             tfn.setRenderable(modelRenderable_userHeight);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100)+"cm");
+            ma.mInputHeight.setText(Float.toString(userHeigth*100));
             return false;
         }
     };
@@ -148,7 +148,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
             initModel_userHeight();
             tfn.setRenderable(modelRenderable_userHeight);
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100)+"cm");
+            ma.mInputHeight.setText(Float.toString(userHeigth*100));
             return false;
         }
     };

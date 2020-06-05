@@ -3,9 +3,6 @@
     <string name="title_userheight">사용자 눈높이</string>
     <string name="title_diameter">흉고직경</string>
     <string name="title_height">수고</string>
-
-    <string name="userheight_info"> &lt;사 용 법 &gt;\n1)현재 위치에서 가장 가까운 위치에 노드를 생성\n2)모바일을 사용자 눈 위치로 놓고, 방향키로 노드위치 조정\n3)체크버튼눌러서 측정높이확정" </string>
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
