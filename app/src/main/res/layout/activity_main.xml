@@ -42,10 +42,10 @@
 
     <EditText
         android:id="@+id/input_height"
-        android:layout_width="150dp"
+        android:layout_width="110dp"
         android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:hint="사용자 눈높이가 입력됩니다."
+        android:layout_toLeftOf="@id/cm"
+        android:hint="사용자 눈높이"
         android:singleLine="true"
         android:textColorHint="#FFFF"
         android:textColor="#FFFF"
@@ -54,6 +54,19 @@
         android:background="#757575"
         android:layout_above="@id/tv_inclinometer"
         android:layout_marginBottom="5dp"
+        />
+    <EditText
+        android:id="@+id/cm"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:textColor="#FFFF"
+        android:textSize="13sp"
+        android:textAlignment="center"
+        android:text="cm"
+        android:background="#757575"
+        android:layout_marginBottom="5dp"
+        android:layout_above="@id/tv_inclinometer"
         />
     <TextView
         android:id="@+id/tv_inclinometer"
@@ -134,24 +147,11 @@
         android:onClick="tv_Reset"
         android:layout_marginLeft="10dp"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="65dp"
+        android:layout_marginTop="5dp"
         />
 
     <ImageButton
         android:id="@+id/Btn_delete"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_above="@id/input_height"
-        android:layout_toRightOf="@id/Btn_add"
-        android:adjustViewBounds="true"
-        android:background="@drawable/circle_background"
-        android:scaleType="centerInside"
-        android:src="@drawable/delete" />
-
-    <ImageButton
-        android:id="@+id/Btn_add"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignLeft="@+id/input_height"
@@ -161,7 +161,7 @@
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"
         android:scaleType="centerInside"
-        android:src="@drawable/add" />
+        android:src="@drawable/delete" />
 
     <ImageButton
         android:id="@+id/Btn_back_step"
@@ -173,7 +173,7 @@
         android:src="@drawable/previous"
         android:layout_toRightOf="@id/Btn_reset"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginTop="5dp"
         />
 
     <ImageButton
@@ -181,7 +181,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/Btn_back_step"
         android:adjustViewBounds="true"
         android:background="@drawable/circle_background"

@@ -31,10 +31,12 @@ import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerIndicator;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
+import com.google.ar.core.Pose;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 
@@ -193,10 +195,17 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
                 if (click_count % 2 == 0) {
 
+                    /*06.07(일) 테스트용으로 주석처리*/
                     //Compute the straight-line distance.
-                    ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                    //ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                    //String meter = String.format("%.1f", ma.distanceMeters);
+                    //ma.mDistance_tv.setText("거        리 : " + meter + "m");
+
+                    /*06.07(일) 테스트용으로 대체 추가*/
+                    ma.distanceMeters = ma.infoArray.get(ma.tree_id).getDistance();
                     String meter = String.format("%.1f", ma.distanceMeters);
                     ma.mDistance_tv.setText("거        리 : " + meter + "m");
+
 
                     //Get the roll1 angle
                     roll1 = Math.abs(mMySensorEventListener.getRoll());

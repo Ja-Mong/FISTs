@@ -84,13 +84,12 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public SeekBar lr_rot;
     public SeekBar fb_rot;
 
+
     //ImageButton
     public ImageButton mTop;
     public ImageButton mBottom;
     public ImageButton mRight;
     public ImageButton mLeft;
-    public ImageButton mRightRoation;
-    public ImageButton mLeftRoation;
 
 
     //TextView
@@ -104,7 +103,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_diameter, null);
         id = 0;
-
 
 
         //Sensor
@@ -139,8 +137,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.radi = progress;
                 ma.initModel();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
-//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(((float)ma.radi/10)*2)+"cm" );
             }
@@ -154,8 +150,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             public void onStopTrackingTouch(SeekBar seekBar) {
                 ma.infoArray.get(ma.tree_id).setDiameter((float)ma.radi);
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
-//                ma.infoArray.get(ma.tree_id).getH_Node().setRenderable(ma.modelRenderable2);
-//                ma.infoArray.get(ma.tree_id).getT_Node().setRenderable(ma.modelRenderable3);
 
                 //AR TextView
                 ma.RenderText(seekBar.getProgress());
@@ -227,14 +221,26 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             if (ma.anchorNode != null) {
                 Frame frame = ma.arFragment.getArSceneView().getArFrame();
+
+                /*06.07(일) 테스트용으로 주석처리*/
                 Pose objectPose = ma.anchor.getPose();
-                Pose cameraPose = frame.getCamera().getPose();
-
+                //Pose cameraPose = frame.getCamera().getPose();
                 //Get the Anchor Pose
-                ma.dx = objectPose.tx() - cameraPose.tx();
-                ma.dy = objectPose.ty() - cameraPose.ty();
-                ma.dz = objectPose.tz() - cameraPose.tz();
+                //ma.dx = objectPose.tx() - cameraPose.tx();
+                //ma.dy = objectPose.ty() - cameraPose.ty();
+                //ma.dz = objectPose.tz() - cameraPose.tz();
 
+                /*06.07(일) 테스트용으로 대체 추가*/
+                Vector3 ov = tmp.getT_Node().getWorldPosition();
+                Pose cameraPose = frame.getCamera().getPose();
+                ma.dx = ov.x - cameraPose.tx();
+                ma.dy = ov.y - cameraPose.ty();
+                ma.dz = ov.z - cameraPose.tz();
+                ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                String meter = String.format("%.1f", ma.distanceMeters);
+                ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                
+                tmp.setDistance(ma.distanceMeters);
                 //Get the altitude
                 if (ma.altitude_vec.isEmpty()) {
                     ma.altitude_vec.add(altitude);
@@ -349,6 +355,21 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                         ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
                                 ((tmpVec3.z * 100)-1)/100));
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+
+
+                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+
+                        ma.dx = ov.x - cameraPose.tx();
+                        ma.dy = ov.y - cameraPose.ty();
+                        ma.dz = ov.z - cameraPose.tz();
+                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                        String meter = String.format("%.1f", ma.distanceMeters);
+                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
+
+
+
                     }
 
             }
@@ -371,6 +392,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                                 ((tmpVec3.z * 100)+1)/100));
 
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+
+                        ma.dx = ov.x - cameraPose.tx();
+                        ma.dy = ov.y - cameraPose.ty();
+                        ma.dz = ov.z - cameraPose.tz();
+                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                        String meter = String.format("%.1f", ma.distanceMeters);
+                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
                     }
                 }
 
@@ -392,7 +423,16 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                         Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
                         ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)+1)/100,
                                 tmpVec3.y, tmpVec3.z));
+                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
 
+                        ma.dx = ov.x - cameraPose.tx();
+                        ma.dy = ov.y - cameraPose.ty();
+                        ma.dz = ov.z - cameraPose.tz();
+                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                        String meter = String.format("%.1f", ma.distanceMeters);
+                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
 
                     }
 
@@ -419,6 +459,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                                 tmpVec3.y, tmpVec3.z));
 
                         ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+                        ma.dx = ov.x - cameraPose.tx();
+                        ma.dy = ov.y - cameraPose.ty();
+                        ma.dz = ov.z - cameraPose.tz();
+                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                        String meter = String.format("%.1f", ma.distanceMeters);
+                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
                     }
                 }
 
