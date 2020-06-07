@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     //AR controller
-    public  int tree_id;
+    public  int tree_id=-1;
     public int radi = 100;
     public int height = 0;
     public int axis_Z = 0;
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //AR ViewRenderable
 
         TextView ar_textview = new TextView(this);
-        ar_textview.setText((tree_id+1)+"번 나무\n"+(float)r/10+"cm");
+        ar_textview.setText((tree_id+1)+"번 나무\n직경 : "+(float)r/10+"cm\n거리 : "+String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
                 .setView(this, ar_textview)
@@ -239,9 +239,10 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         Node text = infoArray.get(tree_id).text;
                         text.setRenderable(null);
                         text.setRenderable(viewRenderable);
-                        text.setParent(infoArray.get(tree_id).getNode());
-                        text.setLocalPosition(new Vector3(infoArray.get(tree_id).getNode().getLocalPosition().x+(float)r/1000+0.2f, 0.0f,
-                                infoArray.get(tree_id).getNode().getLocalPosition().z));
+                        text.setParent(infoArray.get(tree_id).getH_Node());
+                        text.setLocalPosition(new Vector3(infoArray.get(tree_id).getH_Node().getLocalPosition().x+(float)r/1000+0.2f,
+                                main_userHeight,
+                                infoArray.get(tree_id).getH_Node().getLocalPosition().z));
 
                         viewRenderable.setShadowCaster(false);
                         viewRenderable.setShadowReceiver(false);

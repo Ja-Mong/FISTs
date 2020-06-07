@@ -41,6 +41,9 @@ import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.Material;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
@@ -239,7 +242,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
                 String meter = String.format("%.1f", ma.distanceMeters);
                 ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                
+
                 tmp.setDistance(ma.distanceMeters);
                 //Get the altitude
                 if (ma.altitude_vec.isEmpty()) {
@@ -285,6 +288,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     TransformableNode.OnTouchListener touchNode = new TransformableNode.OnTouchListener(){
         @Override
         public boolean onTouch(HitTestResult hitTestResult, MotionEvent motionEvent) {
+            
             if(hitTestResult.getNode()!=null) {
                 id = (ai.size() == 0) ? 0 : ai.size() - 1;
                 for (int i = 0; i < ai.size(); i++) {
