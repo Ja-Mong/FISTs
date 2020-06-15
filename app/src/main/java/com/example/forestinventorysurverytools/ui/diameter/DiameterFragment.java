@@ -75,6 +75,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     double altitude;
     float compass;
     public int id;
+    float diameterValue;
 
 
     //Activity
@@ -137,11 +138,25 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         radiusbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                Frame frame = ma.arFragment.getArSceneView().getArFrame();
+                Pose objectPose = ma.anchor.getPose();
+                Pose cameraPose = frame.getCamera().getPose();
+
+                //Get the Anchor Pose
+                ma.dx = objectPose.tx() - cameraPose.tx();
+                ma.dy = objectPose.ty() - cameraPose.ty();
+                ma.dz = objectPose.tz() - cameraPose.tz();
+                ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+                String meter = String.format("%.1f", ma.distanceMeters);
+                ma.mDistance_tv.setText("거        리 : " + meter + "m");
+
                 ma.radi = progress;
                 ma.initModel();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(((float)ma.radi/10)*2)+"cm" );
+                diameterValue = (((ma.radi*2)/10) * ((ma.distanceMeters*100)+80))/(ma.distanceMeters * 100);
+                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(diameterValue) + "cm" );
             }
 
             @Override
