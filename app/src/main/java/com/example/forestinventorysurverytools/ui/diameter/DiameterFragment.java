@@ -155,7 +155,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.initModel();
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                diameterValue = (((ma.radi*2)/10) * ((ma.distanceMeters*100)+80))/(ma.distanceMeters * 100);
+                diameterValue = (((ma.radi*2)/10) * ((ma.distanceMeters*100)+25))/(ma.distanceMeters * 100);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(diameterValue) + "cm" );
             }
 
