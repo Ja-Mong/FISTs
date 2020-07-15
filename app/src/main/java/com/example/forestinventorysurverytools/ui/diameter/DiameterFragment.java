@@ -76,6 +76,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     float compass;
     public int id;
     float diameterValue;
+    String diameter;
 
 
     //Activity
@@ -98,8 +99,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
     //TextView
     public TextView radius_controller;
-
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -156,7 +155,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
                 ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
                 diameterValue = (((ma.radi*2)/10) * ((ma.distanceMeters*100)+25))/(ma.distanceMeters * 100);
-                ma.mDiameter_tv.setText("흉 고 직 경 : " + Float.toString(diameterValue) + "cm" );
+                diameter = String.format("%.1f", diameterValue);
+                ma.mDiameter_tv.setText("흉 고 직 경 : " + diameter + "cm" );
             }
 
             @Override
@@ -166,7 +166,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                ma.infoArray.get(ma.tree_id).setDiameter((float)ma.radi);
+                ma.infoArray.get(ma.tree_id).setDiameter(Float.valueOf(diameter));
                 ma.infoArray.get(ma.tree_id).getNode().setRenderable(ma.modelRenderable);
 
                 //AR TextView

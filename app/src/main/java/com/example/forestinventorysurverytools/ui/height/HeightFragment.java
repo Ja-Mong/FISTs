@@ -64,7 +64,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     ImageButton mBtn_getHeight1;
     ImageButton mBtn_getHeight2;
     ImageButton mBtn_getHeight3;
-    ImageButton mBtn_getHeight4;
     ImageButton mBtn_capture;
 
 
@@ -122,14 +121,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         mBtn_getHeight1 = (ImageButton) root.findViewById(R.id.Btn_platHeight);
         mBtn_getHeight2 = (ImageButton) root.findViewById(R.id.Btn_upHeight);
         mBtn_getHeight3 = (ImageButton) root.findViewById(R.id.Btn_down1Height);
-        mBtn_getHeight4 = (ImageButton) root.findViewById(R.id.Btn_down2Height);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
 
         mBtn_measure.setOnClickListener(getHeightAngle);
         mBtn_getHeight1.setOnClickListener(getHeightValues1);
         mBtn_getHeight2.setOnClickListener(getHeightValues2);
         mBtn_getHeight3.setOnClickListener(getHeightValues3);
-        mBtn_getHeight4.setOnClickListener(getHeightValues4);
         mBtn_capture.setOnClickListener(takeCapture);
 
 
@@ -195,13 +192,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             if (!ma.mInputHeight.getText().toString().isEmpty()) {
                 if (click_count % 2 == 0) {
 
-                    /*06.07(일) 테스트용으로 주석처리*/
-                    //Compute the straight-line distance.
-                    //ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                    //String meter = String.format("%.1f", ma.distanceMeters);
-                    //ma.mDistance_tv.setText("거        리 : " + meter + "m");
-
-                    /*06.07(일) 테스트용으로 대체 추가*/
+                     /*06.07(일) 테스트용으로 대체 추가*/
                     ma.distanceMeters = ma.infoArray.get(ma.tree_id).getDistance();
                     String meter = String.format("%.1f", ma.distanceMeters);
                     ma.mDistance_tv.setText("거        리 : " + meter + "m");
@@ -231,7 +222,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     };
 
 
-        //Calculate Height depends on 4 case //정확성 테스트 필요 => 논문
+        //Calculate Height depends on 3 case //정확성 테스트 필요 => 논문
         //Plat
         final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
             @Override
@@ -251,8 +242,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             public void onClick(View height2) {
                 if (height2.getId() == R.id.Btn_upHeight) {
                     float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
-                    float y = (float) Math.abs((Math.tan(getRoll1) * length) - (ma.main_userHeight)); //- (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
-                    float h = (float) Math.abs((Math.tan(getRoll2) * length) - y);
+                    float x = (float) Math.abs((Math.tan(getRoll1) * ma.distanceMeters) - ma.main_userHeight);
+                    float h = (float) Math.abs(Math.tan(getRoll2 * length) - x);
                     ma.mHeight_val = h;
                     String height_val = String.format("%.1f", ma.mHeight_val);
                     ma.mHeight_tv.setText("수        고 :" + height_val + "m");
@@ -266,8 +257,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             public void onClick(View height3) {
                 if (height3.getId() == R.id.Btn_down1Height) {
                     float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
-                    float y = (float) Math.abs(Math.tan(getRoll1) * length);
-                    float h = (float) Math.abs((Math.tan(getRoll2) * length) + y + (ma.main_userHeight)); // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
+                    float x = (float) Math.abs(Math.tan(getRoll1) * length);
+                    float h = (float) Math.abs((Math.tan(getRoll2) * length) + x + (ma.main_userHeight)); // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
                     ma.mHeight_val = h;
                     String height_val = String.format("%.1f", ma.mHeight_val);
                     ma.mHeight_tv.setText("수        고 :" + height_val + "m");
@@ -275,21 +266,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             }
         };
 
-        //DownSlope2
-        final ImageButton.OnClickListener getHeightValues4 = new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View height4) {
-                if (height4.getId() == R.id.Btn_down2Height) {
-                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
-                    float y = (float) Math.abs((Math.tan(getRoll1) * length));
-                    float q = (float) Math.abs(Math.tan(getRoll2) * length);
-                    float h = Math.abs((y - q) + (ma.main_userHeight)); //+(Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
-                    ma.mHeight_val = h;
-                    String height_val = String.format("%.1f", ma.mHeight_val);
-                    ma.mHeight_tv.setText("수        고 :" + height_val + "m");
-                }
-            }
-        };
 
         //Capture
         final ImageButton.OnClickListener takeCapture = new ImageButton.OnClickListener() {

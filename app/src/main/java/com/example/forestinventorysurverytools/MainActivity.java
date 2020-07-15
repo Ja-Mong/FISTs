@@ -228,7 +228,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //AR ViewRenderable
 
         TextView ar_textview = new TextView(this);
-        ar_textview.setText((tree_id+1)+"번 나무\n직경 : "+(float)r/10+"cm\n거리 : "+String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
+        ar_textview.setText((tree_id+1)+"번 나무\n직경 : "+
+                String.format("%.1f", (float)(((r*2)/10)* ((distanceMeters*100)+25))/(distanceMeters * 100))+"cm\n거리 : " +
+                String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
                 .setView(this, ar_textview)
