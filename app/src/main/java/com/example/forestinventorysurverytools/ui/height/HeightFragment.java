@@ -31,6 +31,7 @@ import com.example.forestinventorysurverytools.R;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerIndicator;
 //import com.example.forestinventorysurverytools.ui.inclinometer.InclinometerOrientation;
+import com.google.ar.core.Frame;
 import com.google.ar.core.Pose;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.ArSceneView;
@@ -194,6 +195,16 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
                      /*06.07(일) 테스트용으로 대체 추가*/
                     ma.distanceMeters = ma.infoArray.get(ma.tree_id).getDistance();
+
+                    Frame frame = ma.arFragment.getArSceneView().getArFrame();
+                    Pose objectPose = ma.anchor.getPose();
+                    Pose cameraPose = frame.getCamera().getPose();
+
+                    //Get the Anchor Pose
+                    ma.dx = objectPose.tx() - cameraPose.tx();
+                    ma.dy = objectPose.ty() - cameraPose.ty();
+                    ma.dz = objectPose.tz() - cameraPose.tz();
+                    ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
                     String meter = String.format("%.1f", ma.distanceMeters);
                     ma.mDistance_tv.setText("거        리 : " + meter + "m");
 

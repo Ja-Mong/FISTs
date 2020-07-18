@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public ModelRenderable modelRenderable;
     public ModelRenderable modelRenderable2;
     public ModelRenderable modelRenderable3;
+    public ModelRenderable modelRenderable4;
 
 
     //AR controller
@@ -169,13 +170,11 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //AR model 1 = Diameter
     public void initModel() {
-        MaterialFactory.makeTransparentWithColor(this,
-                new Color(1.0f, 0.0f, 0.0f, 1.0f))
+        MaterialFactory.makeTransparentWithColor(this, new Color(1.0f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float) axis_X/100, 0f,
-                                    (float) axis_Z/100);
+                            Vector3 vector3 = new Vector3((float) axis_X/100, 0f, (float) axis_Z/100);
                             modelRenderable = ShapeFactory.makeCylinder
                                     ((float) radi / 1000, 0.05f,
                                             vector3, material);
@@ -213,13 +212,27 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float)axis_X/100, 0f,
-                                    (float)axis_Z/100);
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 0f, (float)axis_Z/100);
                             modelRenderable3 = ShapeFactory.makeSphere(0.03f, vector3, material);
 
                             modelRenderable3.setShadowCaster(false);
                             modelRenderable3.setShadowReceiver(false);
                             Boolean b = (modelRenderable3 == null);
+                        });
+    }
+
+    //AR model 4 = mover
+    public void initModel4() {
+        MaterialFactory.makeTransparentWithColor(this, new Color(1.2f,0f,1f,1f))
+                .thenAccept(
+                        material -> {
+
+                            Vector3 vector3 = new Vector3((float)axis_X/100, 0.6f, (float)axis_Z/100);
+                            modelRenderable4 = ShapeFactory.makeCylinder(200, 1.2f, vector3, material);
+
+                            modelRenderable4.setShadowCaster(false);
+                            modelRenderable4.setShadowReceiver(false);
+                            Boolean b = (modelRenderable4 == null);
                         });
     }
 
@@ -229,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         TextView ar_textview = new TextView(this);
         ar_textview.setText((tree_id+1)+"번 나무\n직경 : "+
-                String.format("%.1f", (float)(((r*2)/10)* ((distanceMeters*100)+25))/(distanceMeters * 100))+"cm\n거리 : " +
+                String.format("%.1f", (float)(((r*2)/10)* ((distanceMeters*100)+30))/(distanceMeters * 100))+"cm\n거리 : " +
                 String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
@@ -316,9 +329,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             initModel();
             initModel2();
             initModel3();
+            initModel4();
             for(int i=0; i<infoArray.size(); i++){
                 infoArray.get(i).getNode().setRenderable(null);
                 infoArray.get(i).getH_Node().setRenderable(null);
+                infoArray.get(i).getT_Node().setRenderable(null);
+                infoArray.get(i).getM_node().setRenderable(null);
             }
             infoArray.clear();
             mInclinometer_tv.setText("경        사 :");
@@ -404,11 +420,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 // 왜 정상작동하는지..... 추후 생각 해봐야할듯 싶습니다. 05.10 (선재)
 
                 initModel();
+                initModel2();
+                initModel3();
+                initModel4();
                 int idx = tree_id;
                 infoArray.get(idx).text.setRenderable(null);
                 infoArray.get(idx).getNode().setRenderable(null);
                 infoArray.get(idx).getH_Node().setRenderable(null);
                 infoArray.get(idx).getT_Node().setRenderable(null);
+                infoArray.get(idx).getM_node().setRenderable(null);
                 infoArray.remove(idx);
                 arFragment.getArSceneView().getScene().addOnUpdateListener(arFragment);
             }

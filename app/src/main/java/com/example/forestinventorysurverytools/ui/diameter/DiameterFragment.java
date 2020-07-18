@@ -91,10 +91,10 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
 
     //ImageButton
-    public ImageButton mTop;
-    public ImageButton mBottom;
-    public ImageButton mRight;
-    public ImageButton mLeft;
+//    public ImageButton mTop;
+//    public ImageButton mBottom;
+//    public ImageButton mRight;
+//    public ImageButton mLeft;
 
 
     //TextView
@@ -115,15 +115,15 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
 
         //ImageButton
-        mTop = (ImageButton)root.findViewById(R.id.top);
-        mBottom = (ImageButton)root.findViewById(R.id.bottom);
-        mRight = (ImageButton)root.findViewById(R.id.right);
-        mLeft = (ImageButton)root.findViewById(R.id.left);
+//        mTop = (ImageButton)root.findViewById(R.id.top);
+//        mBottom = (ImageButton)root.findViewById(R.id.bottom);
+//        mRight = (ImageButton)root.findViewById(R.id.right);
+//        mLeft = (ImageButton)root.findViewById(R.id.left);
 
-        mTop.setOnTouchListener(controll_BtnTop);
-        mBottom.setOnTouchListener(controll_BtnBottom);
-        mRight.setOnTouchListener(controll_BtnRight);
-        mLeft.setOnTouchListener(controll_BtnLeft);
+//        mTop.setOnTouchListener(controll_BtnTop);
+//        mBottom.setOnTouchListener(controll_BtnBottom);
+//        mRight.setOnTouchListener(controll_BtnRight);
+//        mLeft.setOnTouchListener(controll_BtnLeft);
 
 
 
@@ -147,8 +147,6 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.dy = objectPose.ty() - cameraPose.ty();
                 ma.dz = objectPose.tz() - cameraPose.tz();
                 ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                String meter = String.format("%.1f", ma.distanceMeters);
-                ma.mDistance_tv.setText("거        리 : " + meter + "m");
 
                 ma.radi = progress;
                 ma.initModel();
@@ -190,6 +188,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         ma.initModel();
         ma.initModel2();
         ma.initModel3();
+        ma.initModel4();
         ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             mMySensorEventListener.updateOrientationAngles();
             if (ma.modelRenderable == null)
@@ -202,9 +201,11 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             ma.radi = 100;
             ma.height=0;
+
             ma.initModel();
             ma.initModel2();
             ma.initModel3();
+            ma.initModel4();
 
             // Create the transformable object and add it to the anchor.
             ma.anchor = anchor2;
@@ -213,6 +214,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             String idstr = dateformat.format(System.currentTimeMillis());
             Info tmp = new Info(new TransformableNode(ma.arFragment.getTransformationSystem()),
                     new TransformableNode(ma.arFragment.getTransformationSystem()),
+                    new TransformableNode(ma.arFragment.getTransformationSystem()),
                     new TransformableNode(ma.arFragment.getTransformationSystem()), idstr);
 
             tmp.setDiameter(100);
@@ -220,6 +222,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.getNode().setRenderable(ma.modelRenderable);
             tmp.getH_Node().setRenderable(ma.modelRenderable2);
             tmp.getT_Node().setRenderable(ma.modelRenderable3);
+            tmp.getM_node().setRenderable(ma.modelRenderable4);
 
             /***************************************************/
             // T_Node를 Parent라고 놓고 (근간이라고 놓고)
@@ -229,9 +232,11 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             tmp.getT_Node().setParent(anchorNode2);
             tmp.getNode().setParent(tmp.getT_Node());
             tmp.getH_Node().setParent(tmp.getT_Node());
+            tmp.getM_node().setParent(tmp.getT_Node());
 
             tmp.getNode().setOnTouchListener(touchNode);
             tmp.getT_Node().setOnTouchListener(touchNode);
+            tmp.getM_node().setOnTouchListener(touchNode);
 
             ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
             ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
@@ -308,14 +313,18 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 id = (ai.size() == 0) ? 0 : ai.size() - 1;
                 for (int i = 0; i < ai.size(); i++) {
                     if (hitTestResult.getNode().equals(ai.get(i).getNode()) ||
-                            hitTestResult.getNode().equals(ai.get(i).getT_Node())) {
+                            hitTestResult.getNode().equals(ai.get(i).getT_Node()) ||
+                            hitTestResult.getNode().equals(ai.get(i).getM_node())) {
                         id = i;
                         if(hitTestResult.getNode().equals(ai.get(i).getNode())) {
                             ai.get(id).getNode().select();
                         }
+                        else if (ai.get(id).getM_node().select()) {
+                        }
                         else {
                             ai.get(id).getT_Node().select();
-                        }break;
+                        }
+                        break;
                     }
                 }
 
@@ -355,144 +364,143 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         mLocationManager.removeUpdates(this);
     }
 
+
+
     //Image Button
     //control the object
     //Top
-
-
-
-    ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllTop, MotionEvent event) {
-            if (controllTop == mTop) {
-                ma.initModel();
-                ma.initModel2();
-                ma.initModel3();
-                    if (ma.infoArray.get(id).getNode().isSelected() || ma.infoArray.get(id).getT_Node().isSelected()) {
-
-                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
-                                ((tmpVec3.z * 100)-1)/100));
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-
-
-                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
-
-                        ma.dx = ov.x - cameraPose.tx();
-                        ma.dy = ov.y - cameraPose.ty();
-                        ma.dz = ov.z - cameraPose.tz();
-                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                        String meter = String.format("%.1f", ma.distanceMeters);
-                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
-
-
-
-                    }
-
-            }
-            return false;
-        }
-    };
-
-    //Bottom
-    ImageButton.OnTouchListener controll_BtnBottom = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllBottom, MotionEvent event) {
-            if (controllBottom == mBottom) {
-                ma.initModel();
-                ma.initModel2();
-                ma.initModel3();
-                    if (ma.infoArray.get(id).getNode().isSelected() ||ma.infoArray.get(id).getT_Node().isSelected()) {
-
-                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
-                                ((tmpVec3.z * 100)+1)/100));
-
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
-
-                        ma.dx = ov.x - cameraPose.tx();
-                        ma.dy = ov.y - cameraPose.ty();
-                        ma.dz = ov.z - cameraPose.tz();
-                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                        String meter = String.format("%.1f", ma.distanceMeters);
-                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
-                    }
-                }
-
-            return false;
-        }
-    };
-
-    //Right
-    ImageButton.OnTouchListener controll_BtnRight = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllRight, MotionEvent event) {
-            if (controllRight == mRight) {
-                ma.initModel();
-                ma.initModel2();
-                ma.initModel3();
-                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
-
-
-                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)+1)/100,
-                                tmpVec3.y, tmpVec3.z));
-                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
-
-                        ma.dx = ov.x - cameraPose.tx();
-                        ma.dy = ov.y - cameraPose.ty();
-                        ma.dz = ov.z - cameraPose.tz();
-                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                        String meter = String.format("%.1f", ma.distanceMeters);
-                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
-
-                    }
-
-                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            }
-            return false;
-        }
-
-    };
-
-    //Left
-    ImageButton.OnTouchListener controll_BtnLeft = new ImageButton.OnTouchListener() {
-        @Override
-        public boolean onTouch(View controllLeft, MotionEvent event) {
-            if (controllLeft == mLeft) {
-                ma.initModel();
-                ma.initModel2();
-                ma.initModel3();
-                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
-
-
-                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)-1)/100,
-                                tmpVec3.y, tmpVec3.z));
-
-                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
-                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
-                        ma.dx = ov.x - cameraPose.tx();
-                        ma.dy = ov.y - cameraPose.ty();
-                        ma.dz = ov.z - cameraPose.tz();
-                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                        String meter = String.format("%.1f", ma.distanceMeters);
-                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
-                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
-                    }
-                }
-
-            return false;
-        }
-    };
+//    ImageButton.OnTouchListener controll_BtnTop = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllTop, MotionEvent event) {
+//            if (controllTop == mTop) {
+//                ma.initModel();
+//                ma.initModel2();
+//                ma.initModel3();
+//                    if (ma.infoArray.get(id).getNode().isSelected() || ma.infoArray.get(id).getT_Node().isSelected()) {
+//
+//                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+//                                ((tmpVec3.z * 100)-1)/100));
+//                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//
+//
+//                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+//
+//                        ma.dx = ov.x - cameraPose.tx();
+//                        ma.dy = ov.y - cameraPose.ty();
+//                        ma.dz = ov.z - cameraPose.tz();
+//                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+//                        String meter = String.format("%.1f", ma.distanceMeters);
+//                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+//                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
+//
+//
+//
+//                    }
+//
+//            }
+//            return false;
+//        }
+//    };
+//
+//    //Bottom
+//    ImageButton.OnTouchListener controll_BtnBottom = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllBottom, MotionEvent event) {
+//            if (controllBottom == mBottom) {
+//                ma.initModel();
+//                ma.initModel2();
+//                ma.initModel3();
+//                    if (ma.infoArray.get(id).getNode().isSelected() ||ma.infoArray.get(id).getT_Node().isSelected()) {
+//
+//                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(tmpVec3.x, tmpVec3.y,
+//                                ((tmpVec3.z * 100)+1)/100));
+//
+//                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+//
+//                        ma.dx = ov.x - cameraPose.tx();
+//                        ma.dy = ov.y - cameraPose.ty();
+//                        ma.dz = ov.z - cameraPose.tz();
+//                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+//                        String meter = String.format("%.1f", ma.distanceMeters);
+//                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+//                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
+//                    }
+//                }
+//
+//            return false;
+//        }
+//    };
+//
+//    //Right
+//    ImageButton.OnTouchListener controll_BtnRight = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllRight, MotionEvent event) {
+//            if (controllRight == mRight) {
+//                ma.initModel();
+//                ma.initModel2();
+//                ma.initModel3();
+//                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
+//
+//
+//                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)+1)/100,
+//                                tmpVec3.y, tmpVec3.z));
+//                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+//
+//                        ma.dx = ov.x - cameraPose.tx();
+//                        ma.dy = ov.y - cameraPose.ty();
+//                        ma.dz = ov.z - cameraPose.tz();
+//                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+//                        String meter = String.format("%.1f", ma.distanceMeters);
+//                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+//                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
+//
+//                    }
+//
+//                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//            }
+//            return false;
+//        }
+//
+//    };
+//
+//    //Left
+//    ImageButton.OnTouchListener controll_BtnLeft = new ImageButton.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View controllLeft, MotionEvent event) {
+//            if (controllLeft == mLeft) {
+//                ma.initModel();
+//                ma.initModel2();
+//                ma.initModel3();
+//                    if (ma.infoArray.get(id).getNode().isSelected()||ma.infoArray.get(id).getT_Node().isSelected()) {
+//
+//
+//                        Vector3 tmpVec3 = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        ma.infoArray.get(id).getT_Node().setWorldPosition(new Vector3(((tmpVec3.x*100)-1)/100,
+//                                tmpVec3.y, tmpVec3.z));
+//
+//                        ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
+//                        Vector3 ov = ma.infoArray.get(id).getT_Node().getWorldPosition();
+//                        Pose cameraPose = ma.arFragment.getArSceneView().getArFrame().getCamera().getPose();
+//                        ma.dx = ov.x - cameraPose.tx();
+//                        ma.dy = ov.y - cameraPose.ty();
+//                        ma.dz = ov.z - cameraPose.tz();
+//                        ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
+//                        String meter = String.format("%.1f", ma.distanceMeters);
+//                        ma.mDistance_tv.setText("거        리 : " + meter + "m");
+//                        ma.infoArray.get(id).setDistance(ma.distanceMeters);
+//                    }
+//                }
+//
+//            return false;
+//        }
+//    };
 
     /******************  회전부   *********************/
 

@@ -11,6 +11,7 @@ public class Info {
     TransformableNode node;
     TransformableNode h_node;
     TransformableNode t_node;
+    TransformableNode m_node;
     Node text;
     String id;                 // 노드 생성된 월,일,시,분,초 형식
     float distance;
@@ -18,10 +19,11 @@ public class Info {
     float height;
     Location loc; // GPS 좌표 추후 넣기...
 
-    public Info(TransformableNode n, TransformableNode hn, TransformableNode tn, String id){
+    public Info(TransformableNode n, TransformableNode hn, TransformableNode tn, TransformableNode mn, String id){
         this.node = n;
         this.h_node = hn;
         this.t_node = tn;
+        this.m_node = mn;
         this.id = id;
         distance = 0.0f;
         diameter = 0.0f;
@@ -33,6 +35,7 @@ public class Info {
     public void setNode(TransformableNode node){this.node=node;}
     public void setH_Node(TransformableNode h_node){this.h_node=h_node;}
     public void setT_Node(TransformableNode t_node){this.t_node=t_node;}
+    public void setM_Node(TransformableNode m_node){this.m_node=m_node;}
     public void setDistance(float f){distance=f;}
     public void setDiameter(float f){diameter=f;}
     public void setHeight(float f){height=f;}
@@ -46,6 +49,7 @@ public class Info {
     }
     public TransformableNode getH_Node(){return h_node;}
     public TransformableNode getT_Node(){return t_node;}
+    public TransformableNode getM_node(){return m_node;}
     public float getDistance(){return distance;}
     public float getDiameter(){return diameter;}
     public float getHeight(){return height;}
