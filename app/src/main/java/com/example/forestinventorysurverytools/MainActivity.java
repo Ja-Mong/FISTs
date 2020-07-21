@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)axis_X/100, 0.6f, (float)axis_Z/100);
-                            modelRenderable4 = ShapeFactory.makeCylinder(200, 1.2f, vector3, material);
+                            modelRenderable4 = ShapeFactory.makeCylinder(0.02f, 1.2f, vector3, material);
 
                             modelRenderable4.setShadowCaster(false);
                             modelRenderable4.setShadowReceiver(false);
@@ -242,8 +242,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         TextView ar_textview = new TextView(this);
         ar_textview.setText((tree_id+1)+"번 나무\n직경 : "+
-                String.format("%.1f", (float)(((r*2)/10)* ((distanceMeters*100)+30))/(distanceMeters * 100))+"cm\n거리 : " +
-                String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
+                String.format("%.1f", (((r*2)/10) * ((distanceMeters*100)+(((r*2)/10)+2)))/(distanceMeters * 100)) +"cm\n거리 : " +
+                        String.format("%.1f",infoArray.get(tree_id).getDistance())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
                 .setView(this, ar_textview)
