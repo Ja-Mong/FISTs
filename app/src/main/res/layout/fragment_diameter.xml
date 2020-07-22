@@ -6,54 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".ui.diameter.DiameterFragment">
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/left"-->
-<!--        android:layout_width="45dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_marginBottom="65dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:src="@drawable/left"-->
-<!--        android:background="@drawable/circle_background"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:adjustViewBounds="true"/>-->
+    <ImageButton
+        android:id="@+id/left"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/left"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/bottom"-->
-<!--        android:layout_width="45dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_marginBottom="65dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_toRightOf="@id/left"-->
-<!--        android:layout_marginLeft="5dp"-->
-<!--        android:layout_marginRight="5dp"-->
-<!--        android:src="@drawable/bottom"-->
-<!--        android:background="@drawable/circle_background"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:adjustViewBounds="true"/>-->
+    <ImageButton
+        android:id="@+id/bottom"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/bottom"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/right"-->
-<!--        android:layout_width="45dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_marginBottom="65dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_toRightOf="@id/bottom"-->
-<!--        android:src="@drawable/right"-->
-<!--        android:background="@drawable/circle_background"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:adjustViewBounds="true"/>-->
+    <ImageButton
+        android:id="@+id/right"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/bottom"
+        android:src="@drawable/right"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/top"-->
-<!--        android:layout_width="45dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_above="@id/bottom"-->
-<!--        android:layout_marginBottom="5dp"-->
-<!--        android:layout_marginLeft="50dp"-->
-<!--        android:src="@drawable/top"-->
-<!--        android:background="@drawable/circle_background"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:adjustViewBounds="true"/>-->
+    <ImageButton
+        android:id="@+id/top"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_above="@id/bottom"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="50dp"
+        android:src="@drawable/top"
+        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/radi_controller"

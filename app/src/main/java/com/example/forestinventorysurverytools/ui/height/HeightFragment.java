@@ -212,7 +212,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     //Get the roll1 angle
                     roll1 = Math.abs(mMySensorEventListener.getRoll());
                     showToast("초두부를 클릭하여주세요.");
-                    getRoll1 = Math.abs(90 - roll1);
 
                     //Get the Slope
                     int slopeValue = (int) Math.abs(90 - Math.toDegrees(roll1));
@@ -224,7 +223,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     //Get the roll2 angle
                 } else if (click_count % 2 == 1) { //??
                     roll2 = Math.abs(mMySensorEventListener.getRoll());
-                    getRoll2 = Math.abs(roll2 - 90);
                     showToast("상황에 맞는 계산 버튼을 클릭해주세요.");
                     click_count++;
                 }
@@ -239,7 +237,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             @Override
             public void onClick(View height1) {
                 if (height1.getId() == R.id.Btn_platHeight) {
-                    float h = (float) Math.abs((Math.tan(getRoll2) * ma.distanceMeters) + (ma.main_userHeight));
+                    float h = (float) Math.abs((Math.tan(Math.toDegrees(roll2-90)) * ma.distanceMeters) + ma.main_userHeight) - 0.8f;
                     ma.mHeight_val = h;
                     String height_val = String.format("%.1f", ma.mHeight_val);
                     ma.mHeight_tv.setText("수        고 :" + height_val + "m");
@@ -252,9 +250,9 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             @Override
             public void onClick(View height2) {
                 if (height2.getId() == R.id.Btn_upHeight) {
-                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
-                    float x = (float) Math.abs((Math.tan(getRoll1) * ma.distanceMeters) - ma.main_userHeight);
-                    float h = (float) Math.abs(Math.tan(getRoll2 * length) - x);
+                    float length = (float) Math.abs(Math.cos(Math.toDegrees(roll1-90)) * ma.distanceMeters);
+                    float x = (float) Math.abs((Math.tan(Math.toDegrees(roll1-90)) * ma.distanceMeters) - ma.main_userHeight);
+                    float h = (float) Math.abs(Math.tan(Math.toDegrees((roll2-90) * length)) - x)- 0.8f;
                     ma.mHeight_val = h;
                     String height_val = String.format("%.1f", ma.mHeight_val);
                     ma.mHeight_tv.setText("수        고 :" + height_val + "m");
@@ -267,9 +265,9 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             @Override
             public void onClick(View height3) {
                 if (height3.getId() == R.id.Btn_down1Height) {
-                    float length = (float) Math.abs(Math.cos(getRoll1) * ma.distanceMeters);
-                    float x = (float) Math.abs(Math.tan(getRoll1) * length);
-                    float h = (float) Math.abs((Math.tan(getRoll2) * length) + x + (ma.main_userHeight)); // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
+                    float length = (float) Math.abs(Math.cos(Math.toDegrees(roll1-90)) * ma.distanceMeters);
+                    float x = (float) Math.abs(Math.tan(Math.toDegrees(roll1-90)) * length);
+                    float h = (float) Math.abs((Math.tan(Math.toDegrees(roll2-90)) * length) + x + ma.main_userHeight)- 0.8f; // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
                     ma.mHeight_val = h;
                     String height_val = String.format("%.1f", ma.mHeight_val);
                     ma.mHeight_tv.setText("수        고 :" + height_val + "m");

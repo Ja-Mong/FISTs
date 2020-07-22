@@ -223,12 +223,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //AR model 4 = mover
     public void initModel4() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(1.2f,0f,1f,1f))
+        MaterialFactory.makeTransparentWithColor(this, new Color(0f,0f,0f,0f))
                 .thenAccept(
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)axis_X/100, 0.6f, (float)axis_Z/100);
-                            modelRenderable4 = ShapeFactory.makeCylinder(0.02f, 1.2f, vector3, material);
+                            modelRenderable4 = ShapeFactory.makeCylinder(0.1f, 1.2f, vector3, material);
 
                             modelRenderable4.setShadowCaster(false);
                             modelRenderable4.setShadowReceiver(false);
