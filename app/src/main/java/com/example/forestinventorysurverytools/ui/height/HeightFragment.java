@@ -249,7 +249,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     if (mSlope2 <= -6) {
                         float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist);
-                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) + h + ma.mMain_UserHeight;
+                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) + h + ma.mMain_UserHeight + 0.5f;
                         String height = String.format("%.1f", total_h);
                         ma.mHeight_val = total_h;
                         tmp.setHeight(total_h);
@@ -257,7 +257,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                         ma.mHeight_tv.setText("수        고 : " + height + "m");
 
                     } else if (mSlope2 >= -5 && mSlope2 <= 5) {
-                        float h = (float) (Math.abs(Math.tan(mRoll_2) * mDistance) + ma.mMain_UserHeight);
+                        float h = (float) (Math.abs(Math.tan(mRoll_2) * mDistance) + ma.mMain_UserHeight + 0.5f);
                         String height = String.format("%.1f", h);
                         ma.mHeight_val = h;
                         tmp.setHeight(h);
@@ -267,7 +267,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     } else if (mSlope2 >= 6) {
                         float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist) - ma.mMain_UserHeight;
-                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) - h;
+                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) - h + 0.5f;
                         ma.mHeight_val = total_h;
                         tmp.setHeight(total_h);
                         String height = String.format("%.1f", total_h);
