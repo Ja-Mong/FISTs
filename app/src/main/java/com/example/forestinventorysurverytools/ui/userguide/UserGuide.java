@@ -23,12 +23,12 @@ import java.util.ArrayList;
 
 public class UserGuide extends AppCompatActivity implements View.OnClickListener {
 
-    ViewPager viewPager;
+    //View Pager
+    ViewPager mViewPager;
 
+    //ImageView & TextView & Button
     ImageView mImportance_mark;
-
     TextView mTitle;
-
     ImageButton mNext_layout;
 
 
@@ -37,8 +37,8 @@ public class UserGuide extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userguide);
 
-        viewPager = (ViewPager)findViewById(R.id.guideline_pager);
-        viewPager.setOffscreenPageLimit(5);
+        mViewPager = (ViewPager)findViewById(R.id.guideline_pager);
+        mViewPager.setOffscreenPageLimit(5);
 
         MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
 
@@ -57,7 +57,7 @@ public class UserGuide extends AppCompatActivity implements View.OnClickListener
         UserGuide5 fragment5 = new UserGuide5();
         myPagerAdapter.addItem(fragment5);
 
-        viewPager.setAdapter(myPagerAdapter);
+        mViewPager.setAdapter(myPagerAdapter);
 
         mImportance_mark = (ImageView)findViewById(R.id.importance_mark);
 

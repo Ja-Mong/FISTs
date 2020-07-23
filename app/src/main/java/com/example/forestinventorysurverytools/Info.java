@@ -3,66 +3,122 @@ package com.example.forestinventorysurverytools;
 import android.location.Location;
 
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 public class Info {
-    TransformableNode node;
-    TransformableNode h_node;
-    TransformableNode t_node;
-    TransformableNode m_node;
-    Node text;
-    String id;                 // 노드 생성된 월,일,시,분,초 형식
-    float distance;
-    float diameter;
-    float height;
-    Location loc; // GPS 좌표 추후 넣기...
 
-    public Info(TransformableNode n, TransformableNode hn, TransformableNode tn, TransformableNode mn, String id){
-        this.node = n;
-        this.h_node = hn;
-        this.t_node = tn;
-        this.m_node = mn;
-        this.id = id;
-        distance = 0.0f;
-        diameter = 0.0f;
-        height = 0.0f;
-        text=new Node();
+    public Info() {}
+
+    TransformableNode mBotNode;
+    TransformableNode mMovNode;
+    TransformableNode mDBHNode;
+    TransformableNode mUHNode;
+
+    Node mText;
+    String mId;
+    float mClino;
+    float mDist;
+    float mDBH;
+    float mHeight;
+    float mAzi;
+    float mAlti;
+
+    Location locate; //done
+
+    public Info(TransformableNode bot,
+                TransformableNode mov,
+                TransformableNode dbh,
+                TransformableNode uh, String mId) {
+
+        this.mBotNode = bot;
+        this.mMovNode = mov;
+        this.mDBHNode = dbh;
+        this.mUHNode = uh;
+        this.mId = mId;
+
+        mClino = 0.0f;
+        mDist = 0.0f;
+        mDBH = 0.0f;
+        mHeight = 0.0f;
+        mAzi = 0.0f;
+        mAlti = 0.0f;
+
+        mText = new Node();
+    } //done
+
+
+    //setter Func
+    public void setmBotNode(TransformableNode botNode) {
+        this.mBotNode = botNode;
+    }
+    public void setmMovNode(TransformableNode movNode) {
+        this.mMovNode = movNode;
+    }
+    public void setmDBHNode(TransformableNode dbhNode) {
+        this.mDBHNode = dbhNode;
+    }
+    public void setmUHNode(TransformableNode uhNode) {
+        this.mUHNode = uhNode;
     }
 
-    //setter함수
-    public void setNode(TransformableNode node){this.node=node;}
-    public void setH_Node(TransformableNode h_node){this.h_node=h_node;}
-    public void setT_Node(TransformableNode t_node){this.t_node=t_node;}
-    public void setM_Node(TransformableNode m_node){this.m_node=m_node;}
-    public void setDistance(float f){distance=f;}
-    public void setDiameter(float f){diameter=f;}
-    public void setHeight(float f){height=f;}
-
-    //getter함수
-    public TransformableNode getNode(){
-
-        node.setLocalPosition(new Vector3(0.0f, 1.2f, 0.0f));
-
-        return node;
+    //Values
+    public void setClino(float clino) {
+        mClino = clino;
     }
-    public TransformableNode getH_Node(){return h_node;}
-    public TransformableNode getT_Node(){return t_node;}
-    public TransformableNode getM_node(){return m_node;}
-    public float getDistance(){return distance;}
-    public float getDiameter(){return diameter;}
-    public float getHeight(){return height;}
-    public String getId(){return id;}
+    public void setDist(float dist) {
+        mDist = dist;
+    }
+    public void setDBH(float dbh) {
+        mDBH = dbh;
+    }
+    public void setHeight(float height) {
+        mHeight = height;
+    }
+    public void setAzi(float azi) {
+        mAzi = azi;
+    }
+    public void setAlti(float alti) {
+        mAlti = alti;
+    }//done
 
 
-    /*
-    public void changeID(int index){
-        //삭제할 요소 보다 뒤쪽 인덱스이면 삭제할때마다 하나씩 줄여주기..
-        // 이러면 사진 이미지도 나중에 바꿔줘야하는????;;; 잠시 보류... 읍읍
-        if(id>index)
-            id--;
+    //getter Func
+    public TransformableNode getBotNode() {
+        return mBotNode;
+    }
+    public TransformableNode getMovNode() {
+        return mMovNode;
+    }
+    public TransformableNode getDBHNode() {
+        mDBHNode.setLocalPosition(new Vector3(0.0f, 1.2f, 0.0f));
+        return mDBHNode;
+    }//done
+    public TransformableNode getUHNode() {
+        return mUHNode;
     }
 
-     */
-}
+    //Values
+    public float getClino() {
+        return mClino;
+    }
+    public float getDist() {
+        return mDist;
+    }
+    public float getDBH() {
+        return mDBH;
+    }
+    public float getHeight() {
+        return mHeight;
+    }
+    public float getAzi() {
+        return mAzi;
+    }
+    public float getAlti() {
+        return mAlti;
+    }
+    public String getId() {
+        return mId;
+    }
+
+}//done

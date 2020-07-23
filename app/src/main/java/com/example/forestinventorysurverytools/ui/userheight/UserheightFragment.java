@@ -41,88 +41,100 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 public class UserheightFragment extends Fragment implements Scene.OnUpdateListener{
+
+
     //View
     View root;
-    MainActivity ma;
+
+
     //Sensor
     SensorManager mSensorManager;
     LocationManager mLocationManager;
     MySensorEventListener mMySensorEventListener;
 
-    ImageButton upButton;
-    ImageButton downButton;
-    ImageButton check;
-    public Boolean isCreated = false;
-    public TransformableNode tfn =null;
 
-    HeightIndicator hi= null;
-    SeekBar sizeBar;
+    //Inclinometer Indicator
+    HeightIndicator mHeightIndicator = null;
+    SeekBar mSizeControl;
 
 
-    public float userHeigth=1.2f;
-    public float size = 0.15f;
+    //ImageButton
+    ImageButton mUpButton;
+    ImageButton mDownButton;
+    ImageButton mSetUH;
+    public Boolean mIsCreated = false;
+    public TransformableNode mTransNode = null;
 
-    public ModelRenderable modelRenderable_userHeight;
+
+    //Values
+    public float mUserHeight = 1.5f;
+    public float mSize = 0.15f;
+
+
+    //Extends Class
+    MainActivity ma = null;
+    public ModelRenderable mModelRender_UH;
     public UserheightFragment(MainActivity ma){this.ma=ma;}
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_userheight, null);
 
-        upButton = (ImageButton)root.findViewById(R.id.userHeightUp);
-        downButton=(ImageButton)root.findViewById(R.id.userHeightDown);
-        check = (ImageButton) root.findViewById(R.id.check);
-        check.setOnTouchListener(new ImageButton.OnTouchListener(){
+        mUpButton = (ImageButton)root.findViewById(R.id.userHeightUp);
+        mDownButton=(ImageButton)root.findViewById(R.id.userHeightDown);
+        mSetUH = (ImageButton) root.findViewById(R.id.check);
+        mSetUH.setOnTouchListener(new ImageButton.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-//                Toast.makeText(ma,"측정높이는 "+Float.toString(userHeigth*100)+"cm 입니다.",Toast.LENGTH_SHORT).show();
-                tfn.setRenderable(null);
-                isCreated=!isCreated;
-                ma.main_userHeight=userHeigth;
+                mTransNode.setRenderable(null);
+                mIsCreated =! mIsCreated;
+                ma.mMain_UserHeight = mUserHeight;
                 return false;
             }
         });
-        hi = (HeightIndicator)root.findViewById(R.id.inclinometerInUserHeight);
 
 
+        mHeightIndicator = (HeightIndicator)root.findViewById(R.id.inclinometerInUserHeight);
 
-        upButton.setOnTouchListener(moveUp);
-        downButton.setOnTouchListener(moveDown);
+        mUpButton.setOnTouchListener(moveUp);
+        mDownButton.setOnTouchListener(moveDown);
+
+
         //Sensor
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mMySensorEventListener = new MySensorEventListener(ma, mSensorManager);
 
-        initModel_userHeight();
-        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+        uhModel();
+        ma.mArfragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
             mMySensorEventListener.updateOrientationAngles();
-            if (modelRenderable_userHeight == null)
+            if (mModelRender_UH == null)
                 return;
 
 
-            if(!isCreated) {
-                isCreated=!isCreated;
-                Toast.makeText(ma, "위, 아래 버튼을 활용하여 AR 객체를 빨간선에 맞추세요.", Toast.LENGTH_SHORT).show();
+            if(!mIsCreated) {
+                mIsCreated =! mIsCreated;
+                ma.showToast("위, 아래 버튼을 활용하여 AR 객체를 빨간선에 맞추세요.");
+
                 // Creating Anchor.
-                Anchor anchor2 = hitResult.createAnchor();
-                AnchorNode anchorNode2 = new AnchorNode(anchor2);
-
-                anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
-
-                initModel_userHeight();
+                Anchor anchor = hitResult.createAnchor();
+                AnchorNode anchorNode = new AnchorNode(anchor);
+                anchorNode.setParent(ma.mArfragment.getArSceneView().getScene());
+                uhModel();
 
                 // Create the transformable object and add it to the anchor.
-                ma.anchor = anchor2;
-                ma.anchorNode = anchorNode2;
+                ma.mAnchor = anchor;
+                ma.mAnchorNode = anchorNode;
 
+                mTransNode = new TransformableNode(ma.mArfragment.getTransformationSystem());
+                mTransNode.setRenderable(mModelRender_UH);
+                mTransNode.setParent(anchorNode);
 
-                tfn = new TransformableNode(ma.arFragment.getTransformationSystem());
-                tfn.setRenderable(modelRenderable_userHeight);
-                tfn.setParent(anchorNode2);
-
-                ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-                ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
+                ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
+                ma.mArfragment.getArSceneView().getScene().addChild(anchorNode);
 
                 //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             }
@@ -130,45 +142,47 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
         return root;
     }
 
+
+    //Control the uhModel
     ImageButton.OnTouchListener moveUp = new ImageButton.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            userHeigth+=0.005f;
-            initModel_userHeight();
-            tfn.setRenderable(modelRenderable_userHeight);
-            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100));
+            mUserHeight += 0.005f;
+            uhModel();
+            mTransNode.setRenderable(mModelRender_UH);
+            ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
+            ma.mInputUH.setText(Float.toString(mUserHeight * 100));
             return false;
         }
     };
     ImageButton.OnTouchListener moveDown = new ImageButton.OnTouchListener(){
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            userHeigth-=0.005f;
-            initModel_userHeight();
-            tfn.setRenderable(modelRenderable_userHeight);
-            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.mInputHeight.setText(Float.toString(userHeigth*100));
+            mUserHeight -= 0.005f;
+            uhModel();
+            mTransNode.setRenderable(mModelRender_UH);
+            ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
+            ma.mInputUH.setText(Float.toString(mUserHeight*100));
             return false;
         }
     };
 
-    //AR model 4 = userHeightModel
-    public void initModel_userHeight() {
+
+    //Set the UserHeight Model
+    public void uhModel() {
         MaterialFactory.makeTransparentWithColor(ma, new Color(0.8f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
-                            modelRenderable_userHeight = ShapeFactory.makeCube(new Vector3(0.3f,0.01f,0.01f),
-                                    new Vector3(0, userHeigth, 0),material);
-                            modelRenderable_userHeight.setShadowReceiver(false);
-                            modelRenderable_userHeight.setShadowReceiver(false);
-                            Boolean b = (modelRenderable_userHeight == null);
+                            mModelRender_UH = ShapeFactory.makeCube(new Vector3(0.3f,0.01f,0.01f),
+                                    new Vector3(0, mUserHeight, 0),material);
+                            mModelRender_UH.setShadowReceiver(false);
+                            mModelRender_UH.setShadowReceiver(false);
+                            Boolean b = (mModelRender_UH == null);
                         });
     }
 
 
     @Override
     public void onUpdate(FrameTime frameTime) {
-
     }
 }

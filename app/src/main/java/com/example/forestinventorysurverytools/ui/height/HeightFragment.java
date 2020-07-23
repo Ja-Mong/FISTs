@@ -62,9 +62,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
     //ImageButton
     ImageButton mBtn_measure;
-    ImageButton mBtn_getHeight1;
-    ImageButton mBtn_getHeight2;
-    ImageButton mBtn_getHeight3;
+    ImageButton mBtn_getHeight;
     ImageButton mBtn_capture;
 
 
@@ -81,7 +79,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
     //Activity
     MainActivity ma = null;
-
     public HeightFragment(MainActivity ma) {
         this.ma = ma;
     }
@@ -93,11 +90,17 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
 
     //Values
-    float roll1;
-    float getRoll1;
-    float roll2;
-    float getRoll2;
-    int click_count = 0;
+    float mRoll_1;
+    float mRoll_2;
+    int mClikc_count = 0;
+    float mDx;
+    float mDy;
+    float mDz;
+    float mDistance;
+    int mSlopeAngle;
+    int mSlopeValue;
+    int mSlope1;
+    int mSlope2;
 
 
     @Override
@@ -119,15 +122,11 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
         //ImageButton
         mBtn_measure = (ImageButton) root.findViewById(R.id.Btn_measure);
-        mBtn_getHeight1 = (ImageButton) root.findViewById(R.id.Btn_platHeight);
-        mBtn_getHeight2 = (ImageButton) root.findViewById(R.id.Btn_upHeight);
-        mBtn_getHeight3 = (ImageButton) root.findViewById(R.id.Btn_down1Height);
+        mBtn_getHeight = (ImageButton) root.findViewById(R.id.Btn_platHeight);
         mBtn_capture = (ImageButton) root.findViewById(R.id.Btn_capture);
 
         mBtn_measure.setOnClickListener(getHeightAngle);
-        mBtn_getHeight1.setOnClickListener(getHeightValues1);
-        mBtn_getHeight2.setOnClickListener(getHeightValues2);
-        mBtn_getHeight3.setOnClickListener(getHeightValues3);
+        mBtn_getHeight.setOnClickListener(getHeightValues);
         mBtn_capture.setOnClickListener(takeCapture);
 
 
@@ -136,12 +135,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         mSavePortraitScr = (CheckBox) root.findViewById(R.id.savePortraitScreen);
 
         return root;
-    }
-
-
-    //Toast
-    public void showToast(String data) {
-        Toast.makeText(root.getContext(), data, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -190,87 +183,85 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
         @Override
         public void onClick(View rollAngle1) {
             mMySensorEventListener.updateOrientationAngles();
-            if (!ma.mInputHeight.getText().toString().isEmpty()) {
-                if (click_count % 2 == 0) {
+            if (!ma.mInputUH.getText().toString().isEmpty()) {
+                if (mClikc_count % 2 == 0) {
 
-                     /*06.07(일) 테스트용으로 대체 추가*/
-                    ma.distanceMeters = ma.infoArray.get(ma.tree_id).getDistance();
+                    ma.mDistMeter = ma.infoArray.get(ma.mTreeIndex).getDist();
 
-                    Frame frame = ma.arFragment.getArSceneView().getArFrame();
-                    Pose objectPose = ma.anchor.getPose();
+                    Frame frame = ma.mArfragment.getArSceneView().getArFrame();
+                    Pose objectPose = ma.mAnchor.getPose();
                     Pose cameraPose = frame.getCamera().getPose();
 
                     //Get the Anchor Pose
-                    ma.dx = objectPose.tx() - cameraPose.tx();
-                    ma.dy = objectPose.ty() - cameraPose.ty();
-                    ma.dz = objectPose.tz() - cameraPose.tz();
-                    ma.distanceMeters = (float) Math.sqrt(ma.dx * ma.dx + ma.dy * ma.dy + ma.dz * ma.dz);
-                    String meter = String.format("%.1f", ma.distanceMeters);
-                    ma.mDistance_tv.setText("거        리 : " + meter + "m");
+                    mDx = objectPose.tx() - cameraPose.tx();
+                    mDy = objectPose.ty() - cameraPose.ty();
+                    mDz = objectPose.tz() - cameraPose.tz();
+                    mDistance = (float)Math.sqrt((mDx * mDx) + (mDy * mDy) + (mDz * mDz));
+                    mDistance = ma.mDistance_val;
+                    String distance = String.format("%.1f", mDistance);
+                    ma.mDistance_tv.setText("거        리 : " + distance + "m");
 
 
                     //Get the roll1 angle
-                    roll1 = Math.abs(mMySensorEventListener.getRoll());
-                    showToast("초두부를 클릭하여주세요.");
+                    mRoll_1 = Math.abs(mMySensorEventListener.getRoll());
+                    ma.showToast("초두부를 향해 클릭하세요.");
 
                     //Get the Slope
-                    int slopeValue = (int) Math.abs(90 - Math.toDegrees(roll1));
-                    int slopeAngle = (int) Math.toRadians(slopeValue * 100);
-                    ma.mInclinometer_val = slopeAngle;
-                    ma.mInclinometer_tv.setText("경        사 :" + String.format(String.valueOf(ma.mInclinometer_val)) + "%");
-                    click_count++;
+                    mSlope1 = (int) (90 - Math.toDegrees(mRoll_1));
+                    mSlope2 = (int) Math.toRadians(mSlope1 * 100); //Height에 사용
+
+                    mSlopeValue = (int) Math.abs(90 - Math.toDegrees(mRoll_1));
+                    mSlopeAngle = (int) Math.toRadians(mSlopeValue * 100);
+                    mSlopeAngle = (int) ma.mInclinometer_val;
+
+                    ma.infoArray.get(ma.mTreeIndex).setClino(mSlopeAngle);
+                    ma.mInclinometer_tv.setText("경        사 :" + Integer.toString(mSlopeAngle) + "%");
+                    mClikc_count ++;
 
                     //Get the roll2 angle
-                } else if (click_count % 2 == 1) { //??
-                    roll2 = Math.abs(mMySensorEventListener.getRoll());
-                    showToast("상황에 맞는 계산 버튼을 클릭해주세요.");
-                    click_count++;
+                } else if (mClikc_count % 2 == 1) {
+                    mRoll_2 = Math.abs(mMySensorEventListener.getRoll());
+                    ma.showToast("계산 버튼을 클릭하세요.");
+                    mClikc_count ++;
                 }
             }
         }
     };
 
 
-        //Calculate Height depends on 3 case //정확성 테스트 필요 => 논문
-        //Plat
-        final ImageButton.OnClickListener getHeightValues1 = new ImageButton.OnClickListener() {
+        //Calculate Height
+        final ImageButton.OnClickListener getHeightValues = new ImageButton.OnClickListener() {
             @Override
-            public void onClick(View height1) {
-                if (height1.getId() == R.id.Btn_platHeight) {
-                    float h = (float) Math.abs((Math.tan(Math.toDegrees(roll2-90)) * ma.distanceMeters) + ma.main_userHeight) - 0.8f;
-                    ma.mHeight_val = h;
-                    String height_val = String.format("%.1f", ma.mHeight_val);
-                    ma.mHeight_tv.setText("수        고 :" + height_val + "m");
-                }
-            }
-        };
+            public void onClick(View v) {
+                if (v.getId() == R.id.Btn_platHeight) {
+                    mRoll_1 = Math.abs(mRoll_1 - 90);
+                    mRoll_2 = Math.abs(mRoll_2 - 90);
 
-        //UpSlope
-        final ImageButton.OnClickListener getHeightValues2 = new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View height2) {
-                if (height2.getId() == R.id.Btn_upHeight) {
-                    float length = (float) Math.abs(Math.cos(Math.toDegrees(roll1-90)) * ma.distanceMeters);
-                    float x = (float) Math.abs((Math.tan(Math.toDegrees(roll1-90)) * ma.distanceMeters) - ma.main_userHeight);
-                    float h = (float) Math.abs(Math.tan(Math.toDegrees((roll2-90) * length)) - x)- 0.8f;
-                    ma.mHeight_val = h;
-                    String height_val = String.format("%.1f", ma.mHeight_val);
-                    ma.mHeight_tv.setText("수        고 :" + height_val + "m");
-                }
-            }
-        };
+                    if (mSlope2 <= -6) {
+                        float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
+                        float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist);
+                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) + h + ma.mMain_UserHeight;
+                        String height = String.format("%.1" + total_h);
+                        total_h = ma.mHeight_val;
+                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
+                        ma.mHeight_tv.setText("경        사 :" + height + "m");
 
-        //DownSlope1
-        final ImageButton.OnClickListener getHeightValues3 = new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View height3) {
-                if (height3.getId() == R.id.Btn_down1Height) {
-                    float length = (float) Math.abs(Math.cos(Math.toDegrees(roll1-90)) * ma.distanceMeters);
-                    float x = (float) Math.abs(Math.tan(Math.toDegrees(roll1-90)) * length);
-                    float h = (float) Math.abs((Math.tan(Math.toDegrees(roll2-90)) * length) + x + ma.main_userHeight)- 0.8f; // + (Float.valueOf(String.valueOf(ma.mInputHeight)) / 100f));
-                    ma.mHeight_val = h;
-                    String height_val = String.format("%.1f", ma.mHeight_val);
-                    ma.mHeight_tv.setText("수        고 :" + height_val + "m");
+                    } else if (mSlope2 >= -5 && mSlope2 <= 5) {
+                        float h = (float) (Math.abs(Math.tan(mRoll_2) * mDistance) + ma.mMain_UserHeight);
+                        String height = String.format("%.1" + h);
+                        h = ma.mHeight_val;
+                        ma.infoArray.get(ma.mTreeIndex).setHeight(h);
+                        ma.mHeight_tv.setText("경        사 :" + height + "m");
+
+                    } else if (mSlope2 >= 6) {
+                        float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
+                        float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist) - ma.mMain_UserHeight;
+                        float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) - h;
+                        total_h = ma.mHeight_val;
+                        String height = String.format("%.1" + total_h);
+                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
+                        ma.mHeight_tv.setText("경        사 :" + height + "m");
+                    }
                 }
             }
         };
@@ -281,7 +272,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             @Override
             public void onClick(View capture) {
                 String mPath;
-                ArFragment af = ma.arFragment;
+                ArFragment af = ma.mArfragment;
                 ArSceneView view = af.getArSceneView();
 
                 // AR이미지 포함한 사진
@@ -294,14 +285,14 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     if (!dir.exists()) {
                         dir.mkdir();
                     }
-                    mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.tree_id).getId() + ".jpg";
+                    mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.mTreeIndex).getId() + ".jpg";
 
                     if (mSaveOriginImage.isChecked()) {
                         for (int i = 0; i < ma.infoArray.size(); i++) {
-                            tmpRend.add(ma.infoArray.get(i).getNode().getRenderable());
-                            h_tmpRend.add(ma.infoArray.get(i).getH_Node().getRenderable());
-                            ma.infoArray.get(i).getNode().setRenderable(null);
-                            ma.infoArray.get(i).getH_Node().setRenderable(null);
+                            tmpRend.add(ma.infoArray.get(i).getDBHNode().getRenderable());
+                            h_tmpRend.add(ma.infoArray.get(i).getUHNode().getRenderable());
+                            ma.infoArray.get(i).getDBHNode().setRenderable(null);
+                            ma.infoArray.get(i).getUHNode().setRenderable(null);
                         }
                         try {
                             view.getSession().update();
@@ -331,7 +322,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                                 SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
                                 String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
                                 String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
-                                String mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.tree_id).getId() + "_ori.jpg";
+                                String mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.mTreeIndex).getId() + "_ori.jpg";
 
                                 final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
                                 final HandlerThread handlerThread = new HandlerThread("PixelCopier");
@@ -354,8 +345,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                             public void run() {
                                 for (int i = 0; i < ma.infoArray.size(); i++) {
 
-                                    ma.infoArray.get(i).getNode().setRenderable(tmpRend.get(i));
-                                    ma.infoArray.get(i).getH_Node().setRenderable(h_tmpRend.get(i));
+                                    ma.infoArray.get(i).getDBHNode().setRenderable(tmpRend.get(i));
+                                    ma.infoArray.get(i).getUHNode().setRenderable(h_tmpRend.get(i));
                                 }
                                 tmpRend.clear();
                                 h_tmpRend.clear();
@@ -428,33 +419,3 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
     }
 }
-
-
-        /*
-        ma.initModel2();
-
-        ma.arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
-
-            if (ma.modelRenderable2 == null)
-                return;
-
-            // Creating Anchor.
-            Anchor anchor2 = hitResult.createAnchor();
-            AnchorNode anchorNode2 = new AnchorNode(anchor2);
-            anchorNode2.setParent(ma.arFragment.getArSceneView().getScene());
-
-            // renewal of anchor
-//            ma.clearAnchor();
-
-            // Create the transformable object and add it to the anchor.
-            ma.anchor = anchor2;
-            ma.anchorNode = anchorNode2;
-            node = new TransformableNode(ma.arFragment.getTransformationSystem());
-            node.setRenderable(ma.modelRenderable2);
-            node.setParent(anchorNode2);
-            ma.arFragment.getArSceneView().getScene().addOnUpdateListener(ma.arFragment);
-            ma.arFragment.getArSceneView().getScene().addChild(anchorNode2);
-            node.select();
-        });
-
-         */

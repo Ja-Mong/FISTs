@@ -88,16 +88,16 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
 
 
     //Compass
-    public String matchDirection(float compass) {
-        if (compass == 0) {ma.mCompass_tv.setText(90 +"°"); return "N";}
-        if (compass >= 1 && compass <= 89) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "NE";}
-        if (compass == 90) {ma.mCompass_tv.setText(180 + "°" ); return "E";}
-        if (compass >= 91 && compass <= 179) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "SE"; }
-        if (compass == 180) {ma.mCompass_tv.setText(270 + "°"); return "S";}
-        if (compass >= 181 && compass <= 269) {ma.mCompass_tv.setText(Integer.toString((int)compass+90)+"°"); return "SW";}
-        if (compass == 270) {ma.mCompass_tv.setText(0 + "°"); return "W";}
-        if (compass >= 271 && compass <= 359) {ma.mCompass_tv.setText(Integer.toString((int)compass-270)+"°"); return "NW";}
-        if (compass == 360) {ma.mCompass_tv.setText(90 + "°"); return "N";}
+    public String matchDirection(int azimuth) {
+        if (azimuth == 0) {ma.mAzimuth_tv.setText(90 +"°"); return "N";}
+        if (azimuth >= 1 && azimuth <= 89) {ma.mAzimuth_tv.setText(Integer.toString((int)azimuth+90)+"°"); return "NE";}
+        if (azimuth == 90) {ma.mAzimuth_tv.setText(180 + "°" ); return "E";}
+        if (azimuth >= 91 && azimuth <= 179) {ma.mAzimuth_tv.setText(Integer.toString((int)azimuth+90)+"°"); return "SE"; }
+        if (azimuth == 180) {ma.mAzimuth_tv.setText(270 + "°"); return "S";}
+        if (azimuth >= 181 && azimuth <= 269) {ma.mAzimuth_tv.setText(Integer.toString((int)azimuth+90)+"°"); return "SW";}
+        if (azimuth == 270) {ma.mAzimuth_tv.setText(0 + "°"); return "W";}
+        if (azimuth >= 271 && azimuth <= 359) {ma.mAzimuth_tv.setText(Integer.toString((int)azimuth-270)+"°"); return "NW";}
+        if (azimuth == 360) {ma.mAzimuth_tv.setText(90 + "°"); return "N";}
         return null;
     }
 }

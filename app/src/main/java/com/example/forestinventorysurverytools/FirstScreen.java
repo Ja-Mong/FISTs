@@ -40,6 +40,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
     TextView mTitle;
     TextView mSub_title;
     TextView mContent;
+
     public EditText mInputUserID;
     public EditText mDate;
     public EditText mPlace;
@@ -47,8 +48,8 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
 
     //Values
     public String userDefaultID = "홍길동";
-    public String defaultDate = "20201108";
-    public String defaultPlace = "속리산";
+    public String defaultDate = "20201026";
+    public String defaultPlace = "한라산";
 
 
     //ImageView
@@ -58,15 +59,10 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
 
 
     //Permission
-    boolean cameraPermission;
-    boolean writePermission;
-    boolean readPermission;
-    boolean locationPermission;
-
-
-    //Check the support to AR
-    public Session mSession;
-    private boolean mUserRequestedInstall = true;
+    boolean mCamPerm;
+    boolean mWritePerm;
+    boolean mReadPerm;
+    boolean mLocatePerm;
 
 
     //Button
@@ -175,9 +171,9 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-                if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(mInputUserID.getWindowToken(),0);
+                if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(mInputUserID.getWindowToken(), 0);
                     return true;
                 }
                 return false;
@@ -199,58 +195,27 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         //Permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            cameraPermission = true;
+            mCamPerm = true;
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-            writePermission = true;
+            mWritePerm = true;
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
-            readPermission = true;
+            mReadPerm = true;
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            locationPermission = true;
+            mLocatePerm = true;
         }
 
-        if (!cameraPermission || writePermission || readPermission || locationPermission) {
+        if (!mCamPerm || mWritePerm || mReadPerm || mLocatePerm) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-
-        //ARCore API 접근 개체 생성
-        try {
-            if (mSession == null) {
-                switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
-                    case INSTALLED:
-                        mSession = new Session(this);
-                        break;
-                    case INSTALL_REQUESTED:
-                        mUserRequestedInstall = false;
-                        break;
-                }
-            }
-        } catch (UnavailableDeviceNotCompatibleException e) {
-            e.printStackTrace();
-        } catch (UnavailableUserDeclinedInstallationException e) {
-            e.printStackTrace();
-        } catch (UnavailableArcoreNotInstalledException e) {
-            e.printStackTrace();
-        } catch (UnavailableSdkTooOldException e) {
-            e.printStackTrace();
-        } catch (UnavailableApkTooOldException e) {
-            e.printStackTrace();
-        }
-
-
-        //AR 지원 가능 여부 체크
-        if (!checkIsSupportedDeviceOrFinish(this)) {
-            Toast.makeText(this, "본 디바이스는 AR을 지원하지 않습니다.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -268,26 +233,11 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         super.onRequestPermissionsResult(requsetCode, permissions, grantResults);
         if (requsetCode == 1 && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                cameraPermission = true;
+                mCamPerm = true;
             if (grantResults[1] == PackageManager.PERMISSION_GRANTED)
-                writePermission = true;
+                mWritePerm = true;
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED)
-                locationPermission = true;
+                mLocatePerm = true;
         }
-    }
-
-    public boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
-
-        String openGlVersionString =
-                ((ActivityManager) Objects.requireNonNull(activity.getSystemService(Context.ACTIVITY_SERVICE)))
-                        .getDeviceConfigurationInfo()
-                        .getGlEsVersion();
-        if (Double.parseDouble(openGlVersionString) < 3.0) {
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                    .show();
-            activity.finish();
-            return false;
-        }
-        return true;
     }
 }
