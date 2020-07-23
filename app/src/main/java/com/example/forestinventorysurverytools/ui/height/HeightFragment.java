@@ -24,6 +24,7 @@ import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 //import com.example.forestinventorysurverytools.CameraAPI;
 import com.example.forestinventorysurverytools.FirstScreen;
+import com.example.forestinventorysurverytools.Info;
 import com.example.forestinventorysurverytools.MainActivity;
 //import com.example.forestinventorysurverytools.MySensorEventListener;
 import com.example.forestinventorysurverytools.MySensorEventListener;
@@ -40,6 +41,7 @@ import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -237,30 +239,40 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     mRoll_1 = Math.abs(mRoll_1 - 90);
                     mRoll_2 = Math.abs(mRoll_2 - 90);
 
+                    SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
+                    String idstr = dateformat.format(System.currentTimeMillis());
+                    Info tmp = new Info(new TransformableNode(ma.mArfragment.getTransformationSystem()),
+                            new TransformableNode(ma.mArfragment.getTransformationSystem()),
+                            new TransformableNode(ma.mArfragment.getTransformationSystem()),
+                            new TransformableNode(ma.mArfragment.getTransformationSystem()), idstr);
+
                     if (mSlope2 <= -6) {
                         float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist);
                         float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) + h + ma.mMain_UserHeight;
-                        String height = String.format("%.1" + total_h);
+                        String height = String.format("%.1f", total_h);
                         ma.mHeight_val = total_h;
+                        tmp.setHeight(total_h);
 //                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
-                        ma.mHeight_tv.setText("경        사 :" + height + "m");
+                        ma.mHeight_tv.setText("수        고 : " + height + "m");
 
                     } else if (mSlope2 >= -5 && mSlope2 <= 5) {
                         float h = (float) (Math.abs(Math.tan(mRoll_2) * mDistance) + ma.mMain_UserHeight);
-                        String height = String.format("%.1" + h);
+                        String height = String.format("%.1f", h);
                         ma.mHeight_val = h;
+                        tmp.setHeight(h);
 //                        ma.infoArray.get(ma.mTreeIndex).setHeight(h);
-                        ma.mHeight_tv.setText("경        사 :" + height + "m");
+                        ma.mHeight_tv.setText("수        고 : " + height + "m");
 
                     } else if (mSlope2 >= 6) {
                         float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist) - ma.mMain_UserHeight;
                         float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) - h;
                         ma.mHeight_val = total_h;
-                        String height = String.format("%.1" + total_h);
+                        tmp.setHeight(total_h);
+                        String height = String.format("%.1f", total_h);
 //                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
-                        ma.mHeight_tv.setText("경        사 :" + height + "m");
+                        ma.mHeight_tv.setText("수        고 : " + height + "m");
                     }
                 }
             }

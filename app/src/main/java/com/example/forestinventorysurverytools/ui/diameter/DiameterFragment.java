@@ -258,9 +258,11 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.mAzimuth_tv.setText("방        위 : " + Integer.toString(mAzimuth) + "°" + mMySensorEventListener.matchDirection(mAzimuth));
 
                 //Save the distance, altitude, azimuth 오류발생
-//                ma.infoArray.get(ma.mTreeIndex).setDist(ma.mDistMeter);
-//                ma.infoArray.get(ma.mTreeIndex).setAlti(mAltitude);
-//                ma.infoArray.get(ma.mTreeIndex).setAzi(mAzimuth);
+                tmp.setAlti(mAltitude);
+                tmp.setAzi(mAzimuth);
+                tmp.setDist(ma.mDistMeter);
+                tmp.setDBH(mDiameterValue);
+
 
             }
 
