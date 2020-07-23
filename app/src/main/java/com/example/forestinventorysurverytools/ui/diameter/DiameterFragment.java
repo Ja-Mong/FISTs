@@ -151,9 +151,9 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.setDBH_model();
                 ma.infoArray.get(ma.mTreeIndex).getDBHNode().setRenderable(ma.mDBHModelRender);
                 ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
-                mDiameterValue = ((((ma.mRadi * 2) /10) * (ma.mDistMeter * 100)) + (((ma.mRadi * 2) / 10) + 2))
+                mDiameterValue = (((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + (((ma.mRadi * 2) / 10) + 2)))
                         / (ma.mDistMeter * 100);
-                mDiameterValue = ma.mDiameter_val;
+                ma.mDiameter_val = mDiameterValue;
                 mDiameter = String.format("%.1f", mDiameterValue);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + mDiameter + "cm" );
 
@@ -254,7 +254,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 //Get and Show Azimuth
                 mAzimuth = (int) Math.abs(mMySensorEventListener.getYaw());
                 mAzimuth = (int) Math.toDegrees(mAzimuth);
-                mAzimuth = (int) ma.mAzimuth_val;
+                ma.mAzimuth_val = mAzimuth;
                 ma.mAzimuth_tv.setText("방        위 : " + Integer.toString(mAzimuth) + "°" + mMySensorEventListener.matchDirection(mAzimuth));
 
                 //Save the distance, altitude, azimuth 오류발생
@@ -470,7 +470,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
     public void onLocationChanged(Location location) {
 
         mAltitude = (int) location.getAltitude();
-        mAltitude = (int) ma.mAltitude_val;
+        ma.mAltitude_val = mAltitude;
         mLongitude = (int) location.getLongitude();
         mLatitude = (int) location.getLatitude(); //위경도 세팅해야됨.
 

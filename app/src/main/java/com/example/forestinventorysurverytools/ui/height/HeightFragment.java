@@ -197,7 +197,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     mDy = objectPose.ty() - cameraPose.ty();
                     mDz = objectPose.tz() - cameraPose.tz();
                     mDistance = (float)Math.sqrt((mDx * mDx) + (mDy * mDy) + (mDz * mDz));
-                    mDistance = ma.mDistance_val;
+                    ma.mDistance_val = mDistance;
                     String distance = String.format("%.1f", mDistance);
                     ma.mDistance_tv.setText("거        리 : " + distance + "m");
 
@@ -212,7 +212,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
                     mSlopeValue = (int) Math.abs(90 - Math.toDegrees(mRoll_1));
                     mSlopeAngle = (int) Math.toRadians(mSlopeValue * 100);
-                    mSlopeAngle = (int) ma.mInclinometer_val;
+                    ma.mInclinometer_val = mSlopeAngle;
 
                     ma.infoArray.get(ma.mTreeIndex).setClino(mSlopeAngle);
                     ma.mInclinometer_tv.setText("경        사 :" + Integer.toString(mSlopeAngle) + "%");
@@ -242,24 +242,24 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist);
                         float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) + h + ma.mMain_UserHeight;
                         String height = String.format("%.1" + total_h);
-                        total_h = ma.mHeight_val;
-                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
+                        ma.mHeight_val = total_h;
+//                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
                         ma.mHeight_tv.setText("경        사 :" + height + "m");
 
                     } else if (mSlope2 >= -5 && mSlope2 <= 5) {
                         float h = (float) (Math.abs(Math.tan(mRoll_2) * mDistance) + ma.mMain_UserHeight);
                         String height = String.format("%.1" + h);
-                        h = ma.mHeight_val;
-                        ma.infoArray.get(ma.mTreeIndex).setHeight(h);
+                        ma.mHeight_val = h;
+//                        ma.infoArray.get(ma.mTreeIndex).setHeight(h);
                         ma.mHeight_tv.setText("경        사 :" + height + "m");
 
                     } else if (mSlope2 >= 6) {
                         float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
                         float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist) - ma.mMain_UserHeight;
                         float total_h = (float) Math.abs(Math.tan(mRoll_2) * hori_dist) - h;
-                        total_h = ma.mHeight_val;
+                        ma.mHeight_val = total_h;
                         String height = String.format("%.1" + total_h);
-                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
+//                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
                         ma.mHeight_tv.setText("경        사 :" + height + "m");
                     }
                 }
