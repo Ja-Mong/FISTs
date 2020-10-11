@@ -12,9 +12,12 @@ public class treeDTO {
     private String dist;
     private String dbh;
     private String height;
+<<<<<<< HEAD
 
     private String latitude;
     private String longitude;
+=======
+>>>>>>> a3ea9cbd2885c67bb0515762571779c17372693d
 //    private String latitude;
 //    private String longitude;
 //    private String pid;
@@ -22,13 +25,20 @@ public class treeDTO {
 //    private String imgid;
 
     public treeDTO(){};
+<<<<<<< HEAD
     public treeDTO(String tid, String dist, String dbh, String h, String l1, String l2){
+=======
+    public treeDTO(String tid, String dist, String dbh, String h){
+>>>>>>> a3ea9cbd2885c67bb0515762571779c17372693d
         this.tid = tid;
         this.dist = dist;
         this.dbh = dbh;
         this.height = h;
+<<<<<<< HEAD
         this.latitude=l1;
         this.longitude=l2;
+=======
+>>>>>>> a3ea9cbd2885c67bb0515762571779c17372693d
     }
 
     public String getDbh() {

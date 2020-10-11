@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0f, (float)mAxis_Z/100);
-                            mBotModelRender = ShapeFactory.makeSphere(0.03f, vector3, material);
+                            mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
                             mBotModelRender.setShadowCaster(false);
                             mBotModelRender.setShadowReceiver(false);
