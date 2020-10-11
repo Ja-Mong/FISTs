@@ -65,10 +65,6 @@ public class MySensorEventListener extends Fragment implements SensorEventListen
         mSensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
     }
 
-<<<<<<< HEAD
-=======
-    //y축
->>>>>>> a3ea9cbd2885c67bb0515762571779c17372693d
     public int getRoll1() {
         int roll1 = (int) Math.toDegrees(mOrientationAngles[2]);
         return roll1;
