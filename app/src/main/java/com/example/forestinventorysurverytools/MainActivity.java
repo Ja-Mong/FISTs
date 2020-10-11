@@ -1,5 +1,6 @@
 package com.example.forestinventorysurverytools;
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,9 +16,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.forestinventorysurverytools.sever.NetConnect;
+import com.example.forestinventorysurverytools.sever.NetService;
+import com.example.forestinventorysurverytools.sever.treeDTO;
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
@@ -40,6 +45,7 @@ import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +57,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Vector;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements Scene.OnUpdateListener {
 
@@ -187,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.6f, (float)mAxis_Z/100);
-                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.2f, vector3, material);
+                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.35f, vector3, material);
 
                             mMovModelRender.setShadowCaster(false);
                             mMovModelRender.setShadowReceiver(false);
@@ -203,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                             Vector3 vector3 = new Vector3((float) mAxis_X/100, 0f, (float) mAxis_Z/100);
                             mDBHModelRender = ShapeFactory.makeCylinder
-                                    ((float) mRadi / 1000, 0.05f,
+                                    ((float) mRadi / 1000, 0.1f,
                                             vector3, material);
 
                             mDBHModelRender.setShadowCaster(false);
@@ -214,13 +224,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
 
+
     //UserHeight model
     public void setUH_model() {
         MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
                 .thenAccept(
                         material -> {
                             if (!mInputUH.getText().toString().isEmpty()) {
-                                mMain_UserHeight = Float.valueOf(mInputUH.getText().toString()) / 100f;
+                                mMain_UserHeight = Float.valueOf(mInputUH.getText().toString()) / 100 ;
                                 Vector3 vector3 = new Vector3((float) mAxis_X / 100, mMain_UserHeight,
                                         (float) mAxis_Z / 100);
                                 mUHModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
@@ -237,8 +248,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //AR ViewRenderable
 
         TextView ar_textview = new TextView(this);
+//        ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
+//                "직경 : "+ String.format("%.1f", (((r*2)/10) * ((mDistMeter*100)+(((r*2)/10)+2)))/(mDistMeter * 100)) + "cm\n" +
+//                "거리 : " + String.format("%.1f",infoArray.get(mTreeIndex).getDist())+"m");
+        //DBH 측정 값이 통일이 되지 않아서 주석 처리후 일단 DBH fragment 쪽 식으로 맞췄습니다.
+        //차후 맞는 식으로 통일시켜주세요! - 2020.10.11 동현: 통일완료
         ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
-                "직경 : "+ String.format("%.1f", (((r*2)/10) * ((mDistMeter*100)+(((r*2)/10)+2)))/(mDistMeter * 100)) + "cm\n" +
+                "직경 : "+ String.format("%.1f", (((mRadi*2)/10) * ((mDistMeter*100)+(((mRadi*2)/10)+2)))
+                /(mDistMeter * 100)) + "cm\n" +
                 "거리 : " + String.format("%.1f",infoArray.get(mTreeIndex).getDist())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()
@@ -347,58 +364,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         }
     }
 
-
-    //Save data
-    String dirPath;
-    public void Save_data(View v) {
-
-        if (infoArray.size() != 0) {
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-            String filename = "fist_" + dateformat.format(System.currentTimeMillis());
-
-            if (CheckWrite()) {
-                dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FIST";
-                File dir = new File(dirPath);
-                if (!dir.exists()) {
-                    dir.mkdir();
-                    Log.d("tag", "directory 생성");
-                }
-                //File savefile = new File(dirPath+"/"+filename+".txt");
-                File savefile = new File(dirPath + "/" + filename + ".json");
-                try {
-                    Log.d("tag", "File 생성시작");
-                    JSONArray jArray = new JSONArray();
-                    for(int i=0; i<infoArray.size(); i++){
-                        JSONObject obj = new JSONObject();
-
-                        obj.put("id",infoArray.get(i).getId());
-                        obj.put("clino", infoArray.get(i).getClino());
-                        obj.put("distance",infoArray.get(i).getDist() );
-                        obj.put("diameter",infoArray.get(i).getDBH() );
-                        obj.put("height", infoArray.get(i).getHeight());
-                        obj.put("azimuth", infoArray.get(i).getAzi());
-                        obj.put("altitude", infoArray.get(i).getAlti());
-                        // GPS 좌표도 넣기
-                        jArray.put(obj);
-                    }
-                    FileWriter fw = new FileWriter(savefile);
-                    fw.write(jArray.toString());
-                    fw.flush();
-                    fw.close();
-
-                    Log.d("tag", "File 생성완료");
-                    showToast(dirPath + "에 저장 하였습니다.");
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            Log.d("tag", "infoArray 비어있음 ");
-            showToast("저장할 정보가 없습니다. 값을 측정해주세요");
-        }
-    }
-
-
     //Delete create current Anchor.
     ImageButton.OnClickListener delSelect_anchor = new ImageButton.OnClickListener() {
         @Override
@@ -426,4 +391,115 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public void showToast(String data) {
         Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
     }
+
+    //base Server url
+    public String baseurl = "http://114.129.213.50:8080/webfist/";
+    //WebServer Upload
+    NetConnect mNetConnect = new NetConnect();
+    NetService mNetService;
+
+    //Save data
+    String dirPath;
+    ArrayList<treeDTO> tArray = new ArrayList<>();
+    int save_index = 0;  // array에 저장된 나무 수
+    int save_count = 0; // 현재 저장한 횟수
+    public void Save_data(View v) {
+        if (infoArray.size() != 0) {
+            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+            String filename = "fist_" + dateformat.format(System.currentTimeMillis());
+
+            if (CheckWrite()) {
+                dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FIST";
+                File dir = new File(dirPath);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                    Log.d("tag", "directory 생성");
+                }
+                //File savefile = new File(dirPath+"/"+filename+".txt");
+                File savefile = new File(dirPath + "/" + filename + ".json");
+                try {
+                    Log.d("tag", "File 생성시작");
+                    for (int i = 0; i < infoArray.size(); i++) {
+                        JSONObject obj = new JSONObject();
+                        obj.put("tid", infoArray.get(i).getId());
+                        obj.put("dist", Float.toString(infoArray.get(i).getDist()));
+                        obj.put("dbh", Float.toString(infoArray.get(i).getDBH()));
+                        obj.put("height", Float.toString(infoArray.get(i).getHeight()));
+                        Log.d("tag", "treeDTO 생성시작--------------------------------------------");
+//                        treeDTO tree = new treeDTO(infoArray.get(i).getId(),Float.toString(infoArray.get(i).getDist()),
+//                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()) );
+                        treeDTO tree = new treeDTO(infoArray.get(i).getId(), Float.toString(infoArray.get(i).getDist()),
+                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()),
+                                Double.toString(infoArray.get(i).getLatitude()),Double.toString(infoArray.get(i).getLongitude()));
+                        tArray.add(tree);
+                        // GPS 좌표도 넣기
+                    }
+                    FileWriter fw = new FileWriter(savefile);
+                    fw.write(tArray.toString());
+                    fw.flush();
+                    fw.close();
+
+                    Log.d("tag", "File 생성완료");
+                    showToast(dirPath + "에 저장 하였습니다.");
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("서버 업로드-----------------------------");
+                    builder.setMessage("저장한 값들은 업로드하시겠습니까?");
+                    builder.setPositiveButton("예", uploadWebServerListener);
+                    builder.setNegativeButton("아니오", null);
+                    builder.create().show();
+
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+
+                }
+            } else {
+                Log.d("tag", "infoArray 비어있음 ");
+                showToast("저장할 정보가 없습니다. 값을 측정해주세요");
+            }
+        }
+    }
+
+    AlertDialog.OnClickListener uploadWebServerListener = new AlertDialog.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            try {
+
+                Log.d("tag", "업로드 수행-----------------");
+                mNetConnect.buildNetworkService(baseurl);
+                mNetService = mNetConnect.getNetService();
+
+                for (int i = 0; i < tArray.size(); i++) {
+                    if(save_count > 0 && i < save_index){
+                        continue;
+                    }else{
+                        Call<String> post_tree_dto = mNetService.post_tree_dto(tArray.get(i));
+                        post_tree_dto.enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+                                Log.d("tag", "비동기, 업로드 성공");
+                            }
+
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), "업로드 실패1" , Toast.LENGTH_SHORT).show();
+                                Log.d("tag", "실패!, 상태 코드: " + t.getMessage());
+                                t.getStackTrace().toString();
+                            }
+                        });
+                    }
+                } // end for
+                save_index = tArray.size();
+                save_count += 1;
+
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
+                Log.d("tag", "업로드 실패" + e.getMessage());
+            }
+
+        }
+    };
+
+
 }

@@ -24,7 +24,10 @@ public class Info {
     float mAzi;
     float mAlti;
 
+
     Location locate; //done
+    double mLatitude;
+    double mLongitude;
 
     public Info(TransformableNode bot,
                 TransformableNode mov,
@@ -82,6 +85,7 @@ public class Info {
         mAlti = alti;
     }//done
 
+    public void setLocate(double latitude, double longitude){this.mLatitude=latitude; this.mLongitude=longitude;}
 
     //getter Func
     public TransformableNode getBotNode() {
@@ -120,5 +124,7 @@ public class Info {
     public String getId() {
         return mId;
     }
+    public double getLatitude(){return mLatitude;}
+    public double getLongitude(){return mLongitude;}
 
 }//done

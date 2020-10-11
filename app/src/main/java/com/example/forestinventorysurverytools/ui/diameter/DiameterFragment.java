@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
+import com.example.forestinventorysurverytools.GpsTracker;
+
 public class DiameterFragment extends Fragment implements Scene.OnUpdateListener, LocationListener{
 
 
@@ -151,12 +153,13 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.setDBH_model();
                 ma.infoArray.get(ma.mTreeIndex).getDBHNode().setRenderable(ma.mDBHModelRender);
                 ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
-                mDiameterValue = (((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + ((ma.mRadi / 10) + 2)))
+                mDiameterValue = (((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + (((ma.mRadi * 2) / 10) + 2)))
                         / (ma.mDistMeter * 100);
                 ma.mDiameter_val = mDiameterValue;
                 mDiameter = String.format("%.1f", mDiameterValue);
                 ma.mDiameter_tv.setText("흉 고 직 경 : " + mDiameter + "cm" );
-
+                ma.infoArray.get(ma.mTreeIndex).setDBH(mDiameterValue);
+                ma.RenderText((int)ma.mRadi);
             }
 
             @Override
@@ -166,7 +169,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                ma.infoArray.get(ma.mTreeIndex).setDBH((ma.mRadi * 2) / 10);
+                ma.infoArray.get(ma.mTreeIndex).setDBH((((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + ((ma.mRadi / 10) + 2)))
+                        / (ma.mDistMeter * 100));
                 ma.infoArray.get(ma.mTreeIndex).getDBHNode().setRenderable(ma.mDBHModelRender);
 
                 //AR TextView
@@ -238,6 +242,21 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             //Get the Anchor distance to User and other value(Altitude, Compass. Diameter)
             if (ma.mAnchorNode != null) {
 
+                //GPS트래커 설정
+                GpsTracker gpsTracker = new GpsTracker(ma, ma);
+
+
+                // 위치권한 확인
+                if (!gpsTracker.checkLocationServicesStatus()) {
+                    gpsTracker.showDialogForLocationServiceSetting();
+                }else {
+                    gpsTracker.checkRunTimePermission();
+                }
+
+                // 측정위치 GPS값
+                double latitude = gpsTracker.getLatitude();
+                double longitude = gpsTracker.getLongitude();
+
                 Frame frame = ma.mArfragment.getArSceneView().getArFrame();
                 Vector3 ov = tmp.getBotNode().getWorldPosition();
                 Pose cameraPose = frame.getCamera().getPose();
@@ -262,7 +281,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 tmp.setAzi(mAzimuth);
                 tmp.setDist(ma.mDistMeter);
                 tmp.setDBH(mDiameterValue);
-
+                tmp.setLocate(latitude,longitude);
 
             }
 
