@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0f, (float)mAxis_Z/100);
-                            mBotModelRender = ShapeFactory.makeSphere(0.03f, vector3, material);
+                            mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
                             mBotModelRender.setShadowCaster(false);
                             mBotModelRender.setShadowReceiver(false);
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         material -> {
 
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.6f, (float)mAxis_Z/100);
-                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.2f, vector3, material);
+                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.35f, vector3, material);
 
                             mMovModelRender.setShadowCaster(false);
                             mMovModelRender.setShadowReceiver(false);
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                             Vector3 vector3 = new Vector3((float) mAxis_X/100, 0f, (float) mAxis_Z/100);
                             mDBHModelRender = ShapeFactory.makeCylinder
-                                    ((float) mRadi / 1000, 0.05f,
+                                    ((float) mRadi / 1000, 0.1f,
                                             vector3, material);
 
                             mDBHModelRender.setShadowCaster(false);
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
                             if (!mInputUH.getText().toString().isEmpty()) {
-                                mMain_UserHeight = Float.valueOf(mInputUH.getText().toString()) / 100f;
+                                mMain_UserHeight = Float.valueOf(mInputUH.getText().toString()) / 100 ;
                                 Vector3 vector3 = new Vector3((float) mAxis_X / 100, mMain_UserHeight,
                                         (float) mAxis_Z / 100);
                                 mUHModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
@@ -238,7 +238,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         TextView ar_textview = new TextView(this);
         ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
-                "직경 : "+ String.format("%.1f", (((r*2)/10) * ((mDistMeter*100)+(((r*2)/10)+2)))/(mDistMeter * 100)) + "cm\n" +
+                "직경 : "+ String.format("%.1f", (((mRadi*2)/10) * ((mDistMeter*100)+(((mRadi*2)/10)+2)))
+                /(mDistMeter * 100)) + "cm\n" +
                 "거리 : " + String.format("%.1f",infoArray.get(mTreeIndex).getDist())+"m");
         ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
         ViewRenderable.builder()

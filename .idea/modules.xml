@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/FISTs_Project-app.iml" filepath="$PROJECT_DIR$/app/FISTs_Project-app.iml" group="Forest Inventory Survery Tools/app" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Forest_Inventory_Survery_Tools.iml" filepath="$PROJECT_DIR$/.idea/modules/Forest_Inventory_Survery_Tools.iml" group="Forest_Inventory_Survery_Tools" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Forest Inventory Survery Tools/app" />
-      <module fileurl="file://$PROJECT_DIR$/poi-4.1.2/poi-4.1.2.iml" filepath="$PROJECT_DIR$/poi-4.1.2/poi-4.1.2.iml" group="Forest Inventory Survery Tools/poi-4.1.2" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Forest Inventory Survery Tools/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/poi-4.1.2/poi-4.1.2.iml" filepath="$PROJECT_DIR$/.idea/modules/poi-4.1.2/poi-4.1.2.iml" group="Forest Inventory Survery Tools/poi-4.1.2" />
     </modules>
   </component>
 </project>

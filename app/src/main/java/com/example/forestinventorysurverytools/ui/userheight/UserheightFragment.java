@@ -151,7 +151,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
             uhModel();
             mTransNode.setRenderable(mModelRender_UH);
             ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
-            ma.mInputUH.setText(Float.toString(mUserHeight * 100));
+            ma.mInputUH.setText(Integer.toString((int) (mUserHeight * 100)));
             return false;
         }
     };
@@ -162,7 +162,7 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
             uhModel();
             mTransNode.setRenderable(mModelRender_UH);
             ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
-            ma.mInputUH.setText(Float.toString((mUserHeight * 100) + 3));
+            ma.mInputUH.setText(Integer.toString((int) ((mUserHeight * 100) + 3)));
             return false;
         }
     };

@@ -151,7 +151,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 ma.setDBH_model();
                 ma.infoArray.get(ma.mTreeIndex).getDBHNode().setRenderable(ma.mDBHModelRender);
                 ma.mArfragment.getArSceneView().getScene().addOnUpdateListener(ma.mArfragment);
-                mDiameterValue = (((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + ((ma.mRadi / 10) + 2)))
+                mDiameterValue = (((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + (((ma.mRadi * 2) / 10) + 2)))
                         / (ma.mDistMeter * 100);
                 ma.mDiameter_val = mDiameterValue;
                 mDiameter = String.format("%.1f", mDiameterValue);
@@ -166,7 +166,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                ma.infoArray.get(ma.mTreeIndex).setDBH((ma.mRadi * 2) / 10);
+                ma.infoArray.get(ma.mTreeIndex).setDBH((((ma.mRadi * 2) /10) * ((ma.mDistMeter * 100) + ((ma.mRadi / 10) + 2)))
+                        / (ma.mDistMeter * 100));
                 ma.infoArray.get(ma.mTreeIndex).getDBHNode().setRenderable(ma.mDBHModelRender);
 
                 //AR TextView

@@ -207,7 +207,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
 
                     //Get the roll1 angle
-                    mRoll_1 = Math.abs(mMySensorEventListener.getRoll());
+                    mRoll_1 = Math.abs(mMySensorEventListener.getRoll1());
+                    mGetRoll_1 = (int)  Math.abs(90 - mRoll_1);
                     ma.showToast("초두부를 향해 클릭하세요.");
 
                     //Get the Slope
@@ -224,9 +225,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
                     //Get the roll2 angle
                 } else if (mClikc_count % 2 == 1) {
-                    mRoll_2 = Math.abs(mMySensorEventListener.getRoll());
-                    float quadrant = mMySensorEventListener.getRollQuadrantUpDown();
-                    mRoll_2 = mRoll_2 * (Math.signum(quadrant));
+                    mRoll_2 = Math.abs(mMySensorEventListener.getRoll2());
+                    mGetRoll_2 = (int) Math.abs(90 - mRoll_2);
                     ma.showToast("계산 버튼을 클릭하세요.");
                     mClikc_count ++;
                 }
@@ -240,8 +240,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.Btn_platHeight) {
-                    mGetRoll_1 = Math.abs(mRoll_1 - 90);
-                    mGetRoll_2 = Math.abs(mRoll_2 - 90);
 
                     SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
                     String idstr = dateformat.format(System.currentTimeMillis());
@@ -250,25 +248,18 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                             new TransformableNode(ma.mArfragment.getTransformationSystem()),
                             new TransformableNode(ma.mArfragment.getTransformationSystem()), idstr);
 
-                    if (mSlope2 <= -6) {
-                        float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
-                        float h = (float) Math.abs(Math.tan(mRoll_1) * hori_dist);
-                        float total_h = (float) Math.abs(Math.tan(mGetRoll_2) * hori_dist) + h + ma.mMain_UserHeight;
-                        String height = String.format("%.1f", total_h);
-                        ma.mHeight_val = total_h;
-                        tmp.setHeight(total_h);
-                        ma.mHeight_tv.setText("수        고 : " + height + "m");
-
-                    } else if (mSlope2 >= -5 && mSlope2 <= 5) {
-                        float h = (float) (Math.abs(Math.tan(mGetRoll_2) * mDistance) + ma.mMain_UserHeight);
+                    if (mSlope2 >= -5 && mSlope2 <= 5) {
+                        float h = (float) Math.abs(Math.tan(mGetRoll_2 * (Math.PI / 180)) * mDistance) + (Float.valueOf(ma.mInputUH.getText().toString())/100);
                         String height = String.format("%.1f", h);
                         ma.mHeight_val = h;
                         tmp.setHeight(h);
                         ma.mHeight_tv.setText("수        고 : " + height + "m");
+                        ma.showToast("tan1: " + Float.toString((float) Math.tan(mGetRoll_1 * (Math.PI / 180))));
+                        ma.showToast("tan2: " + Float.toString((float) Math.tan(mGetRoll_2 * (Math.PI / 180))));
 
                     } else if (mSlope2 >= 6) {
-                        float hori_dist = (float) Math.abs(Math.cos(mRoll_1) * mDistance);
-                        float total_h = (float) Math.abs(Math.tan(mGetRoll_2) * hori_dist);
+                        float hori_dist = (float) Math.abs(Math.cos(mGetRoll_1 * (Math.PI / 180)) * mDistance);
+                        float total_h = (float) Math.abs((Math.tan(mGetRoll_2 * (Math.PI / 180))) * hori_dist);
                         ma.mHeight_val = total_h;
                         tmp.setHeight(total_h);
                         String height = String.format("%.1f", total_h);
