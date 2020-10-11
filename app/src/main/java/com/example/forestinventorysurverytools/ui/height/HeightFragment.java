@@ -243,16 +243,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
                     SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
                     String idstr = dateformat.format(System.currentTimeMillis());
-                    Info tmp = new Info(new TransformableNode(ma.mArfragment.getTransformationSystem()),
-                            new TransformableNode(ma.mArfragment.getTransformationSystem()),
-                            new TransformableNode(ma.mArfragment.getTransformationSystem()),
-                            new TransformableNode(ma.mArfragment.getTransformationSystem()), idstr);
 
                     if (mSlope2 >= -5 && mSlope2 <= 5) {
                         float h = (float) Math.abs(Math.tan(mGetRoll_2 * (Math.PI / 180)) * mDistance) + (Float.valueOf(ma.mInputUH.getText().toString())/100);
                         String height = String.format("%.1f", h);
                         ma.mHeight_val = h;
-                        tmp.setHeight(h);
+                        ma.infoArray.get(ma.mTreeIndex).setHeight(h);
                         ma.mHeight_tv.setText("수        고 : " + height + "m");
                         ma.showToast("tan1: " + Float.toString((float) Math.tan(mGetRoll_1 * (Math.PI / 180))));
                         ma.showToast("tan2: " + Float.toString((float) Math.tan(mGetRoll_2 * (Math.PI / 180))));
@@ -261,7 +257,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                         float hori_dist = (float) Math.abs(Math.cos(mGetRoll_1 * (Math.PI / 180)) * mDistance);
                         float total_h = (float) Math.abs((Math.tan(mGetRoll_2 * (Math.PI / 180))) * hori_dist);
                         ma.mHeight_val = total_h;
-                        tmp.setHeight(total_h);
+                        ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
                         String height = String.format("%.1f", total_h);
                         ma.mHeight_tv.setText("수        고 : " + height + "m");
                     }
