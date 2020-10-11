@@ -393,8 +393,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
     //base Server url
-    public String baseurl = "http://192.168.0.23:8080/webfist/";
-//    public String baseurl = "http://114.129.213.50:8080/webfist/";
+    public String baseurl = "http://114.129.213.50:8080/webfist/";
     //WebServer Upload
     NetConnect mNetConnect = new NetConnect();
     NetService mNetService;
