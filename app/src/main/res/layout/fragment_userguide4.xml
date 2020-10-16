@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#413F3F">
@@ -9,110 +11,166 @@
         android:id="@+id/guide4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="314dp"
         android:text="4. 흉고직경 측정"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/guide_view4"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:src="@drawable/guideview4"
         android:layout_below="@id/guide4"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview4"
+        app:layout_constraintBottom_toTopOf="@+id/line1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide4" />
+
     <TextView
         android:id="@+id/line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view4"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="118dp"
         android:text="· 바닥을 탭하면 ①과 같이 AR객체가 렌더링됩니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view4" />
+
     <TextView
         android:id="@+id/line2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="152dp"
         android:text="· ②는 사용자 눈높이를 완료하면 생성됩니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
     <TextView
         android:id="@+id/line3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="32dp"
         android:text="· ③은 흉고직경을 측정하는 객체입니다. ⑥, ⑦과 상호작용합니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
+
     <TextView
         android:id="@+id/line4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line3"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="97dp"
         android:text="· ④는 나무와 바닥을 구분지어주는 역할을 수행합니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
+
     <TextView
         android:id="@+id/line5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line4"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="219dp"
         android:text="· ⑤를 활용해 ①을 이동시킵니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
+
     <TextView
         android:id="@+id/line6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line5"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
         android:text="· ⑥을 활용해 ①을 기울입니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
+
     <TextView
         android:id="@+id/line7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line6"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="186dp"
         android:text="· ⑦를 활용해 ①의 크기를 조절합니다. "
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/guide4_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line6" />
 
     <TextView
         android:id="@+id/guide4_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
         android:layout_below="@id/line7"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="264dp"
         android:text="4.1 흉고직경 바 조절예시"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view4_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line7" />
 
     <ImageView
         android:id="@+id/guide_view4_1"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:src="@drawable/guideview4_1"
         android:layout_below="@id/guide4_1"
-        android:layout_marginTop="5dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview4_1"
+        app:layout_constraintBottom_toTopOf="@+id/line8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide4_1" />
+
     <TextView
         android:id="@+id/line8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view4_1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="39dp"
+        android:layout_marginBottom="15dp"
         android:text="· 위 그림과 같이 ⑥, ⑦를 활용해 흉고직경을 측정할 수 있습니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view4_1" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

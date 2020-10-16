@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#413F3F">
@@ -9,102 +11,155 @@
         android:id="@+id/guide2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
         android:text="2. 애플리케이션의 기본 구성"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.021"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/guide_view2"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
-        android:src="@drawable/guideview2"
         android:layout_below="@id/guide2"
-        android:layout_marginTop="5dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview2"
+        app:layout_constraintBottom_toTopOf="@+id/line1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide2" />
+
     <TextView
         android:id="@+id/line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
         android:text="· ①: Reset버튼으로 현재 측정한 모든 데이터 및 정보를 초기화"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view2" />
+
     <TextView
         android:id="@+id/line2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
         android:text="· ②: Back버튼으로 한단계 전으로 돌아감"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
     <TextView
         android:id="@+id/line3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
         android:text="· ③: Save버튼으로 측정한 모든 데이터를 저장"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
+
     <TextView
         android:id="@+id/line4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line3"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="158dp"
         android:text="· ④: Delete버튼으로 선택한 AR객체를 제거"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
+
     <TextView
         android:id="@+id/line5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line4"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="259dp"
         android:text="· ⑤: 측정한 데이터 정보창"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
+
     <TextView
         android:id="@+id/line6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line5"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="163dp"
         android:text="· ⑥: 본 애플리케이션이 제공하는 기능 Tap"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/guide2_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
 
     <TextView
         android:id="@+id/guide2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
         android:layout_below="@id/line6"
+        android:layout_marginStart="10dp"
         android:text="2.1. 애플리케이션 사용 순서"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view2_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.021"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line6" />
 
     <ImageView
         android:id="@+id/guide_view2_1"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
-        android:src="@drawable/guideview2_1"
         android:layout_below="@id/guide2_1"
-        android:layout_marginTop="10dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview2_1"
+        app:layout_constraintBottom_toTopOf="@+id/line7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide2_1" />
+
     <TextView
         android:id="@+id/line7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view2_1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
         android:text="· 사용순서는 사용자 눈높이 → 흉고직경 → 수고로 진행됩니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.028"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view2_1" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

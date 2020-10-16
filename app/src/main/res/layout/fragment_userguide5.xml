@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,99 +11,153 @@
         android:id="@+id/guide5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="294dp"
         android:text="5. 경사 및 수고 측정"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/guide_view5"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:src="@drawable/guideview5"
         android:layout_below="@id/guide5"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview5"
+        app:layout_constraintBottom_toTopOf="@+id/line1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide5" />
+
     <TextView
         android:id="@+id/line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view5"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="262dp"
         android:text="· ① 경사 측정을 위한 Box"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view5" />
+
     <TextView
         android:id="@+id/line2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="256dp"
         android:text="· ② 경사 및 수고 측정 버튼"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
     <TextView
         android:id="@+id/line3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="259dp"
         android:text="· ③ 상황별 수고 계산 버튼"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
+
     <TextView
         android:id="@+id/line4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line3"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="217dp"
+        android:layout_marginBottom="5dp"
         android:text="· ④ 사진촬영을 위한 옵션 및 버튼"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/guide_view6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
 
     <ImageView
         android:id="@+id/guide_view6"
-        android:layout_width="match_parent"
-        android:layout_height="228dp"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/guideview6"
+        android:layout_width="wrap_content"
+        android:layout_height="220dp"
         android:layout_below="@id/line4"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/guideview6"
+        app:layout_constraintBottom_toTopOf="@+id/line5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
+
     <TextView
         android:id="@+id/line5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view6"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="21dp"
         android:text="· 주황색 십자가를 ⑥에 가르키고 ② 버튼을 눌러 경사를 측정합니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view6" />
+
     <TextView
         android:id="@+id/line6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line5"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="76dp"
         android:text="· 이후 주황색 십자가를 ⑦에 가르키고 ② 버튼을 누릅니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line5" />
+
     <TextView
         android:id="@+id/line7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line6"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:text="· ③ 버튼을 참고하여 상황에 맞는 버튼을 클릭하여 수고값을 구합니다."
-        android:textColor="#FFFFFF"/>
+        android:text="· ③ 버튼을 클릭하여 수고값을 구합니다."
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line6" />
+
     <TextView
         android:id="@+id/line8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line7"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="15dp"
         android:text="· 모든 측정이 완료되었다면 Save 버튼을 눌러 데이터를 저장합니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line7" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

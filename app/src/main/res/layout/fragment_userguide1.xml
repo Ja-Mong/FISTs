@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,66 +10,97 @@
         android:id="@+id/line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="24dp"
         android:text="· 본 애플리케이션은 수목의 수고 및 직경 등을 측정하는 App입니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/line2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_below="@id/line1"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="208dp"
         android:text="· 사용방법은 다음 그림과 같습니다."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/guide1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
 
     <TextView
         android:id="@+id/guide1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line2"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="288dp"
         android:text="1. 기초정보 입력하기"
+        android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"/>
+        app:layout_constraintBottom_toTopOf="@+id/guide_view1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
 
     <ImageView
         android:id="@+id/guide_view1"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/guideview1"
         android:layout_below="@id/guide1"
-        android:layout_marginTop="5dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview1"
+        app:layout_constraintBottom_toTopOf="@+id/line3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide1" />
+
     <TextView
         android:id="@+id/line3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
         android:text="· ① 부분에 정보를 알맞게 입력하고 ② 를 클릭하세요."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/guide_view1_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.078"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view1" />
 
     <ImageView
         android:id="@+id/guide_view1_1"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        android:src="@drawable/guideview1_1"
         android:layout_below="@id/line3"
-        android:layout_marginTop="15dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/guideview1_1"
+        app:layout_constraintBottom_toTopOf="@+id/line4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line3" />
+
     <TextView
         android:id="@+id/line4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/guide_view1_1"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
         android:text="· 가이드라인을 충분히 숙지하고 GO버튼을 눌러 측정을 시작하세요."
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/slidefinger"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guide_view1_1" />
 
     <ImageView
         android:id="@+id/slidefinger"
@@ -76,17 +108,26 @@
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/slide_finger"/>
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/slide_finger"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/careful"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
+
     <TextView
         android:id="@+id/careful"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="220dp"
+        android:layout_toLeftOf="@id/slidefinger"
         android:text="※ 손가락으로 밀어 넘기세요."
         android:textColor="#FFFFFF"
         android:textSize="12dp"
-        android:layout_toLeftOf="@id/slidefinger" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/slidefinger"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line4" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
