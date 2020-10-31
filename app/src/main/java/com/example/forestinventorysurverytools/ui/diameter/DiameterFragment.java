@@ -214,7 +214,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             // Create the transformable object and add it to the anchor.
             ma.mAnchor = anchor;
             ma.mAnchorNode = anchorNode;
-            SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
+            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
             String idstr = dateformat.format(System.currentTimeMillis());
             Info tmp = new Info(new TransformableNode(ma.mArfragment.getTransformationSystem()),
                     new TransformableNode(ma.mArfragment.getTransformationSystem()),
