@@ -22,6 +22,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/sub_title"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,6 +71,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -94,6 +96,7 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toTopOf="@+id/notice"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.426"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sub_title" />
 
@@ -131,6 +134,7 @@
         android:textSize="18dp"
         app:layout_constraintBottom_toTopOf="@+id/date"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notice" />
 
@@ -150,13 +154,14 @@
         android:textAlignment="center"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/place"
+        app:layout_constraintBottom_toTopOf="@+id/userID"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_btn" />
 
     <EditText
-        android:id="@+id/place"
+        android:id="@+id/userID"
         android:layout_width="130dp"
         android:layout_height="50dp"
         android:layout_below="@id/date"
@@ -166,18 +171,20 @@
         android:layout_marginEnd="141dp"
         android:layout_marginBottom="5dp"
         android:background="#A5FFFFFF"
-        android:hint="조사지"
+        android:hint="조사자"
+        android:inputType="text"
         android:maxLines="2"
         android:textAlignment="center"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/userID"
+        app:layout_constraintBottom_toTopOf="@+id/place"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date" />
 
     <EditText
-        android:id="@+id/userID"
+        android:id="@+id/place"
         android:layout_width="130dp"
         android:layout_height="50dp"
         android:layout_below="@id/place"
@@ -185,15 +192,36 @@
         android:layout_marginStart="140dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="141dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="5dp"
         android:background="#A5FFFFFF"
-        android:hint="조사자"
+        android:hint="표준지 번호"
         android:maxLines="1"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/coordinate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userID" />
+
+    <EditText
+        android:id="@+id/coordinate"
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/place"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:background="#A5FFFFFF"
+        android:hint="위치좌표"
+        android:maxLines="2"
         android:textAlignment="center"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/place" />
 

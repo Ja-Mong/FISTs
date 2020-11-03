@@ -248,11 +248,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         //AR ViewRenderable
 
         TextView ar_textview = new TextView(this);
-//        ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
-//                "직경 : "+ String.format("%.1f", (((r*2)/10) * ((mDistMeter*100)+(((r*2)/10)+2)))/(mDistMeter * 100)) + "cm\n" +
-//                "거리 : " + String.format("%.1f",infoArray.get(mTreeIndex).getDist())+"m");
-        //DBH 측정 값이 통일이 되지 않아서 주석 처리후 일단 DBH fragment 쪽 식으로 맞췄습니다.
-        //차후 맞는 식으로 통일시켜주세요! - 2020.10.11 동현: 통일완료
         ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
                 "직경 : "+ String.format("%.1f", (((mRadi*2)/10) * ((mDistMeter*100)+(((mRadi*2)/10)+2)))
                 /(mDistMeter * 100)) + "cm\n" +
@@ -425,11 +420,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         obj.put("dist", Float.toString(infoArray.get(i).getDist()));
                         obj.put("dbh", Float.toString(infoArray.get(i).getDBH()));
                         obj.put("height", Float.toString(infoArray.get(i).getHeight()));
+                        obj.put("Clino", Float.toString(infoArray.get(i).getClino())); //경사
+                        obj.put("Azimuth", Float.toString(infoArray.get(i).getAzi())); //방위
+                        obj.put("Altitude", Float.toString(infoArray.get(i).getAlti())); //고도
                         Log.d("tag", "treeDTO 생성시작--------------------------------------------");
-//                        treeDTO tree = new treeDTO(infoArray.get(i).getId(),Float.toString(infoArray.get(i).getDist()),
-//                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()) );
                         treeDTO tree = new treeDTO(infoArray.get(i).getId(), Float.toString(infoArray.get(i).getDist()),
                                 Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()),
+                                Float.toString(infoArray.get(i).getAzi()), Float.toString(infoArray.get(i).getClino()),
+                                Float.toString(infoArray.get(i).getAlti()),
                                 Double.toString(infoArray.get(i).getLatitude()),Double.toString(infoArray.get(i).getLongitude()));
                         tArray.add(tree);
                         // GPS 좌표도 넣기
@@ -443,8 +441,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     showToast(dirPath + "에 저장 하였습니다.");
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("서버 업로드-----------------------------");
-                    builder.setMessage("저장한 값들은 업로드하시겠습니까?");
+                    builder.setTitle("주의!!");
+                    builder.setMessage("현재 표준지에 대해 모든 측정이 끝났다면, '예' 버튼을 눌러 웹서버에 측정 값 및 사진들을 업로드 하세요.");
                     builder.setPositiveButton("예", uploadWebServerListener);
                     builder.setNegativeButton("아니오", null);
                     builder.create().show();

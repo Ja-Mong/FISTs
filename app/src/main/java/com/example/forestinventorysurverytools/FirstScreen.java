@@ -1,8 +1,6 @@
 package com.example.forestinventorysurverytools;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,22 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.forestinventorysurverytools.ui.userguide.UserGuide;
-import com.google.ar.core.ArCoreApk;
-import com.google.ar.core.Session;
-import com.google.ar.core.exceptions.UnavailableApkTooOldException;
-import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException;
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
-import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-
-import java.util.Objects;
 
 public class FirstScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,12 +32,14 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
     public EditText mInputUserID;
     public EditText mDate;
     public EditText mPlace;
+    public EditText mCoordi;
 
 
     //Values
     public String userDefaultID = "홍길동";
     public String defaultDate = "20201026";
-    public String defaultPlace = "한라산";
+    public String defaultPlace = "1 or 속리산 1";
+    public String defaultCoordi = "12.34567 \n 89.10111";
 
 
     //ImageView
@@ -81,6 +71,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         mInputUserID = (EditText) findViewById(R.id.userID);
         mDate = (EditText) findViewById(R.id.date);
         mPlace = (EditText) findViewById(R.id.place);
+        mCoordi = (EditText) findViewById(R.id.coordinate);
 
         //EditText default values
         //date
@@ -102,6 +93,30 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                     mDate.setText(defaultDate);
                 } else if (hasFocus && mDate.getText().toString().equals(defaultDate)) {
                     mDate.setText("");
+                }
+            }
+        });
+
+
+        //userID
+        mInputUserID.setText(userDefaultID);
+        mInputUserID.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mInputUserID.getText().toString().equals(userDefaultID)) {
+                    mInputUserID.setText("");
+                }
+                return false;
+            }
+        });
+
+        mInputUserID.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && TextUtils.isEmpty(mInputUserID.getText().toString())) {
+                    mInputUserID.setText(userDefaultID);
+                } else if (hasFocus && mInputUserID.getText().toString().equals(userDefaultID)) {
+                    mInputUserID.setText("");
                 }
             }
         });
@@ -135,7 +150,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    mInputUserID.requestFocus();
+                    mCoordi.requestFocus();
                     return true;
                 }
                 return false;
@@ -143,37 +158,38 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         });
 
 
-        //userID
-        mInputUserID.setText(userDefaultID);
-        mInputUserID.setOnTouchListener(new View.OnTouchListener() {
+        //coordinate
+        mCoordi.setText(defaultCoordi);
+        mCoordi.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (mInputUserID.getText().toString().equals(userDefaultID)) {
-                    mInputUserID.setText("");
+                if (mCoordi.getText().toString().equals(defaultCoordi)) {
+                    mCoordi.setText("");
                 }
                 return false;
             }
         });
 
-        mInputUserID.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mCoordi.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && TextUtils.isEmpty(mInputUserID.getText().toString())) {
-                    mInputUserID.setText(userDefaultID);
-                } else if (hasFocus && mInputUserID.getText().toString().equals(userDefaultID)) {
-                    mInputUserID.setText("");
+                if (!hasFocus && TextUtils.isEmpty(mCoordi.getText().toString())) {
+                    mCoordi.setText(defaultCoordi);
+                } else if (hasFocus && mCoordi.getText().toString().equals(defaultCoordi)) {
+                    mCoordi.setText("");
                 }
             }
         });
 
-        mInputUserID.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        mInputUserID.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+        mCoordi.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        mCoordi.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
                 if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(mInputUserID.getWindowToken(), 0);
+                    inputMethodManager.hideSoftInputFromWindow(mCoordi.getWindowToken(), 0);
                     return true;
                 }
                 return false;
