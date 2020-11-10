@@ -256,6 +256,8 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     } else if (mSlope2 >= 6) {
                         float hori_dist = (float) Math.abs(Math.cos(mGetRoll_1 * (Math.PI / 180)) * mDistance);
                         float total_h = (float) Math.abs((Math.tan(mGetRoll_2 * (Math.PI / 180))) * hori_dist);
+//                        float x = total_h - (Float.valueOf(ma.mInputUH.getText().toString())/100);
+//                        total_h = total_h - x;
                         ma.mHeight_val = total_h;
                         ma.infoArray.get(ma.mTreeIndex).setHeight(total_h);
                         String height = String.format("%.1f", total_h);
