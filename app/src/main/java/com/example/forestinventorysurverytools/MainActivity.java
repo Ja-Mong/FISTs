@@ -35,6 +35,7 @@ import com.google.ar.core.Anchor;
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
@@ -283,8 +284,12 @@ public Config config = null;
             mArfragment.getPlaneDiscoveryController().hide();
         }
         mSession.configure(config);
+        try {
+            mSession.resume();
+        } catch (CameraNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
-
 
     //Delete Anchor when user create new Anchor onTouch the screen
     public void clearAnchor() {
@@ -296,7 +301,6 @@ public Config config = null;
             mAnchorNode = null;
         }
     }
-
 
     //Save Anchor to ArrayList
     Anchor tmpA;
