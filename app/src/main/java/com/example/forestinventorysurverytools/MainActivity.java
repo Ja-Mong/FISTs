@@ -1,5 +1,6 @@
 package com.example.forestinventorysurverytools;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
@@ -59,6 +61,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.concurrent.CompletableFuture;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -124,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public float mDy;
     public float mDz;
 
-    public Session mSession;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,10 +181,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //Bottom model
     public void setBot_model() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(1.0f, 1.27f, 0.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(1.0f, 1.27f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
-
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.5f, (float)mAxis_Z/100);
                             mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
@@ -207,17 +207,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //                            Boolean b = (mMovModelRender == null);
 //                        });
 //    }
-
     //Diameter model
     public void setDBH_model() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(1.0f, 0.0f, 0.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(1.0f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
-
                             Vector3 vector3 = new Vector3((float) mAxis_X/100, 0f, (float) mAxis_Z/100);
                             mDBHModelRender = ShapeFactory.makeCylinder
-                                    ((float) mRadi / 1000, 0.1f,
-                                            vector3, material);
+                                    ((float) mRadi / 1000, 0.1f, vector3, material);
 
                             mDBHModelRender.setShadowCaster(false);
                             mDBHModelRender.setShadowReceiver(false);
@@ -226,11 +223,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         });
     }
 
-
-
     //UserHeight model
     public void setUH_model() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
                 .thenAccept(
                         material -> {
                             if (!mInputUH.getText().toString().isEmpty()) {
@@ -274,10 +269,14 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //                });
 //    }
     //AR update
+public Session mSession = null;
+public Config config = null;
+
     @Override
     public void onUpdate(FrameTime frameTime) {
         com.google.ar.core.Camera camera = mArfragment.getArSceneView().getArFrame().getCamera();
-        Config config = new Config(mSession);
+
+        config = mSession.getConfig();
         config.setFocusMode(Config.FocusMode.AUTO);
 
         if (camera.getTrackingState() == TrackingState.TRACKING) {
