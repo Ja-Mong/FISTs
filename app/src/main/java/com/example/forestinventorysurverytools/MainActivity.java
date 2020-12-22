@@ -31,6 +31,8 @@ import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 import com.example.forestinventorysurverytools.ui.userheight.UserheightFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Config;
+import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public float mDy;
     public float mDz;
 
+    public Session mSession;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -274,9 +277,13 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     @Override
     public void onUpdate(FrameTime frameTime) {
         com.google.ar.core.Camera camera = mArfragment.getArSceneView().getArFrame().getCamera();
+        Config config = new Config(mSession);
+        config.setFocusMode(Config.FocusMode.AUTO);
+
         if (camera.getTrackingState() == TrackingState.TRACKING) {
             mArfragment.getPlaneDiscoveryController().hide();
         }
+        mSession.configure(config);
     }
 
 
