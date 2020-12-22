@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     public Anchor mAnchor = null;
     public AnchorNode mAnchorNode;
     public ModelRenderable mBotModelRender;
-    public ModelRenderable mMovModelRender;
+//    public ModelRenderable mMovModelRender;
     public ModelRenderable mDBHModelRender;
     public ModelRenderable mUHModelRender;
 
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 .thenAccept(
                         material -> {
 
-                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0f, (float)mAxis_Z/100);
+                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.5f, (float)mAxis_Z/100);
                             mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
                             mBotModelRender.setShadowCaster(false);
@@ -243,36 +243,33 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         });
     }
 
-    //Text View renderable
-    public void RenderText(int r){
-        //AR ViewRenderable
-
-        TextView ar_textview = new TextView(this);
-        ar_textview.setText((mTreeIndex+1)+"번 나무\n" +
-                "직경 : "+ String.format("%.1f", (((mRadi*2)/10) * ((mDistMeter*100)+(((mRadi*2)/10)+2)))
-                /(mDistMeter * 100)) + "cm\n" +
-                "거리 : " + String.format("%.1f",infoArray.get(mTreeIndex).getDist())+"m");
-        ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
-        ViewRenderable.builder()
-                .setView(this, ar_textview)
-                .build()
-                .thenAccept(viewRenderable -> {
-                    viewRenderable.getView().clearFocus();
-                    if(infoArray.size()>0) {
-                        Node text = infoArray.get(mTreeIndex).mText;
-                        text.setRenderable(null);
-                        text.setRenderable(viewRenderable);
-                        text.setParent(infoArray.get(mTreeIndex).getUHNode());
-                        text.setLocalPosition(new Vector3(infoArray.get(mTreeIndex).getUHNode().getLocalPosition().x
-                                + (float)r/1000+0.2f,
-                                mMain_UserHeight,
-                                infoArray.get(mTreeIndex).getUHNode().getLocalPosition().z));
-
-                        viewRenderable.setShadowCaster(false);
-                        viewRenderable.setShadowReceiver(false);
-                    }
-                });
-    }
+//    //Text View renderable
+//    public void RenderText(int r){
+//        //AR ViewRenderable
+//
+//        TextView ar_textview = new TextView(this);
+//        ar_textview.setText((mTreeIndex+1)+"번 나무");
+//        ar_textview.setBackgroundColor(android.graphics.Color.GRAY);
+//        ViewRenderable.builder()
+//                .setView(this, ar_textview)
+//                .build()
+//                .thenAccept(viewRenderable -> {
+//                    viewRenderable.getView().clearFocus();
+//                    if(infoArray.size()>0) {
+//                        Node text = infoArray.get(mTreeIndex).mText;
+//                        text.setRenderable(null);
+//                        text.setRenderable(viewRenderable);
+//                        text.setParent(infoArray.get(mTreeIndex).getUHNode());
+//                        text.setLocalPosition(new Vector3(infoArray.get(mTreeIndex).getUHNode().getLocalPosition().x
+//                                + (float)r/2000+0.2f,
+//                                mMain_UserHeight,
+//                                infoArray.get(mTreeIndex).getUHNode().getLocalPosition().z));
+//
+//                        viewRenderable.setShadowCaster(false);
+//                        viewRenderable.setShadowReceiver(false);
+//                    }
+//                });
+//    }
     //AR update
     @Override
     public void onUpdate(FrameTime frameTime) {
@@ -338,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             setUH_model();
             for(int i=0; i<infoArray.size(); i++){
                 infoArray.get(i).getBotNode().setRenderable(null);
-                infoArray.get(i).getMovNode().setRenderable(null);
+//                infoArray.get(i).getMovNode().setRenderable(null);
                 infoArray.get(i).getDBHNode().setRenderable(null);
                 infoArray.get(i).getUHNode().setRenderable(null);
             }
@@ -371,9 +368,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                 setDBH_model();
                 setUH_model();
                 int idx = mTreeIndex;
-                infoArray.get(idx).mText.setRenderable(null);
+//                infoArray.get(idx).mText.setRenderable(null);
                 infoArray.get(idx).getBotNode().setRenderable(null);
-                infoArray.get(idx).getMovNode().setRenderable(null);
+//                infoArray.get(idx).getMovNode().setRenderable(null);
                 infoArray.get(idx).getDBHNode().setRenderable(null);
                 infoArray.get(idx).getUHNode().setRenderable(null);
                 infoArray.remove(idx);

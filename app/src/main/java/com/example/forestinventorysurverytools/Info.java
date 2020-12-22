@@ -11,11 +11,11 @@ public class Info {
     public Info() {}
 
     TransformableNode mBotNode;
-    TransformableNode mMovNode;
+//    TransformableNode mMovNode;
     TransformableNode mDBHNode;
     TransformableNode mUHNode;
 
-    Node mText;
+//    Node mText;
     String mId;
     float mClino;
     float mDist;
@@ -35,7 +35,7 @@ public class Info {
                 TransformableNode uh, String mId) {
 
         this.mBotNode = bot;
-        this.mMovNode = mov;
+//        this.mMovNode = mov;
         this.mDBHNode = dbh;
         this.mUHNode = uh;
         this.mId = mId;
@@ -47,7 +47,7 @@ public class Info {
         mAzi = 0.0f;
         mAlti = 0.0f;
 
-        mText = new Node();
+//        mText = new Node();
     } //done
 
 
@@ -55,15 +55,18 @@ public class Info {
     public void setmBotNode(TransformableNode botNode) {
         this.mBotNode = botNode;
     }
-    public void setmMovNode(TransformableNode movNode) {
-        this.mMovNode = movNode;
-    }
+//    public void setmMovNode(TransformableNode movNode) {
+//        this.mMovNode = movNode;
+//    }
     public void setmDBHNode(TransformableNode dbhNode) {
         this.mDBHNode = dbhNode;
     }
     public void setmUHNode(TransformableNode uhNode) {
         this.mUHNode = uhNode;
     }
+//    public void setmText(Node textNode) {
+//        this.mText = textNode;
+//    }
 
     //Values
     public void setClino(float clino) {
@@ -91,9 +94,9 @@ public class Info {
     public TransformableNode getBotNode() {
         return mBotNode;
     }
-    public TransformableNode getMovNode() {
-        return mMovNode;
-    }
+//    public TransformableNode getMovNode() {
+//        return mMovNode;
+//    }
     public TransformableNode getDBHNode() {
         mDBHNode.setLocalPosition(new Vector3(0.0f, 1.2f, 0.0f));
         return mDBHNode;
@@ -101,6 +104,9 @@ public class Info {
     public TransformableNode getUHNode() {
         return mUHNode;
     }
+//    public Node getmText() {
+//        return mText;
+//    }
 
     //Values
     public float getClino() {

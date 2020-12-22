@@ -37,6 +37,7 @@ import com.google.ar.core.Pose;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Renderable;
@@ -275,7 +276,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                 String mPath;
                 ArFragment af = ma.mArfragment;
                 ArSceneView view = af.getArSceneView();
-
                 // AR이미지 포함한 사진
                 try {
                     SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
@@ -294,6 +294,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                             h_tmpRend.add(ma.infoArray.get(i).getUHNode().getRenderable());
                             ma.infoArray.get(i).getDBHNode().setRenderable(null);
                             ma.infoArray.get(i).getUHNode().setRenderable(null);
+//                            ma.infoArray.get(i).getmText().setRenderable(null);
                         }
                         try {
                             view.getSession().update();
