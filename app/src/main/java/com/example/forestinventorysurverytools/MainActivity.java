@@ -190,20 +190,20 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         });
     }
 
-    //Mover model
-    public void setMov_model() {
-        MaterialFactory.makeTransparentWithColor(this, new Color(0f,0f,0f,0f))
-                .thenAccept(
-                        material -> {
-
-                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.6f, (float)mAxis_Z/100);
-                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.35f, vector3, material);
-
-                            mMovModelRender.setShadowCaster(false);
-                            mMovModelRender.setShadowReceiver(false);
-                            Boolean b = (mMovModelRender == null);
-                        });
-    }
+//    //Mover model
+//    public void setMov_model() {
+//        MaterialFactory.makeTransparentWithColor(this, new Color(0f,0f,0f,0f))
+//                .thenAccept(
+//                        material -> {
+//
+//                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.6f, (float)mAxis_Z/100);
+//                            mMovModelRender = ShapeFactory.makeCylinder(0.1f, 1.35f, vector3, material);
+//
+//                            mMovModelRender.setShadowCaster(false);
+//                            mMovModelRender.setShadowReceiver(false);
+//                            Boolean b = (mMovModelRender == null);
+//                        });
+//    }
 
     //Diameter model
     public void setDBH_model() {
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
         if(infoArray.size()!=0){
             setBot_model();
-            setMov_model();
+//            setMov_model();
             setDBH_model();
             setUH_model();
             for(int i=0; i<infoArray.size(); i++){
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
             if (delete_anchor == mDelete_Anchor) {
 
                 setBot_model();
-                setMov_model();
+//                setMov_model();
                 setDBH_model();
                 setUH_model();
                 int idx = mTreeIndex;

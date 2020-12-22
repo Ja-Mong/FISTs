@@ -190,7 +190,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
 
         //AR
         ma.setBot_model();
-        ma.setMov_model();
+//        ma.setMov_model();
         ma.setDBH_model();
         ma.setUH_model();
         ma.mArfragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
@@ -207,7 +207,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             ma.mHeight = 0;
 
             ma.setBot_model();
-            ma.setMov_model();
+//            ma.setMov_model();
             ma.setDBH_model();
             ma.setUH_model();
 
@@ -343,7 +343,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_UI);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+//        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
     }
 
     @Override
@@ -361,7 +361,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         @Override
         public void onClick(View controlTop) {
             if (controlTop == mTop) {
-                ma.setMov_model();
+                ma.setBot_model();
+//                ma.setMov_model();
                 if (ma.infoArray.get(mID).getMovNode().isSelected()) {
 
                     Vector3 tmpVec3 = ma.infoArray.get(mID).getMovNode().getWorldPosition();
@@ -379,7 +380,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         @Override
         public void onClick(View controlBottom) {
             if (controlBottom == mBottom) {
-                ma.setMov_model();
+                ma.setBot_model();
                 if (ma.infoArray.get(mID).getMovNode().isSelected()) {
 
                     Vector3 tmpVec3 = ma.infoArray.get(mID).getMovNode().getWorldPosition();
@@ -397,7 +398,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         @Override
         public void onClick(View controlRight) {
             if (controlRight == mRight) {
-                ma.setMov_model();
+                ma.setBot_model();
                 if (ma.infoArray.get(mID).getMovNode().isSelected()) {
 
                     Vector3 tmpVec3 = ma.infoArray.get(mID).getMovNode().getWorldPosition();
@@ -414,7 +415,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
         @Override
         public void onClick(View controlLeft) {
             if (controlLeft == mLeft) {
-                ma.setMov_model();
+                ma.setBot_model();
                 if (ma.infoArray.get(mID).getMovNode().isSelected()) {
 
 
