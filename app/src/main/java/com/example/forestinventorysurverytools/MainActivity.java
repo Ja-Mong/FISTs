@@ -1,14 +1,11 @@
 package com.example.forestinventorysurverytools;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,27 +29,20 @@ import com.example.forestinventorysurverytools.ui.height.HeightFragment;
 import com.example.forestinventorysurverytools.ui.userheight.UserheightFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.Anchor;
-import com.google.ar.core.Config;
-import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
-import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
-import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
-import com.google.ar.sceneform.rendering.ViewRenderable;
+import com.google.ar.sceneform.rendering.Texture;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,8 +51,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Vector;
-import java.util.concurrent.CompletableFuture;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -182,9 +170,17 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //Bottom model
     public void setBot_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(1.0f, 1.27f, 0.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.YELLOW))
                 .thenAccept(
-                        material -> {
+                        material-> {
+
+                            material.setFloat("roughness", 1.0f);
+                            material.setFloat("metallic", 1.0f);
+                            material.setFloat("reflectance", 0.0f);
+                            MaterialFactory.MATERIAL_ROUGHNESS.indexOf("roughness", (int) 1.0f);
+                            MaterialFactory.MATERIAL_METALLIC.indexOf("metallic", (int) 1.0f);
+                            MaterialFactory.MATERIAL_REFLECTANCE.indexOf("reflectance", (int) 0.0f);
+
                             Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.5f, (float)mAxis_Z/100);
                             mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
@@ -210,23 +206,28 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //    }
     //Diameter model
     public void setDBH_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(1.0f, 0.0f, 0.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.RED))
                 .thenAccept(
                         material -> {
+                            material.setFloat("roughness", 1.0f);
+                            material.setFloat("metallic", 1.0f);
+                            material.setFloat("reflectance", 0.0f);
+                            MaterialFactory.MATERIAL_ROUGHNESS.indexOf("roughness", (int) 1.0f);
+                            MaterialFactory.MATERIAL_METALLIC.indexOf("metallic", (int) 1.0f);
+                            MaterialFactory.MATERIAL_REFLECTANCE.indexOf("reflectance", (int) 0.0f);
                             Vector3 vector3 = new Vector3((float) mAxis_X/100, 0f, (float) mAxis_Z/100);
                             mDBHModelRender = ShapeFactory.makeCylinder
                                     ((float) mRadi / 1000, 0.1f, vector3, material);
 
-                            mDBHModelRender.setShadowCaster(false);
-                            mDBHModelRender.setShadowReceiver(false);
-                            Boolean b = (mDBHModelRender == null);
-
+                                    mDBHModelRender.setShadowCaster(false);
+                                    mDBHModelRender.setShadowReceiver(false);
+                                    Boolean b = (mDBHModelRender == null);
                         });
     }
 
     //UserHeight model
     public void setUH_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(0.0f, 0.0f, 1.0f, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.BLUE))
                 .thenAccept(
                         material -> {
                             if (!mInputUH.getText().toString().isEmpty()) {
@@ -269,26 +270,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //                    }
 //                });
 //    }
-    //AR update
-public Session mSession = null;
-public Config config = null;
 
+    //AR update
     @Override
     public void onUpdate(FrameTime frameTime) {
         com.google.ar.core.Camera camera = mArfragment.getArSceneView().getArFrame().getCamera();
-
-        config = mSession.getConfig();
-        config.setFocusMode(Config.FocusMode.AUTO);
-
         if (camera.getTrackingState() == TrackingState.TRACKING) {
             mArfragment.getPlaneDiscoveryController().hide();
         }
-        mSession.configure(config);
-        try {
-            mSession.resume();
-        } catch (CameraNotAvailableException e) {
-            e.printStackTrace();
-        }
+
     }
 
     //Delete Anchor when user create new Anchor onTouch the screen
@@ -306,11 +296,12 @@ public Config config = null;
     Anchor tmpA;
     AnchorNode tmpAN;
     TransformableNode node;
+    
     public void saveAnchor() {
         tmpA = mAnchor;
         tmpAN = mAnchorNode;
-
     }
+
     public void retrieveAnchor() {
         mAnchor = tmpA;
         mAnchorNode = tmpAN;
