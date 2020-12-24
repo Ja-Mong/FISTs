@@ -77,7 +77,6 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
     //CheckBox
     CheckBox mSavePortraitScr;
-    CheckBox mSaveOriginImage;
 
 
     //Activity
@@ -90,6 +89,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     //Capture Data
     ArrayList<Renderable> tmpRend = new ArrayList<>();
     ArrayList<Renderable> h_tmpRend = new ArrayList<>();
+    ArrayList<Renderable> b_tmpRend = new ArrayList<>();
 
 
     //Values
@@ -136,7 +136,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
 
         //CheckBox
-        mSaveOriginImage = (CheckBox) root.findViewById(R.id.saveOriginImage);
+
         mSavePortraitScr = (CheckBox) root.findViewById(R.id.savePortraitScreen);
 
         return root;
@@ -287,97 +287,69 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                         dir.mkdir();
                     }
                     mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.mTreeIndex).getId() + ".jpg";
-
-                    if (mSaveOriginImage.isChecked()) {
-                        for (int i = 0; i < ma.infoArray.size(); i++) {
+                    for (int i = 0; i < ma.infoArray.size(); i++) {
+                        if(i==ma.mTreeIndex) {
+                            tmpRend.add(null);
+                            h_tmpRend.add(null);
+                            b_tmpRend.add(null);
+                        }else {
                             tmpRend.add(ma.infoArray.get(i).getDBHNode().getRenderable());
                             h_tmpRend.add(ma.infoArray.get(i).getUHNode().getRenderable());
+                            b_tmpRend.add(ma.infoArray.get(i).getBotNode().getRenderable());
                             ma.infoArray.get(i).getDBHNode().setRenderable(null);
                             ma.infoArray.get(i).getUHNode().setRenderable(null);
+                            ma.infoArray.get(i).getBotNode().setRenderable(null);
 //                            ma.infoArray.get(i).getmText().setRenderable(null);
                         }
-                        try {
-                            view.getSession().update();
-                        } catch (CameraNotAvailableException e) {
-                            e.printStackTrace();
-                        }
+                    }
 
-                        final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                        handlerThread.start();
+                    Handler mHandler = new Handler();
 
-                        PixelCopy.request(view, mybitmap, (copyResult) -> {
-                            if (copyResult == PixelCopy.SUCCESS) {
-                                try {
-                                    saveBitmapToDisk(mybitmap, mPath);
-                                } catch (IOException e) {
-                                    return;
-                                }
-                            }
-                            handlerThread.quitSafely();
-                        }, new Handler(handlerThread.getLooper()));
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                            final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+                            handlerThread.start();
 
-                        //AR 제외한 원본사진
-                        Handler mHandler = new Handler();
-                        mHandler.postDelayed(new Runnable() {
-                            public void run() {
-                                SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-                                String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
-                                String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
-                                String mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.mTreeIndex).getId() + "_ori.jpg";
-
-                                final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                                final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                                handlerThread.start();
-
-                                PixelCopy.request(view, mybitmap, (copyResult) -> {
-                                    if (copyResult == PixelCopy.SUCCESS) {
-                                        try {
-                                            saveBitmapToDisk(mybitmap, mPath);
-                                        } catch (IOException e) {
-                                            return;
-                                        }
+                            PixelCopy.request(view, mybitmap, (copyResult) -> {
+                                if (copyResult == PixelCopy.SUCCESS) {
+                                    try {
+                                        saveBitmapToDisk(mybitmap, mPath);
+                                    } catch (IOException e) {
+                                        return;
                                     }
-                                    handlerThread.quitSafely();
-                                }, new Handler(handlerThread.getLooper()));
-                            }
-                        }, 300);
+                                }
+                                handlerThread.quitSafely();
+                            }, new Handler(handlerThread.getLooper()));
+                        }
+                    }, 300);
 
-                        mHandler.postDelayed(new Runnable() {
-                            public void run() {
-                                for (int i = 0; i < ma.infoArray.size(); i++) {
 
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            for (int i = 0; i < ma.infoArray.size(); i++) {
+                                if(i!=ma.mTreeIndex) {;
                                     ma.infoArray.get(i).getDBHNode().setRenderable(tmpRend.get(i));
                                     ma.infoArray.get(i).getUHNode().setRenderable(h_tmpRend.get(i));
-                                }
-                                tmpRend.clear();
-                                h_tmpRend.clear();
-                                try {
-                                    view.getSession().update();
-                                } catch (CameraNotAvailableException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                        }, 600);
-
-                    } else {
-
-                        final Bitmap mybitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-                        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
-                        handlerThread.start();
-
-                        PixelCopy.request(view, mybitmap, (copyResult) -> {
-                            if (copyResult == PixelCopy.SUCCESS) {
-                                try {
-                                    saveBitmapToDisk(mybitmap, mPath);
-                                } catch (IOException e) {
-                                    return;
+                                    ma.infoArray.get(i).getBotNode().setRenderable(b_tmpRend.get(i));
+//                            ma.infoArray.get(i).getmText().setRenderable(null);
                                 }
                             }
-                            handlerThread.quitSafely();
-                        }, new Handler(handlerThread.getLooper()));
-                    }
+                            tmpRend.clear();
+                            h_tmpRend.clear();
+                            b_tmpRend.clear();
+                            /*
+                            try {
+                                view.getSession().update();
+                            } catch (CameraNotAvailableException e) {
+                                e.printStackTrace();
+                            }
+                            */
+                        }
+                    }, 600);
+
+
+
                     Toast.makeText(ma, mPath, Toast.LENGTH_LONG).show();
                 } catch (Throwable e) {
 

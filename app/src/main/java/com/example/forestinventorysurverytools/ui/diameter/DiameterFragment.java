@@ -291,6 +291,7 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
             mListInfo.get(mID).getDBHNode().select();
             ma.mTreeIndex = mID;
             mRadiusbar.setProgress(100,true);
+            ma.showToast(Integer.toString(mID + 1) + "번째 노드 생성");
         });
         return root;
     }
@@ -313,8 +314,8 @@ public class DiameterFragment extends Fragment implements Scene.OnUpdateListener
                     if (hitTestResult.getNode().equals(mListInfo.get(i).getBotNode()) ||
                             hitTestResult.getNode().equals(mListInfo.get(i).getDBHNode())) {
                         mID = i;
+                        break;
                     }
-                    break;
                 }
                 ma.showToast(Integer.toString(mID + 1) + "번째 요소 선택(" + mListInfo.get(mID).getId() + ")");
 

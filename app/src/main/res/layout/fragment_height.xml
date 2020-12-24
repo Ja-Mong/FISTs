@@ -60,17 +60,8 @@
         android:id="@+id/savePortraitScreen"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/saveOriginImage"
         android:layout_alignParentRight="true"
         android:checked="true"
         android:text="세로저장" />
-
-    <CheckBox
-        android:id="@+id/saveOriginImage"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:checked="false"
-        android:text="원본이미지저장" />
 
 </RelativeLayout>
