@@ -47,7 +47,6 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 
-import org.apache.poi.ss.formula.functions.T;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
