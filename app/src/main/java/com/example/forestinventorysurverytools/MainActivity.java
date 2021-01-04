@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //    }
     //Diameter model
     public void setDBH_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(139, 0 ,255, 1.0f))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.MAGENTA))
                 .thenAccept(
                         material -> {
                             material.setFloat("roughness", 1.0f);
