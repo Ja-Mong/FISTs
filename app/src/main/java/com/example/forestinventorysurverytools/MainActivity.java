@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //Bottom model
     public void setBot_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.YELLOW))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.BLUE))
                 .thenAccept(
                         material-> {
 
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                             MaterialFactory.MATERIAL_METALLIC.indexOf("metallic", (int) 1.0f);
                             MaterialFactory.MATERIAL_REFLECTANCE.indexOf("reflectance", (int) 0.0f);
 
-                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.5f, (float)mAxis_Z/100);
+                            Vector3 vector3 = new Vector3((float)mAxis_X/100, 0.2f, (float)mAxis_Z/100);
                             mBotModelRender = ShapeFactory.makeSphere(0.05f, vector3, material);
 
                             mBotModelRender.setShadowCaster(false);
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 //    }
     //Diameter model
     public void setDBH_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.RED))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(139, 0 ,255))
                 .thenAccept(
                         material -> {
                             material.setFloat("roughness", 1.0f);
