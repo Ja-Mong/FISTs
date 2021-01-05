@@ -294,13 +294,13 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                             b_tmpRend.add(null);
                         }else {
                             tmpRend.add(ma.infoArray.get(i).getDBHNode().getRenderable());
-                            h_tmpRend.add(ma.infoArray.get(i).getUHNode().getRenderable());
                             b_tmpRend.add(ma.infoArray.get(i).getBotNode().getRenderable());
                             ma.infoArray.get(i).getDBHNode().setRenderable(null);
-                            ma.infoArray.get(i).getUHNode().setRenderable(null);
                             ma.infoArray.get(i).getBotNode().setRenderable(null);
 //                            ma.infoArray.get(i).getmText().setRenderable(null);
                         }
+                        h_tmpRend.add(ma.infoArray.get(i).getUHNode().getRenderable());
+                        ma.infoArray.get(i).getUHNode().setRenderable(null);
                     }
 
                     Handler mHandler = new Handler();
@@ -330,10 +330,10 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                             for (int i = 0; i < ma.infoArray.size(); i++) {
                                 if(i!=ma.mTreeIndex) {;
                                     ma.infoArray.get(i).getDBHNode().setRenderable(tmpRend.get(i));
-                                    ma.infoArray.get(i).getUHNode().setRenderable(h_tmpRend.get(i));
                                     ma.infoArray.get(i).getBotNode().setRenderable(b_tmpRend.get(i));
 //                            ma.infoArray.get(i).getmText().setRenderable(null);
                                 }
+                                ma.infoArray.get(i).getUHNode().setRenderable(h_tmpRend.get(i));
                             }
                             tmpRend.clear();
                             h_tmpRend.clear();
