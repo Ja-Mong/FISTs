@@ -227,9 +227,15 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     //UserHeight model
     public void setUH_model() {
-        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.BLUE))
+        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.YELLOW))
                 .thenAccept(
                         material -> {
+                            material.setFloat("roughness", 1.0f);
+                            material.setFloat("metallic", 1.0f);
+                            material.setFloat("reflectance", 0.0f);
+                            MaterialFactory.MATERIAL_ROUGHNESS.indexOf("roughness", (int) 1.0f);
+                            MaterialFactory.MATERIAL_METALLIC.indexOf("metallic", (int) 1.0f);
+                            MaterialFactory.MATERIAL_REFLECTANCE.indexOf("reflectance", (int) 0.0f);
                             if (!mInputUH.getText().toString().isEmpty()) {
                                 mMain_UserHeight = Float.valueOf(mInputUH.getText().toString()) / 100 ;
                                 Vector3 vector3 = new Vector3((float) mAxis_X / 100, mMain_UserHeight,
