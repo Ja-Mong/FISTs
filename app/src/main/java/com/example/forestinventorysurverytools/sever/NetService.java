@@ -26,7 +26,6 @@ public interface NetService {
     @POST("/imgsUpload")
     Call<String> imgFile(@Part ArrayList<MultipartBody.Part> imageFile);
 
-    @Multipart
     @POST("/jsonUpload")
-    Call<String> jsonFile(@Part MultipartBody.Part jsonFile);
+    Call<String> jsonFile(@Body String jsonFile);
 }

@@ -29,12 +29,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -64,7 +68,7 @@ public class UploadView extends AppCompatActivity {
     NetService mNetService;
 
 
-    MultipartBody.Part mbPart=null;
+    String mbPart=null;
     ArrayList<MultipartBody.Part> blist = new ArrayList<MultipartBody.Part>();
 
 
@@ -142,6 +146,7 @@ public class UploadView extends AppCompatActivity {
 
 
     // jpg나 json 선택 완료 직후의 작업
+    @SneakyThrows
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -177,8 +182,12 @@ public class UploadView extends AppCompatActivity {
                 Uri uri = data.getData();
                 File file = new File(FileUtil.getPath(uri,getApplicationContext()));
 
-                RequestBody requestFile =RequestBody.create(MediaType.parse(getContentResolver().getType(uri)),file );
-                mbPart = MultipartBody.Part.createFormData("files", file.getName(), requestFile);
+
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(new FileReader(file));
+                JSONArray jsonArray = (JSONArray) obj;
+                mbPart = jsonArray.toJSONString();
+
                 if(file!=null && mbPart!=null)
                     mView_json.setText(jsonText+"\n 선택된 파일 : "+file.getName());
                 else
