@@ -11,65 +11,35 @@
         android:text="← 메인"
         android:textSize="10pt"
         android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/Btn_sel_img"
-        android:layout_marginTop="100dp"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:background="#abc9fd"
-        android:layout_marginLeft="30dp"
-        android:text="이미지 선택"
-        android:textSize="8pt"
-        android:textStyle="bold"
-        />
-    <Button
-        android:id="@+id/Btn_upload_img"
-        android:layout_marginTop="100dp"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/Btn_sel_img"
-        android:layout_marginLeft="50dp"
-        android:text="jpg업로드"
-        android:background="#5B4CAF50"
-        android:textSize="8pt"
-        android:textStyle="bold"
-        />
-
     <TextView
-        android:id="@+id/tv_selected_img"
+        android:id="@+id/uploadGuide"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/btn_return"
+        android:textAlignment="center"
+        android:text="정보파일 업로드 후 이미지 업로드하세요."
+        android:textSize="22dp"
+        android:layout_height="35dp"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_alignTop="@id/Btn_sel_img"
-        android:layout_marginTop="70dp"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbarFadeDuration="0"
-        android:scrollbarStyle="outsideInset"
-        android:scrollbars="vertical"
-        android:text="선택된 이미지 파일(.jpg확장자)-다중선택"
-        android:textSize="20dp"
-        />
-
+        android:textStyle="bold"
+        android:textColor="#ff0000"/>
     <Button
         android:id="@+id/Btn_sel_json"
+        android:layout_marginTop="100dp"
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="300dp"
+        android:background="#abc9fd"
         android:layout_marginLeft="30dp"
         android:text="정보파일 선택"
-        android:background="#abc9fd"
         android:textSize="8pt"
         android:textStyle="bold"
         />
     <Button
         android:id="@+id/Btn_upload_json"
+        android:layout_marginTop="100dp"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_toRightOf="@+id/Btn_sel_json"
         android:layout_marginLeft="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="300dp"
         android:text="json업로드"
         android:background="#5B4CAF50"
         android:textSize="8pt"
@@ -80,13 +50,53 @@
         android:id="@+id/tv_selected_json"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:scrollbars="vertical"
         android:layout_alignTop="@id/Btn_sel_json"
+        android:layout_marginTop="70dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"
+        android:text="선택된 정보 파일(.json확장자)-단일선택"
+        android:textSize="20dp"
+        />
+
+    <Button
+        android:id="@+id/Btn_sel_img"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="300dp"
+        android:layout_marginLeft="30dp"
+        android:text="이미지 선택"
+        android:background="#abc9fd"
+        android:textSize="8pt"
+        android:textStyle="bold"
+        />
+    <Button
+        android:id="@+id/Btn_upload_img"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@+id/Btn_sel_img"
+        android:layout_marginLeft="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="300dp"
+        android:text="jpg업로드"
+        android:background="#5B4CAF50"
+        android:textSize="8pt"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/tv_selected_img"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scrollbars="vertical"
+        android:layout_alignTop="@id/Btn_sel_img"
         android:layout_marginTop="70dp"
         android:textSize="20dp"
         android:scrollbarFadeDuration="0"
         android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:text="선택된 정보 파일(.json확장자)-단일선택"
+        android:text="선택된 이미지 파일(.jpg확장자)-다중선택"
         android:scrollbarStyle="outsideInset"
         />
 

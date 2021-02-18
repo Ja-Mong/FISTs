@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -200,6 +202,7 @@ public class UploadView extends AppCompatActivity {
 
     //이미지 업로드
     View.OnClickListener upload_img_Listener = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onClick(View v) {
             mView_img.setText(imgText+"\n 업로드 중...");
@@ -208,6 +211,10 @@ public class UploadView extends AppCompatActivity {
                 mNetConnect.buildNetworkService(baseurl);
                 mNetService = mNetConnect.getNetService();
                 Call<String> imgFile = mNetService.imgFile(blist);
+                Log.d("tag","##"+blist.get(0).body().getClass().getName()+" "
+                        +blist.get(0).body().getClass().getCanonicalName()+
+                        " "+blist.get(0).body().getClass().getSimpleName()
+                +" "+blist.get(0).body().getClass().getTypeName());
                 imgFile.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
