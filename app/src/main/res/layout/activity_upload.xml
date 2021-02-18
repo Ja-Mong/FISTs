@@ -5,19 +5,23 @@
 
     <Button
         android:id="@+id/btn_return"
-        android:layout_width="35dp"
+        android:layout_width="80dp"
         android:layout_height="35dp"
-        android:background="@color/cardview_shadow_end_color"
-        android:text="←"
-        />
+        android:background="#BA20D46C"
+        android:text="← 메인"
+        android:textSize="10pt"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/Btn_sel_img"
         android:layout_marginTop="100dp"
         android:layout_width="150dp"
         android:layout_height="50dp"
+        android:background="#abc9fd"
         android:layout_marginLeft="30dp"
-        android:text="select IMG"
+        android:text="이미지 선택"
+        android:textSize="8pt"
+        android:textStyle="bold"
         />
     <Button
         android:id="@+id/Btn_upload_img"
@@ -26,7 +30,10 @@
         android:layout_height="50dp"
         android:layout_toRightOf="@+id/Btn_sel_img"
         android:layout_marginLeft="50dp"
-        android:text="Upload IMG"
+        android:text="jpg업로드"
+        android:background="#5B4CAF50"
+        android:textSize="8pt"
+        android:textStyle="bold"
         />
 
     <TextView
@@ -39,6 +46,7 @@
         android:scrollbarFadeDuration="0"
         android:scrollbarStyle="outsideInset"
         android:scrollbars="vertical"
+        android:text="선택된 이미지 파일(.jpg확장자)-다중선택"
         android:textSize="20dp"
         />
 
@@ -49,7 +57,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="300dp"
         android:layout_marginLeft="30dp"
-        android:text="Select json"
+        android:text="정보파일 선택"
+        android:background="#abc9fd"
+        android:textSize="8pt"
+        android:textStyle="bold"
         />
     <Button
         android:id="@+id/Btn_upload_json"
@@ -59,7 +70,10 @@
         android:layout_marginLeft="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="300dp"
-        android:text="Upload json"
+        android:text="json업로드"
+        android:background="#5B4CAF50"
+        android:textSize="8pt"
+        android:textStyle="bold"
         />
 
     <TextView
@@ -72,7 +86,10 @@
         android:textSize="20dp"
         android:scrollbarFadeDuration="0"
         android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:text="선택된 정보 파일(.json확장자)-단일선택"
         android:scrollbarStyle="outsideInset"
         />
+
+
 
 </RelativeLayout>
