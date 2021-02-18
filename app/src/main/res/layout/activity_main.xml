@@ -201,7 +201,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:onClick="Go_upload_view"
-        android:src="@drawable/uploadIcon"
+        android:src="@drawable/uploadicon"
         android:background="@drawable/circle_background"
         />
 
@@ -215,7 +215,7 @@
         android:layout_toRightOf="@id/Btn_upload"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/analysisIcon"
+        android:src="@drawable/analysisicon"
         android:background="@drawable/circle_background"
         android:onClick="Go_analyize_view"
         />

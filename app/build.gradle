@@ -50,9 +50,13 @@ dependencies {
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.10.0'
 
 
+
     testImplementation 'junit:junit:4.12'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // Gson 레트로핏에서 스칼라컨버터??
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
+
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 

@@ -21,7 +21,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.forestinventorysurverytools.sever.NetConnect;
 import com.example.forestinventorysurverytools.sever.NetService;
-import com.example.forestinventorysurverytools.sever.treeDTO;
+import com.example.forestinventorysurverytools.sever.TreeDTO;
 import com.example.forestinventorysurverytools.ui.diameter.DiameterFragment;
 //import com.example.forestinventorysurverytools.ui.distance.DistanceFragment;
 import com.example.forestinventorysurverytools.ui.height.HeightFragment;
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
     //base Server url
-    public String baseurl = "http://192.168.0.12:8081/webfist/"; // "http://114.129.213.50:8080/webfist/";
+    public String baseurl = "http://192.168.0.17:8080/"; // "http://114.129.213.50:8080/webfist/";
     //WebServer Upload
     NetConnect mNetConnect = new NetConnect();
     NetService mNetService;
@@ -413,9 +413,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     //Save data
     String dirPath;
     JSONArray jarray = new JSONArray();
-//    ArrayList<treeDTO> tArray = new ArrayList<>();
-//    int save_index = 0;  // array에 저장된 나무 수
-//    int save_count = 0; // 현재 저장한 횟수
+
     public void Save_data(View v) {
         if (infoArray.size() != 0) {
             String pattern = "yyMMdd";
@@ -440,22 +438,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         obj.put("dist", Float.toString(infoArray.get(i).getDist()));
                         obj.put("dbh", Float.toString(infoArray.get(i).getDBH()));
                         obj.put("height", Float.toString(infoArray.get(i).getHeight()));
-                        obj.put("Clino", Float.toString(infoArray.get(i).getClino())); //경사
-                        obj.put("Azimuth", Float.toString(infoArray.get(i).getAzi())); //방위
-                        obj.put("Altitude", Float.toString(infoArray.get(i).getAlti())); //고도
+                        obj.put("azimuth", Float.toString(infoArray.get(i).getAzi())); //방위
                         obj.put("latitude",Double.toString(infoArray.get(i).getLatitude())); // 위도
                         obj.put("longitude",Double.toString(infoArray.get(i).getLongitude())); // 경도
                         obj.put("pid",UserID); // 조사자
+                        obj.put("imgPath",""); // 이미지경로
                         jarray.put(obj);
-//                        Log.d("tag", "treeDTO 생성시작--------------------------------------------");
-//                        treeDTO tree = new treeDTO(infoArray.get(i).getId(), Float.toString(infoArray.get(i).getDist()),
-//                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()),
-//                                Float.toString(infoArray.get(i).getAzi()), Float.toString(infoArray.get(i).getClino()),
-//                                Float.toString(infoArray.get(i).getAlti()),
-//                                Double.toString(infoArray.get(i).getLatitude()),Double.toString(infoArray.get(i).getLongitude()),
-//                                UserID);
-//                        tArray.add(tree);
-
                     }
                     Gson gson = new Gson();
                     FileWriter fw = new FileWriter(savefile);
@@ -466,13 +454,6 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
                     Log.d("tag", "File 생성완료");
                     showToast(dirPath + "에 저장 하였습니다.");
-
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                    builder.setTitle("주의!!");
-//                    builder.setMessage("현재 표준지에 대해 모든 측정이 끝났다면, '예' 버튼을 눌러 웹서버에 측정 값 및 사진들을 업로드 하세요.");
-//                    builder.setPositiveButton("예", uploadWebServerListener);
-//                    builder.setNegativeButton("아니오", null);
-//                    builder.create().show();
 
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();

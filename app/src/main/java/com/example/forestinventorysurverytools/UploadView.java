@@ -1,5 +1,6 @@
 package com.example.forestinventorysurverytools;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,9 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.forestinventorysurverytools.sever.FileUtil;
 import com.example.forestinventorysurverytools.sever.NetConnect;
 import com.example.forestinventorysurverytools.sever.NetService;
-import com.example.forestinventorysurverytools.sever.treeDTO;
+import com.example.forestinventorysurverytools.sever.TreeDTO;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -33,6 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,6 +53,10 @@ public class UploadView extends AppCompatActivity {
     TextView mView_img;
     TextView mView_json;
 
+    String imgText;
+    String jsonText;
+
+
     //base Server url
     public String baseurl;
     //WebServer Upload
@@ -55,9 +64,9 @@ public class UploadView extends AppCompatActivity {
     NetService mNetService;
 
 
-    public ArrayList<String> img_path_arr;
-    public ArrayList<String> json_path_arr;
-    public ArrayList<treeDTO> tArray;
+    MultipartBody.Part mbPart=null;
+    ArrayList<MultipartBody.Part> blist = new ArrayList<MultipartBody.Part>();
+
 
     public String UserID;
 
@@ -86,8 +95,12 @@ public class UploadView extends AppCompatActivity {
         mUpload_img_btn.setOnClickListener(upload_img_Listener);
         mUpload_json_btn.setOnClickListener(upload_json_Listener);
         mReturn.setOnClickListener(return_Listener);
+
+        imgText = mView_img.getText().toString();
+        jsonText = mView_json.getText().toString();
     }
 
+    //메인으로돌아가기
     View.OnClickListener return_Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -95,13 +108,15 @@ public class UploadView extends AppCompatActivity {
         }
     };
 
+
+    // 이미지 선택
     View.OnClickListener sel_img_Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent();
             Uri uri = Uri.parse(dirPath);
             intent.setDataAndType(uri,"image/*");
-//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
             intent.setAction(Intent.ACTION_GET_CONTENT);
 //            startActivityForResult(intent,1);
             startActivityForResult(
@@ -110,150 +125,141 @@ public class UploadView extends AppCompatActivity {
         }
     };
 
+    //JSON파일 선택
     View.OnClickListener sel_json_Listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent();
             Uri uri = Uri.parse(dirPath);
-            //intent.setDataAndType(uri,"application/json");
-            intent.setDataAndType(uri,"application/octet-stream");
-//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
-//            setResult(RESULT_OK,intent);
+            intent.setDataAndType(uri,"application/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
 //            startActivityForResult(intent,1);
             startActivityForResult(
                     Intent.createChooser(intent,"선택")
-                    ,1);
-        }
-    };
-
-    View.OnClickListener upload_img_Listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            // textview에서 \n 파싱 후 path arr에 집어넣기
-            String rawdata = mView_img.getText().toString();
-            String [] split = rawdata.split("\n");
-            for(String tmp : split){
-                Log.d("tag",tmp);
-            }
-            // 각 img path에서 이미지 데이터 가져오기
-
-            // 이미지 하나씩 전송
-
-            // array 초기화
-            img_path_arr.clear();
-            tArray.clear();
-
-            //textview 초기화
-            mView_img.setText("");
+                    ,2);
         }
     };
 
 
-    View.OnClickListener upload_json_Listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mNetConnect.buildNetworkService(baseurl);
-            mNetService = mNetConnect.getNetService();
-
-            // textview에서 \n 파싱 후 path arr에 집어넣기
-            String rawdata = mView_json.getText().toString();
-            String [] split = rawdata.split("\n");
-            for(String tmp : split){
-                Log.d("tag",tmp);
-                json_path_arr.add(tmp);
-            }
-
-            // 각 json path에서 데이터 불러오기
-            //https://medium.com/@nayantala259/android-how-to-read-and-write-parse-data-from-json-file-226f821e957a
-
-            for(String tmp: json_path_arr){
-                JsonParser jsonParser = new JsonParser();
-                try{
-                    JsonElement element = jsonParser.parse(new FileReader(tmp));
-                    JsonObject jsonObject = element.getAsJsonObject();
-                    JsonArray jsonArray = (JsonArray)jsonObject.get("nameValuePairs");
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-
-            }
-
-
-
-            // json array 내 요소 -> treeDTO araaylist로 변경
-
-            // post_tree_dto 사용해서 하나씩 전송
-            try{
-                for (int i=0; i<tArray.size();i++){
-                    Call<String> post_tree_dto = mNetService.post_tree_dto(tArray.get(i));
-                    post_tree_dto.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
-                            Log.d("tag", "비동기, 업로드 성공");
-                        }
-
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "업로드 실패1" , Toast.LENGTH_SHORT).show();
-                            Log.d("tag", "실패!, 상태 코드: " + t.getMessage());
-                            Log.d("tag",t.getStackTrace().toString());
-                        }
-                    });
-                }
-            }catch (Exception e){
-                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
-                Log.d("tag", "업로드 실패" + e.getMessage());
-            }
-
-
-            //tArray, path array 초기화
-            json_path_arr.clear();
-            tArray.clear();
-            //textview 초기화
-            mView_json.setText("");
-        }
-    };
-    
-    public String realpath = "";
+    // jpg나 json 선택 완료 직후의 작업
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode != 1 || resultCode != RESULT_OK){
-            return;
+        if(resultCode == RESULT_OK){
+            if(requestCode==1){
+                String fName= "";
+                blist.clear();
+                ClipData clipData = data.getClipData();
+                //이미지 URI 를 이용하여 이미지뷰에 순서대로 세팅한다.
+                if (clipData != null) {
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        Uri urione = clipData.getItemAt(i).getUri();
+                        String ss= FileUtil.getPath(urione,getApplicationContext());
+                        Log.d("tag", "@@"+ss);
+                        File file = new File(FileUtil.getPath(urione,getApplicationContext()));
+                        if(i==0)
+                            fName = file.getName();
+
+                        // 멀티파트바디 파트타입으로 변환
+                        RequestBody requestFile =RequestBody.create(MediaType.parse(getContentResolver().getType(urione)),file );
+                        MultipartBody.Part body = MultipartBody.Part.createFormData("files", file.getName(), requestFile);
+                        blist.add(body);
+
+
+                    }
+                    if(blist.size()>0)
+                        mView_img.setText(imgText+"\n선택된 파일 : "+fName+"\n 외 "+blist.size()+"개가 선택");
+                    else
+                        mView_img.setText(imgText+"\n선택된 파일이 없습니다.");
+                }
+            }else{
+                mbPart=null;
+                Uri uri = data.getData();
+                File file = new File(FileUtil.getPath(uri,getApplicationContext()));
+
+                RequestBody requestFile =RequestBody.create(MediaType.parse(getContentResolver().getType(uri)),file );
+                mbPart = MultipartBody.Part.createFormData("files", file.getName(), requestFile);
+                if(file!=null && mbPart!=null)
+                    mView_json.setText(jsonText+"\n 선택된 파일 : "+file.getName());
+                else
+                    mView_json.setText(jsonText+"\n선택된 파일이 없습니다.");
+            }
         }
-
-        Uri selected_file = data.getData();
-        String filename = selected_file.getLastPathSegment();
-        Log.d("tag",filename);
-
-        String p = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String [] split = filename.split(":");
-
-        if ("primary".equals(split[0])){
-            realpath = p + "/" + split[1];
-        }
-        Log.d("tag", realpath);
-        Toast.makeText(getApplicationContext(), realpath, Toast.LENGTH_SHORT).show();
-
-        String [] split2 = split[1].split("/");
-
-        if (split2[1].startsWith("FistJSON")){
-            Log.d("tag", "json 파일");
-            String view_data = mView_json.getText().toString();
-            view_data += realpath+"\n";
-            mView_json.setText(view_data);
-            //arr에 add만 하면 에러발생
-        }else{
-            Log.d("tag", "img 파일");
-            String view_data = mView_img.getText().toString();
-            view_data += realpath+"\n";
-            mView_img.setText(view_data);
-        }
-
     }
+
+
+
+    //이미지 업로드
+    View.OnClickListener upload_img_Listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mView_img.setText(imgText+"\n 업로드 중...");
+            try {
+                Log.d("tag", "업로드 수행-----------------");
+                mNetConnect.buildNetworkService(baseurl);
+                mNetService = mNetConnect.getNetService();
+                Call<String> imgFile = mNetService.imgFile(blist);
+                imgFile.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+
+                        String urJson = response.body();
+                        mView_img.setText(imgText+"\n 업로드 완료");
+                        Log.d("tag", "비동기, 업로드 성공 " + urJson);
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "업로드 실패1", Toast.LENGTH_SHORT).show();
+                        Log.d("tag", "실패!, 상태 코드: " + t.getMessage());
+                        mView_img.setText(imgText+"\n 업로드 실패");
+                        t.getStackTrace().toString();
+                    }
+                });
+
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
+                Log.d("tag", "업로드 실패 에러:" + e.getMessage());
+            }
+        }
+    };
+
+    // JSON업로드
+    View.OnClickListener upload_json_Listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mView_json.setText(jsonText+"\n 업로드 중...");
+            try {
+                Log.d("tag", "업로드 수행-----------------");
+                mNetConnect.buildNetworkService(baseurl);
+                mNetService = mNetConnect.getNetService();
+                Call<String> jsonFile = mNetService.jsonFile(mbPart);
+                jsonFile.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+                        mView_json.setText(jsonText+"\n 업로드 완료");
+                        String urJson = response.body();
+                        Log.d("tag", "비동기, 업로드 성공 " + urJson);
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "업로드 실패1", Toast.LENGTH_SHORT).show();
+                        Log.d("tag", "실패!, 상태 코드: " + t.getMessage()+" "+t.toString());
+                        t.getStackTrace().toString();
+                        mView_json.setText(jsonText+"\n 업로드 실패");
+                    }
+                });
+
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
+                Log.d("tag", "업로드 실패 에러:" + e.getMessage());
+            }
+        }
+    };
+
+
 
 
 }
