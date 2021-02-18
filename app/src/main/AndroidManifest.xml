@@ -60,8 +60,16 @@
             </intent-filter>
         </activity>
 
-
-
+        <activity android:name=".UploadView"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/app_name"
+            >
+        </activity>
+        <activity android:name=".AnalyzeView"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/app_name"
+            >
+        </activity>
     </application>
 
 </manifest>

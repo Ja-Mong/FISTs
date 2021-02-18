@@ -278,15 +278,16 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                 ArSceneView view = af.getArSceneView();
                 // AR이미지 포함한 사진
                 try {
-                    SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-                    String filename = "FistIMG_" + dateformat.format(System.currentTimeMillis());
+                    //SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+                    String current_id = ma.infoArray.get(ma.mTreeIndex).getId();
+                    String filename = "FistIMG_" + current_id;
 
                     String dirPath = Environment.getExternalStorageDirectory().toString() + "/FIST";
                     File dir = new File(dirPath);
                     if (!dir.exists()) {
                         dir.mkdir();
                     }
-                    mPath = dirPath + "/" + filename + "_" + ma.infoArray.get(ma.mTreeIndex).getId() + ".jpg";
+                    mPath = dirPath + "/" + filename + ".jpg";
                     for (int i = 0; i < ma.infoArray.size(); i++) {
                         if(i==ma.mTreeIndex) {
                             tmpRend.add(null);

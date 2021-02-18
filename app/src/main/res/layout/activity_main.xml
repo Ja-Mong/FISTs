@@ -190,5 +190,31 @@
         android:scaleType="centerInside"
         android:src="@drawable/save_data" />
 
+    <ImageButton
+        android:id="@+id/Btn_upload"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/Btn_save"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:onClick="Go_upload_view"
+        />
+
+    <ImageButton
+        android:id="@+id/Btn_analyze"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/Btn_upload"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_background"
+        android:onClick="Go_analyize_view"
+        />
+
 
 </RelativeLayout>

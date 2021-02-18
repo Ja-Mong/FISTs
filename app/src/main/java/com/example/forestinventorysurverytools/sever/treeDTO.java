@@ -19,14 +19,10 @@ public class treeDTO {
     private String latitude;
     private String longitude;
 
-//    private String latitude;
-//    private String longitude;
-//    private String pid;
-//    private String imgloc;
-//    private String imgid;
+    private String pid;
 
     public treeDTO(){};
-    public treeDTO(String tid, String dist, String dbh, String h, String l1, String l2, String l3, String l4, String l5){
+    public treeDTO(String tid, String dist, String dbh, String h, String l1, String l2, String l3, String l4, String l5,String pid){
 
         this.tid = tid;
         this.dist = dist;
@@ -37,6 +33,7 @@ public class treeDTO {
         this.alti = l3;
         this.latitude=l4;
         this.longitude=l5;
+        this.pid = pid;
     }
 
     public String getDbh() {
@@ -61,6 +58,18 @@ public class treeDTO {
         return alti;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
     public void setDbh(String dbh) {
         this.dbh = dbh;
     }
@@ -83,14 +92,15 @@ public class treeDTO {
         this.alti = alti;
     }
 
-//    @Override
-//    public String toString() {
-//        return "treeDTO{" +
-//                "tid='" + tid + '\'' +
-//                ", dist='" + dist + '\'' +
-//                ", dbh='" + dbh + '\'' +
-//                ", height='" + height + '\'' +
-//                '}';
-//    }
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
 
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
 }

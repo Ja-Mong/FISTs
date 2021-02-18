@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_return"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:text="←"
+        />
+
+    <Button
+        android:id="@+id/Btn_sel_img"
+        android:layout_marginTop="100dp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:text="select IMG"
+        />
+    <Button
+        android:id="@+id/Btn_upload_img"
+        android:layout_marginTop="100dp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@+id/Btn_sel_img"
+        android:layout_marginLeft="50dp"
+        android:text="Upload IMG"
+        />
+
+    <TextView
+        android:id="@+id/tv_selected_img"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_alignTop="@id/Btn_sel_img"
+        android:layout_marginTop="70dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"
+        android:textSize="20dp"
+        />
+
+    <Button
+        android:id="@+id/Btn_sel_json"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="300dp"
+        android:layout_marginLeft="30dp"
+        android:text="Select json"
+        />
+    <Button
+        android:id="@+id/Btn_upload_json"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@+id/Btn_sel_json"
+        android:layout_marginLeft="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="300dp"
+        android:text="Upload json"
+        />
+
+    <TextView
+        android:id="@+id/tv_selected_json"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scrollbars="vertical"
+        android:layout_alignTop="@id/Btn_sel_json"
+        android:layout_marginTop="70dp"
+        android:textSize="20dp"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="outsideInset"
+        />
+
+</RelativeLayout>

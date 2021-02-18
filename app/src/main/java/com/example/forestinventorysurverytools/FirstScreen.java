@@ -241,6 +241,9 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         if (v == mGuide_btn) {
 
             Intent intent = new Intent(getApplicationContext(), UserGuide.class);
+            intent.putExtra("UserID",mInputUserID.getText().toString());
+            intent.putExtra("Place",mPlace.getText().toString());
+            intent.putExtra("Coordi",mCoordi.getText().toString());
             startActivity(intent);
         }
     }

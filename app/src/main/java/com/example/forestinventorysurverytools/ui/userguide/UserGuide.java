@@ -2,6 +2,7 @@ package com.example.forestinventorysurverytools.ui.userguide;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,10 +33,21 @@ public class UserGuide extends AppCompatActivity implements View.OnClickListener
     ImageButton mNext_layout;
 
 
+    String UserID;
+    String Place;
+    String Coordi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userguide);
+
+        Intent guideIntent = getIntent();
+        UserID = guideIntent.getStringExtra("UserID");
+        Place = guideIntent.getStringExtra("Place");
+        Coordi = guideIntent.getStringExtra("Coordi");
+
+        Log.d("tag", "User ID : "+UserID);
 
         mViewPager = (ViewPager)findViewById(R.id.guideline_pager);
         mViewPager.setOffscreenPageLimit(5);
@@ -72,6 +84,9 @@ public class UserGuide extends AppCompatActivity implements View.OnClickListener
     public void onClick(View v) {
         if (v == mNext_layout) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("UserID",UserID);
+            intent.putExtra("Place",Place);
+            intent.putExtra("Coordi",Coordi);
             startActivity(intent);
         }
     }

@@ -1,6 +1,7 @@
 package com.example.forestinventorysurverytools;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,7 +43,11 @@ import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.rendering.Texture;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,7 +93,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     // 데이터 관리
     public ArrayList<Info> infoArray = new ArrayList<Info>(); //Save the data
-
+    public String UserID = "";
+    public String Place = "";
+    public String Coordi = "";
 
     //AR
     public ArFragment mArfragment;
@@ -122,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent mainIntent = getIntent();
+        UserID = mainIntent.getStringExtra("UserID");
+        Place = mainIntent.getStringExtra("Place");
+        Coordi = mainIntent.getStringExtra("Coordi");
+
+        Log.d("tag", "User ID : "+UserID);
 
         //TextView
         mInclinometer_tv = (TextView) this.findViewById(R.id.tv_inclinometer);
@@ -392,20 +405,23 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
     //base Server url
-    public String baseurl = "http://114.129.213.50:8080/webfist/";
+    public String baseurl = "http://192.168.0.12:8081/webfist/"; // "http://114.129.213.50:8080/webfist/";
     //WebServer Upload
     NetConnect mNetConnect = new NetConnect();
     NetService mNetService;
 
     //Save data
     String dirPath;
-    ArrayList<treeDTO> tArray = new ArrayList<>();
-    int save_index = 0;  // array에 저장된 나무 수
-    int save_count = 0; // 현재 저장한 횟수
+    JSONArray jarray = new JSONArray();
+//    ArrayList<treeDTO> tArray = new ArrayList<>();
+//    int save_index = 0;  // array에 저장된 나무 수
+//    int save_count = 0; // 현재 저장한 횟수
     public void Save_data(View v) {
         if (infoArray.size() != 0) {
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
-            String filename = "fist_" + dateformat.format(System.currentTimeMillis());
+            String pattern = "yyMMdd";
+            //SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
+            SimpleDateFormat dateformat = new SimpleDateFormat(pattern);
+            String filename = "FistJSON_" + dateformat.format(System.currentTimeMillis())+"_"+Place;
 
             if (CheckWrite()) {
                 dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FIST";
@@ -414,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     dir.mkdir();
                     Log.d("tag", "directory 생성");
                 }
-                //File savefile = new File(dirPath+"/"+filename+".txt");
+
                 File savefile = new File(dirPath + "/" + filename + ".json");
                 try {
                     Log.d("tag", "File 생성시작");
@@ -427,29 +443,36 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         obj.put("Clino", Float.toString(infoArray.get(i).getClino())); //경사
                         obj.put("Azimuth", Float.toString(infoArray.get(i).getAzi())); //방위
                         obj.put("Altitude", Float.toString(infoArray.get(i).getAlti())); //고도
-                        Log.d("tag", "treeDTO 생성시작--------------------------------------------");
-                        treeDTO tree = new treeDTO(infoArray.get(i).getId(), Float.toString(infoArray.get(i).getDist()),
-                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()),
-                                Float.toString(infoArray.get(i).getAzi()), Float.toString(infoArray.get(i).getClino()),
-                                Float.toString(infoArray.get(i).getAlti()),
-                                Double.toString(infoArray.get(i).getLatitude()),Double.toString(infoArray.get(i).getLongitude()));
-                        tArray.add(tree);
-                        // GPS 좌표도 넣기
+                        obj.put("latitude",Double.toString(infoArray.get(i).getLatitude())); // 위도
+                        obj.put("longitude",Double.toString(infoArray.get(i).getLongitude())); // 경도
+                        obj.put("pid",UserID); // 조사자
+                        jarray.put(obj);
+//                        Log.d("tag", "treeDTO 생성시작--------------------------------------------");
+//                        treeDTO tree = new treeDTO(infoArray.get(i).getId(), Float.toString(infoArray.get(i).getDist()),
+//                                Float.toString(infoArray.get(i).getDBH()), Float.toString(infoArray.get(i).getHeight()),
+//                                Float.toString(infoArray.get(i).getAzi()), Float.toString(infoArray.get(i).getClino()),
+//                                Float.toString(infoArray.get(i).getAlti()),
+//                                Double.toString(infoArray.get(i).getLatitude()),Double.toString(infoArray.get(i).getLongitude()),
+//                                UserID);
+//                        tArray.add(tree);
+
                     }
+                    Gson gson = new Gson();
                     FileWriter fw = new FileWriter(savefile);
-                    fw.write(tArray.toString());
+                    fw.write(gson.toJson(jarray));
+//                    fw.write(jarray.toString());
                     fw.flush();
                     fw.close();
 
                     Log.d("tag", "File 생성완료");
                     showToast(dirPath + "에 저장 하였습니다.");
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("주의!!");
-                    builder.setMessage("현재 표준지에 대해 모든 측정이 끝났다면, '예' 버튼을 눌러 웹서버에 측정 값 및 사진들을 업로드 하세요.");
-                    builder.setPositiveButton("예", uploadWebServerListener);
-                    builder.setNegativeButton("아니오", null);
-                    builder.create().show();
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                    builder.setTitle("주의!!");
+//                    builder.setMessage("현재 표준지에 대해 모든 측정이 끝났다면, '예' 버튼을 눌러 웹서버에 측정 값 및 사진들을 업로드 하세요.");
+//                    builder.setPositiveButton("예", uploadWebServerListener);
+//                    builder.setNegativeButton("아니오", null);
+//                    builder.create().show();
 
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -462,46 +485,64 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         }
     }
 
-    AlertDialog.OnClickListener uploadWebServerListener = new AlertDialog.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            try {
+//    AlertDialog.OnClickListener uploadWebServerListener = new AlertDialog.OnClickListener() {
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            try {
+//
+//                Log.d("tag", "업로드 수행-----------------");
+//                mNetConnect.buildNetworkService(baseurl);
+//                mNetService = mNetConnect.getNetService();
+//
+//                for (int i = 0; i < tArray.size(); i++) {
+//                    if(save_count > 0 && i < save_index){
+//                        continue;
+//                    }else{
+//                        Call<String> post_tree_dto = mNetService.post_tree_dto(tArray.get(i));
+//                        post_tree_dto.enqueue(new Callback<String>() {
+//                            @Override
+//                            public void onResponse(Call<String> call, Response<String> response) {
+//                                Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
+//                                Log.d("tag", "비동기, 업로드 성공");
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<String> call, Throwable t) {
+//                                Toast.makeText(getApplicationContext(), "업로드 실패1" , Toast.LENGTH_SHORT).show();
+//                                Log.d("tag", "실패!, 상태 코드: " + t.getMessage());
+//                                t.getStackTrace().toString();
+//                            }
+//                        });
+//                    }
+//                } // end for
+//                save_index = tArray.size();
+//                save_count += 1;
+//
+//            } catch (Exception e) {
+//                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
+//                Log.d("tag", "업로드 실패" + e.getMessage());
+//            }
+//
+//        }
+//    };
 
-                Log.d("tag", "업로드 수행-----------------");
-                mNetConnect.buildNetworkService(baseurl);
-                mNetService = mNetConnect.getNetService();
 
-                for (int i = 0; i < tArray.size(); i++) {
-                    if(save_count > 0 && i < save_index){
-                        continue;
-                    }else{
-                        Call<String> post_tree_dto = mNetService.post_tree_dto(tArray.get(i));
-                        post_tree_dto.enqueue(new Callback<String>() {
-                            @Override
-                            public void onResponse(Call<String> call, Response<String> response) {
-                                Toast.makeText(getApplicationContext(), "업로드 성공", Toast.LENGTH_SHORT).show();
-                                Log.d("tag", "비동기, 업로드 성공");
-                            }
+    //Go Upload View
+    public void Go_upload_view(View v){
+        Intent intent = new Intent(getApplicationContext(), UploadView.class);
+        intent.putExtra("UserID",UserID);
+        intent.putExtra("baseurl",baseurl);
+        startActivity(intent);
+    }
 
-                            @Override
-                            public void onFailure(Call<String> call, Throwable t) {
-                                Toast.makeText(getApplicationContext(), "업로드 실패1" , Toast.LENGTH_SHORT).show();
-                                Log.d("tag", "실패!, 상태 코드: " + t.getMessage());
-                                t.getStackTrace().toString();
-                            }
-                        });
-                    }
-                } // end for
-                save_index = tArray.size();
-                save_count += 1;
+    //Go Analyize View
+    public void Go_analyize_view(View v){
+        Intent intent = new Intent(getApplicationContext(), AnalyzeView.class);
+        intent.putExtra("UserID",UserID);
+        intent.putExtra("baseurl",baseurl);
+        startActivity(intent);
+    }
 
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "업로드 실패2", Toast.LENGTH_SHORT).show();
-                Log.d("tag", "업로드 실패" + e.getMessage());
-            }
-
-        }
-    };
 
 
 }
