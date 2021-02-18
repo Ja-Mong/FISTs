@@ -199,8 +199,10 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/Btn_save"
         android:adjustViewBounds="true"
-        android:background="@drawable/circle_background"
+        android:scaleType="fitCenter"
         android:onClick="Go_upload_view"
+        android:src="@drawable/uploadIcon"
+        android:background="@drawable/circle_background"
         />
 
     <ImageButton
@@ -212,6 +214,8 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/Btn_upload"
         android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/analysisIcon"
         android:background="@drawable/circle_background"
         android:onClick="Go_analyize_view"
         />

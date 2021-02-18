@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     }
                     Gson gson = new Gson();
                     FileWriter fw = new FileWriter(savefile);
-                    fw.write(gson.toJson(jarray));
+                    fw.write(jarray.toString());
 //                    fw.write(jarray.toString());
                     fw.flush();
                     fw.close();
