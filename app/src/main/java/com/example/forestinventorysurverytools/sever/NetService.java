@@ -23,9 +23,9 @@ import retrofit2.http.Query;
 
 public interface NetService {
     @Multipart
-    @POST("/imgsUpload")
+    @POST("/webfist/imgsUpload")
     Call<String> imgFile(@Part ArrayList<MultipartBody.Part> imageFile);
 
-    @POST("/jsonUpload")
+    @POST("/webfist/jsonUpload")
     Call<String> jsonFile(@Body String jsonFile);
 }
