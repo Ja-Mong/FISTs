@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     }
 
     //base Server url
-    public String baseurl = "http://192.168.0.17:8080/"; // "http://114.129.213.50:8080/webfist/";
+    public String baseurl = "http://localhost:8080"; //
     //WebServer Upload
     NetConnect mNetConnect = new NetConnect();
     NetService mNetService;
@@ -443,6 +443,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                         obj.put("longitude",Double.toString(infoArray.get(i).getLongitude())); // 경도
                         obj.put("pid",UserID); // 조사자
                         obj.put("imgPath",""); // 이미지경로
+                        obj.put("location",Coordi); // 조사지 좌표
                         jarray.put(obj);
                     }
                     Gson gson = new Gson();

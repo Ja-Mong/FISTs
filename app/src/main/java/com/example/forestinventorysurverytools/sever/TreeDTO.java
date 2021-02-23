@@ -18,4 +18,5 @@ public class TreeDTO {
     private String longitude; // 경도
     private String pid; // 조사자
     private String imgPath; //실제 서버 DTO에서는 이미지패스추가
+    private String location; //조사지 좌표
 }
