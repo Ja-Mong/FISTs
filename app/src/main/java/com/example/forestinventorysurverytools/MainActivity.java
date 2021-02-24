@@ -64,8 +64,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements Scene.OnUpdateListener {
 
 
-    //base Server url 형식 : http://xxx.xxx.xxx.xxx:8080/webfist
-    public String baseurl = "http://localhost:8080/webfist"; //
+    //base Server url 형식 : http://xxx.xxx.xxx.xxx:8080 (8080포트까지만 작성)
+    public String baseurl = "http://localhost:8080"; //
 
     // Fragment
     public UserheightFragment mUserheightFragment;

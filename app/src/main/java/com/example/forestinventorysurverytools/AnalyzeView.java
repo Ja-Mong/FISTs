@@ -31,20 +31,19 @@ public class AnalyzeView extends AppCompatActivity {
         UserID = anViewIntent.getStringExtra("UserID");
         baseurl = anViewIntent.getStringExtra("baseurl");
 
-        mReturn = (Button)findViewById(R.id.btn_return);
+        mReturn = (Button)findViewById(R.id.btn_return2);
         webView = (WebView)findViewById(R.id.webView);
         mReturn.setOnClickListener(return_Listener);
 
         webView.setWebViewClient(new WebViewClient());
-        String url = baseurl.substring(0,baseurl.lastIndexOf("/webfist"));
 
         WebSettings ws = webView.getSettings();
         ws.setJavaScriptEnabled(true);
         ws.setBuiltInZoomControls(true);
         ws.setSupportZoom(true);
 
+        webView.loadUrl(baseurl+"/analysis");
 
-        webView.loadUrl(url+"/analysis");
     }
 
     View.OnClickListener return_Listener = new View.OnClickListener() {
