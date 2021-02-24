@@ -4,17 +4,19 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/btn_return"
-        android:layout_width="35dp"
+        android:id="@+id/btn_return2"
+        android:layout_width="80dp"
         android:layout_height="35dp"
-        android:background="@color/cardview_shadow_end_color"
-        android:text="←"
-        />
+        android:background="#BA20D46C"
+        android:text="← 메인"
+        android:textSize="10pt"
+        android:textStyle="bold" />
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/btn_return2"
         />
 
 </RelativeLayout>

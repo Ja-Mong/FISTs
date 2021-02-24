@@ -64,6 +64,9 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements Scene.OnUpdateListener {
 
 
+    //base Server url 형식 : http://xxx.xxx.xxx.xxx:8080/webfist
+    public String baseurl = "http://localhost:8080/webfist"; //
+
     // Fragment
     public UserheightFragment mUserheightFragment;
     public DiameterFragment mDiameterFragment;
@@ -404,8 +407,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
     }
 
-    //base Server url
-    public String baseurl = "http://localhost:8080"; //
+
     //WebServer Upload
     NetConnect mNetConnect = new NetConnect();
     NetService mNetService;

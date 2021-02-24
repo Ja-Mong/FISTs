@@ -2,7 +2,9 @@ package com.example.forestinventorysurverytools;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -34,9 +36,15 @@ public class AnalyzeView extends AppCompatActivity {
         mReturn.setOnClickListener(return_Listener);
 
         webView.setWebViewClient(new WebViewClient());
-        String weburl = "";
-        webView.loadUrl(weburl);
+        String url = baseurl.substring(0,baseurl.lastIndexOf("/webfist"));
 
+        WebSettings ws = webView.getSettings();
+        ws.setJavaScriptEnabled(true);
+        ws.setBuiltInZoomControls(true);
+        ws.setSupportZoom(true);
+
+
+        webView.loadUrl(url+"/analysis");
     }
 
     View.OnClickListener return_Listener = new View.OnClickListener() {
