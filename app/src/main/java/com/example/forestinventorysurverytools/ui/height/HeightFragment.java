@@ -103,9 +103,7 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
     float mDz;
     float mDistance;
     int mSlopeAngle;
-    int mSlopeValue;
-    int mSlope1;
-    int mSlope2;
+    int mSlope;
 
 
     @Override
@@ -214,14 +212,12 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
 
                     //Get the Slope
                     float slope = Math.abs(mMySensorEventListener.getSlope());
-                    mSlope1 = (int) (90 - Math.toDegrees(slope));
-                    mSlope2 = (int) Math.toRadians(mSlope1 * 100); //Height에 사용
+                    mSlope = (int) (90 - Math.toDegrees(slope));
 
-                    mSlopeValue = (int) Math.abs(90 - Math.toDegrees(slope));
-                    mSlopeAngle = (int) Math.toRadians(mSlopeValue * 100);
+                    mSlopeAngle = (int) Math.abs(90 - Math.toDegrees(slope));
                     ma.mInclinometer_val = mSlopeAngle;
                     ma.infoArray.get(ma.mTreeIndex).setClino(mSlopeAngle);
-                    ma.mInclinometer_tv.setText("경        사 : " + Integer.toString(mSlopeAngle) + "%");
+                    ma.mInclinometer_tv.setText("경        사 : " + Integer.toString(mSlopeAngle) + "º");
                     mClikc_count ++;
 
                     //Get the roll2 angle
@@ -245,16 +241,14 @@ public class HeightFragment extends Fragment implements Scene.OnUpdateListener, 
                     SimpleDateFormat dateformat = new SimpleDateFormat("dd_HHmmss");
                     String idstr = dateformat.format(System.currentTimeMillis());
 
-                    if (mSlope2 >= -5 && mSlope2 <= 5) {
+                    if (mSlope >= -5) {
                         float h = (float) Math.abs(Math.tan(mGetRoll_2 * (Math.PI / 180)) * mDistance) + (Float.valueOf(ma.mInputUH.getText().toString())/100);
                         String height = String.format("%.1f", h);
                         ma.mHeight_val = h;
                         ma.infoArray.get(ma.mTreeIndex).setHeight(h);
                         ma.mHeight_tv.setText("수        고 : " + height + "m");
-                        ma.showToast("tan1: " + Float.toString((float) Math.tan(mGetRoll_1 * (Math.PI / 180))));
-                        ma.showToast("tan2: " + Float.toString((float) Math.tan(mGetRoll_2 * (Math.PI / 180))));
 
-                    } else if (mSlope2 >= 6) {
+                    } else if (mSlope <= -6) {
                         float hori_dist = (float) Math.abs(Math.cos(mGetRoll_1 * (Math.PI / 180)) * mDistance);
                         float total_h = (float) Math.abs((Math.tan(mGetRoll_2 * (Math.PI / 180))) * hori_dist);
 //                        float x = total_h - (Float.valueOf(ma.mInputUH.getText().toString())/100);

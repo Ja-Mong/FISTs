@@ -32,8 +32,8 @@ public class GpsTracker extends Service implements LocationListener {
     double latitude;
     double longitude;
 
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    private static final double MIN_DISTANCE_CHANGE_FOR_UPDATES = 0.3;
+    private static final long MIN_TIME_BW_UPDATES = 5000;
     protected LocationManager locationManager;
 
 
@@ -77,7 +77,7 @@ public class GpsTracker extends Service implements LocationListener {
                 if (isNetworkEnabled) {
 
 
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, (float) MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
                     if (locationManager != null)
                     {
@@ -95,7 +95,7 @@ public class GpsTracker extends Service implements LocationListener {
                 {
                     if (location == null)
                     {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, (float) MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                         if (locationManager != null)
                         {
                             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);

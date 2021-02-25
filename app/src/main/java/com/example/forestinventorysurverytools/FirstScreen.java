@@ -37,9 +37,9 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
 
     //Values
     public String userDefaultID = "홍길동";
-    public String defaultDate = "20201026";
-    public String defaultPlace = "1 or 속리산 1";
-    public String defaultCoordi = "12.34567 \n 89.10111";
+    public String defaultDate = "년 월 일";
+    public String defaultPlace = "1 or 속리산-1";
+    public String defaultCoordi = "12.34567,89.10111";
 
 
     //ImageView

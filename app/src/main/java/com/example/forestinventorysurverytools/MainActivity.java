@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
 
     //base Server url 형식 : http://xxx.xxx.xxx.xxx:8080 (8080포트까지만 작성)
-    public String baseurl = "http://localhost:8080"; //
+    public String baseurl = "http://155.230.236.39:8080"; //
 
     // Fragment
     public UserheightFragment mUserheightFragment;
@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     public void Save_data(View v) {
         if (infoArray.size() != 0) {
-            String pattern = "yyMMdd";
+            String pattern = "yyMMdd_HHmmss";
             //SimpleDateFormat dateformat = new SimpleDateFormat("yyMMdd_HHmmss");
             SimpleDateFormat dateformat = new SimpleDateFormat(pattern);
             String filename = "FistJSON_" + dateformat.format(System.currentTimeMillis())+"_"+Place;

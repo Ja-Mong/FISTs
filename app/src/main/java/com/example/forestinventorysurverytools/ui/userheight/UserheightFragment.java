@@ -173,8 +173,8 @@ public class UserheightFragment extends Fragment implements Scene.OnUpdateListen
         MaterialFactory.makeTransparentWithColor(ma, new Color(0.8f, 0.0f, 0.0f, 1.0f))
                 .thenAccept(
                         material -> {
-                            mModelRender_UH = ShapeFactory.makeCube(new Vector3(0.3f,0.01f,0.01f),
-                                    new Vector3(0, mUserHeight, 0),material);
+                            Vector3 vector3 = new Vector3(0.0f, mUserHeight, 0.0f);
+                            mModelRender_UH = ShapeFactory.makeSphere(0.01f, vector3, material);
                             mModelRender_UH.setShadowReceiver(false);
                             mModelRender_UH.setShadowReceiver(false);
                             Boolean b = (mModelRender_UH == null);
